@@ -1,6 +1,6 @@
 # jupyterlab-ws-contents
 
-![Github Actions Status](https://github.com/deathbeds/jupyterlab-ws-contents/workflows/Build/badge.svg)
+![Github Actions Status](https://github.com/deathbeds/jupyterlab-dat/workflows/Build/badge.svg)
 
 jupyter contents over websockets
 

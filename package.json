@@ -1,49 +1,35 @@
 {
-  "name": "jupyterlab-ws-contents",
+  "name": "@deathbeds/jupyterlab-dat-dev",
   "version": "0.1.0",
-  "description": "jupyter contents over websockets",
-  "keywords": [
-    "jupyter",
-    "jupyterlab",
-    "jupyterlab-extension"
-  ],
-  "homepage": "https://github.com/deathbeds/jupyterlab-ws-contents",
+  "private": true,
+  "homepage": "https://github.com/deathbeds/jupyterlab-dat",
   "bugs": {
-    "url": "https://github.com/deathbeds/jupyterlab-ws-contents/issues"
+    "url": "https://github.com/deathbeds/jupyterlab-dat/issues"
   },
   "license": "BSD-3-Clause",
   "author": "dead pixels collective",
-  "files": [
-    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
-    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
-  ],
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/deathbeds/jupyterlab-ws-contents.git"
+    "url": "https://github.com/deathbeds/jupyterlab-dat.git"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   },
   "scripts": {
-    "bootstrap": "jlpm --prefer-offline --ignore-optional && jlpm run clean && jlpm run build",
-    "build": "tsc -b",
-    "clean": "rimraf lib tsconfig.tsbuildinfo",
-    "watch": "tsc -b -w",
+    "bootstrap": "jlpm --prefer-offline --ignore-optional && jlpm bootstrap && jlpm run clean && jlpm lint && jlpm run build",
+    "build": "jlpm build:meta && jlpm build:dat",
+    "build:webpack": "lerna run build:webpack --stream",
+    "build:ts": "lerna run build:ts --stream",
+    "clean": "lerna run clean --parallel",
+    "watch": "lerna run watch --parallel",
     "lint:check": "jlpm prettier:check && jlpm tslint:check",
     "lint": "jlpm prettier && jlpm tslint",
     "prettier:check": "prettier --check '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md,.yml}'",
     "prettier": "prettier --write '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md,.yml}'",
-    "test": "lerna run test",
-    "tslint": "tslint --fix -c tslint.json 'src/**/*{.ts,.tsx}'",
-    "tslint:check": "tslint -c tslint.json 'src/**/*{.ts,.tsx}'"
-  },
-  "dependencies": {
-    "dat-sdk": "^0.3.6",
-    "browser-builtins": "^3.3.1"
-  },
-  "peerDependencies": {
-    "@jupyterlab/notebook": "1",
-    "@jupyterlab/application": "1"
+    "tslint": "tslint --fix -c tslint.json 'packages/**/*{.ts,.tsx}'",
+    "tslint:check": "tslint -c tslint.json 'packages/**/*{.ts,.tsx}'"
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
@@ -51,15 +37,8 @@
     "prettier": "^1.19.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
+    "lerna": "^3.13.2",
     "tslint-react": "^4.0.0",
-    "tslint": "^5.15.0",
-    "@jupyterlab/notebook": "1",
-    "@jupyterlab/application": "1"
-  },
-  "sideEffects": [
-    "style/*.css"
-  ],
-  "jupyterlab": {
-    "extension": "lib/plugin.js"
+    "tslint": "^5.15.0"
   }
 }

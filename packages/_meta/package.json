@@ -1,0 +1,39 @@
+{
+  "name": "@deathbeds/jupyterlab-dat-metapackage",
+  "version": "0.6.1",
+  "description": "JupyterLab Dat - Meta Package.  All of the packages used by JupyterLab dat",
+  "homepage": "https://github.com/deathbeds/jupyterlab-dat",
+  "bugs": {
+    "url": "https://github.com/krassowski/jupyterlab-dat/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "dead pixels collective",
+  "files": [
+    "lib/*.{d.ts,js.map,js}"
+  ],
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib/"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf lib",
+    "prepublishOnly": "npm run build",
+    "watch": "tsc -b --watch"
+  },
+  "dependencies": {
+    "@deathbeds/dat-sdk-webpack": "*",
+    "@deathbeds/jupyterlab-dat": "*"
+  },
+  "devDependencies": {
+    "fs-extra": "^8.0.1",
+    "rimraf": "~2.6.2",
+    "typedoc": "^0.14.2",
+    "typescript": "~3.7.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

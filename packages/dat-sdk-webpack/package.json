@@ -1,0 +1,36 @@
+{
+  "name": "@deathbeds/dat-sdk-webpack",
+  "version": "0.3.6",
+  "description": "dat-sdk for webpack and typescript",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "lab:link": "jupyter labextension link . --no-build",
+    "build:webpack": "webpack",
+    "watch": "webpack --watch",
+    "clean": "rimraf lib dist"
+  },
+  "author": "dead pixels collective",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "dat",
+    "webpack",
+    "typescript"
+  ],
+  "homepage": "https://github.com/deathbeds/jupyterlab-dat",
+  "dependencies": {
+    "dat-sdk": "0.3.6"
+  },
+  "devDependencies": {
+    "file-loader": "~3.0.1",
+    "rimraf": "^2.6.3",
+    "source-map-loader": "~0.2.1",
+    "typescript": "~3.7.2",
+    "webpack-cli": "^3.3.0",
+    "webpack": "^4.32.2"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "@deatheds/jupyterlab-dat",
+  "version": "0.1.0",
+  "description": "dat for JupyterLab",
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-extension",
+    "dat",
+    "p2p"
+  ],
+  "homepage": "https://github.com/deathbeds/jupyterlab-dat",
+  "bugs": {
+    "url": "https://github.com/deathbeds/jupyterlab-dat/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "dead pixels collective",
+  "files": [
+    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
+    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "style": "style/index.css",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deathbeds/jupyterlab-dat.git"
+  },
+  "scripts": {
+    "clean": "rimraf lib",
+    "lab:link": "jupyter labextension link . --no-build"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@deathbeds/dat-sdk-webpack": "0.3.6",
+    "@jupyterlab/notebook": "1",
+    "@jupyterlab/application": "1"
+  },
+  "devDependencies": {
+    "@deathbeds/dat-sdk-webpack": "0.3.6",
+    "@jupyterlab/notebook": "1",
+    "@jupyterlab/application": "1"
+  },
+  "sideEffects": [
+    "style/*.css"
+  ],
+  "jupyterlab": {
+    "extension": "lib/plugin.js"
+  }
+}

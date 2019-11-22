@@ -1,5 +1,4 @@
-import * as dat from 'dat-sdk/auto';
-const SDK = dat.default;
+import {SDK, dat} from '@deathbeds/dat-sdk-webpack';
 
 export class DatManager {
   private _archives = new Map<string, dat.IDatArchive>();
