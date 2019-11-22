@@ -1,15 +1,15 @@
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
-} from "@jupyterlab/application";
+} from '@jupyterlab/application';
 
-import { DatManager } from "./manager";
+import { DatManager } from './manager';
 
-import { NotebookSyncButton } from "./button";
-import { DatNotebookButton } from "./datbutton";
+import { NotebookSyncButton } from './button';
+import { DatNotebookButton } from './datbutton';
 
 const extension: JupyterFrontEndPlugin<void> = {
-  id: "jupyterlab-ws-contents",
+  id: 'jupyterlab-ws-contents',
   autoStart: true,
   activate: (app: JupyterFrontEnd) => {
     const manager = new DatManager();
@@ -18,7 +18,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     const datButton = new DatNotebookButton(manager);
 
     [syncButton, datButton].forEach(button => {
-      app.docRegistry.addWidgetExtension("Notebook", button);
+      app.docRegistry.addWidgetExtension('Notebook', button);
     });
   }
 };

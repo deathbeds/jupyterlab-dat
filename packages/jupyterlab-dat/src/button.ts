@@ -1,18 +1,18 @@
-import { IDisposable, DisposableDelegate } from "@phosphor/disposable";
+import { IDisposable, DisposableDelegate } from '@phosphor/disposable';
 
-import { ISignal, Signal } from "@phosphor/signaling";
+import { ISignal, Signal } from '@phosphor/signaling';
 
-import { each } from "@phosphor/algorithm";
+import { each } from '@phosphor/algorithm';
 
-import { ToolbarButton } from "@jupyterlab/apputils";
+import { ToolbarButton } from '@jupyterlab/apputils';
 
-import { PageConfig, URLExt } from "@jupyterlab/coreutils";
+import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
-import { DocumentRegistry } from "@jupyterlab/docregistry";
+import { DocumentRegistry } from '@jupyterlab/docregistry';
 
-import { NotebookPanel, INotebookModel } from "@jupyterlab/notebook";
+import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 
-const ICON_CLASS = "jp-WSContents-Icon";
+const ICON_CLASS = 'jp-WSContents-Icon';
 
 /**
  * A notebook widget extension that adds a button to the toolbar.
@@ -29,12 +29,12 @@ export class NotebookSyncButton
   ): IDisposable {
     let sock: WebSocket;
     let button = new ToolbarButton({
-      iconClassName: ICON_CLASS + " jp-Icon jp-Icon-16",
+      iconClassName: ICON_CLASS + ' jp-Icon jp-Icon-16',
       onClick: () => {
         const url = URLExt.join(
-          PageConfig.getBaseUrl().replace(/^http/, "ws"),
-          "api",
-          "wscontents",
+          PageConfig.getBaseUrl().replace(/^http/, 'ws'),
+          'api',
+          'wscontents',
           context.path
         );
 
@@ -45,16 +45,16 @@ export class NotebookSyncButton
         }
         sock = new WebSocket(url);
         sock.onopen = evt => {
-          console.log("open", evt);
+          console.log('open', evt);
         };
         sock.onmessage = evt => {
-          console.log("received", new Date());
+          console.log('received', new Date());
           const data = JSON.parse(evt.data);
           const { content, cell } = data;
           if (content) {
             each(panel.model.cells, (cell, i) => {
-              const newSource = content.cells[i].source.join("");
-              if (cell.value.text != newSource) {
+              const newSource = content.cells[i].source.join('');
+              if (cell.value.text !== newSource) {
                 cell.value.text = newSource;
               }
             });
@@ -73,10 +73,10 @@ export class NotebookSyncButton
           );
         });
       },
-      tooltip: "Activate Notebook Sync"
+      tooltip: 'Activate Notebook Sync'
     });
 
-    panel.toolbar.insertItem(9, "ws-sync", button);
+    panel.toolbar.insertItem(9, 'ws-sync', button);
 
     return new DisposableDelegate(() => {
       button.dispose();

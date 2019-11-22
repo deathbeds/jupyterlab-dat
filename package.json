@@ -32,7 +32,7 @@
     "tslint:check": "tslint -c tslint.json 'packages/**/*{.ts,.tsx}'"
   },
   "devDependencies": {
-    "rimraf": "^2.6.1",
+    "rimraf": "^2.6.2",
     "typescript": "~3.7",
     "prettier": "^1.19.1",
     "tslint-config-prettier": "^1.18.0",
