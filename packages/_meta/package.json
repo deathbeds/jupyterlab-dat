@@ -23,7 +23,7 @@
     "prepublishOnly": "npm run build",
     "watch": "tsc -b --watch"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@deathbeds/dat-sdk-webpack": "*",
     "@deathbeds/jupyterlab-dat": "*"
   },

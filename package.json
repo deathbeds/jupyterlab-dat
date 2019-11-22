@@ -18,7 +18,7 @@
     ]
   },
   "scripts": {
-    "bootstrap": "jlpm --prefer-offline --ignore-optional && jlpm bootstrap && jlpm run clean && jlpm lint && jlpm run build",
+    "bootstrap": "jlpm --prefer-offline --ignore-optional && lerna bootstrap && jlpm run clean && jlpm lint && jlpm run build",
     "build": "jlpm build:meta && jlpm build:dat",
     "build:webpack": "lerna run build:webpack --stream",
     "build:ts": "lerna run build:ts --stream",
