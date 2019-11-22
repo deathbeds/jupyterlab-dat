@@ -1,0 +1,7 @@
+{
+  "NotebookApp": {
+    "nbserver_extensions": {
+      "jupyter_ws_contents": true
+    }
+  }
+}

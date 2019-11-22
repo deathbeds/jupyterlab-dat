@@ -1,0 +1,61 @@
+{
+  "name": "jupyterlab-ws-contents",
+  "version": "0.1.0",
+  "description": "jupyter contents over websockets",
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-extension"
+  ],
+  "homepage": "https://github.com/deathbeds/jupyterlab-ws-contents",
+  "bugs": {
+    "url": "https://github.com/deathbeds/jupyterlab-ws-contents/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "dead pixels collective",
+  "files": [
+    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
+    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "style": "style/index.css",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deathbeds/jupyterlab-ws-contents.git"
+  },
+  "scripts": {
+    "bootstrap": "jlpm --prefer-offline --ignore-optional && jlpm run clean && jlpm run build",
+    "build": "tsc -b",
+    "clean": "rimraf lib tsconfig.tsbuildinfo",
+    "watch": "tsc -b -w",
+    "lint:check": "jlpm prettier:check && jlpm tslint:check",
+    "lint": "jlpm prettier && jlpm tslint",
+    "prettier:check": "prettier --check '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md,.yml}'",
+    "prettier": "prettier --write '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md,.yml}'",
+    "test": "lerna run test",
+    "tslint": "tslint --fix -c tslint.json 'src/**/*{.ts,.tsx}'",
+    "tslint:check": "tslint -c tslint.json 'src/**/*{.ts,.tsx}'"
+  },
+  "peerDependencies": {
+    "@jupyterlab/notebook": "1",
+    "@jupyterlab/application": "1"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.1",
+    "typescript": "~3.7",
+    "prettier": "^1.19.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^4.0.0",
+    "tslint": "^5.15.0",
+    "@jupyterlab/notebook": "1",
+    "@jupyterlab/application": "1"
+  },
+  "sideEffects": [
+    "style/*.css"
+  ],
+  "jupyterlab": {
+    "extension": "lib/plugin.js"
+  }
+}
