@@ -4,10 +4,9 @@
 
 jupyter contents over websockets
 
-
 ## Requirements
 
-* JupyterLab >= 1.0
+- JupyterLab >= 1.0
 
 ## Install
 
@@ -52,4 +51,3 @@ jupyter lab --watch
 ```bash
 jupyter labextension uninstall jupyterlab-ws-contents
 ```
-

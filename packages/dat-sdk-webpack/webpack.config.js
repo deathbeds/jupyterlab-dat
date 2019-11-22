@@ -1,33 +1,33 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  mode: 'production',
+  mode: "production",
   entry: {
-    index: './lib/index.js'
+    index: "./lib/index.js"
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        use: ['source-map-loader'],
-        enforce: 'pre',
+        use: ["source-map-loader"],
+        enforce: "pre",
         // eslint-disable-next-line no-undef
         exclude: /node_modules/
       },
-      { test: /\.js.map$/, use: 'file-loader' }
+      { test: /\.js.map$/, use: "file-loader" }
     ]
   },
   resolve: {
-    extensions: ['.js']
+    extensions: [".js"]
   },
-  target: 'web',
+  target: "web",
   node: {
-    dns: 'mock'
+    dns: "mock"
   },
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
-    library: 'dat-sdk-webpack',
-    libraryTarget: 'umd'
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist"),
+    library: "dat-sdk-webpack",
+    libraryTarget: "umd"
   }
 };

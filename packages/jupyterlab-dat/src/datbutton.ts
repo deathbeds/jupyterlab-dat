@@ -1,24 +1,24 @@
-import { IDisposable, DisposableDelegate } from '@phosphor/disposable';
+import { IDisposable, DisposableDelegate } from "@phosphor/disposable";
 
-import { Widget } from '@phosphor/widgets';
+import { Widget } from "@phosphor/widgets";
 
-import { ISignal, Signal } from '@phosphor/signaling';
+import { ISignal, Signal } from "@phosphor/signaling";
 
-import { ToolbarButton } from '@jupyterlab/apputils';
+import { ToolbarButton } from "@jupyterlab/apputils";
 
-import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { DocumentRegistry } from "@jupyterlab/docregistry";
 
-import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
+import { NotebookPanel, INotebookModel } from "@jupyterlab/notebook";
 
-import { DatManager } from './manager';
+import { DatManager } from "./manager";
 
-const ICON_CLASS = 'jp-DatContents-Icon';
+const ICON_CLASS = "jp-DatContents-Icon";
 
 export class DatURL extends Widget {
   constructor() {
-    const node = document.createElement('input');
-    node.placeholder = 'dat://';
-    super({node});
+    const node = document.createElement("input");
+    node.placeholder = "dat://";
+    super({ node });
   }
 }
 
@@ -39,34 +39,41 @@ export class DatNotebookButton
     let text = new DatURL();
 
     let button = new ToolbarButton({
-      iconClassName: ICON_CLASS + ' jp-Icon jp-Icon-16',
+      iconClassName: ICON_CLASS + " jp-Icon jp-Icon-16",
       onClick: async () => {
         const node = text.node as HTMLInputElement;
         const datUrl = node.value;
-        if(!datUrl) {
-          const title = context.path.split('/').slice(-1)[0];
+        if (!datUrl) {
+          const title = context.path.split("/").slice(-1)[0];
           const dat = await this._manager.create({ title });
           const onChange = () => {
-            dat.writeFile(`${context.model.toJSON()}`, `/Untitled.ipynb`, 'utf-8');
-          }
+            dat.writeFile(
+              `${context.model.toJSON()}`,
+              `/Untitled.ipynb`,
+              "utf-8"
+            );
+          };
           context.model.contentChanged.connect(onChange);
           onChange();
           node.value = dat.url;
         } else {
           const dat = await this._manager.listen(datUrl);
           const watcher = dat.watch();
-          watcher.on('changed', async (evt) => {
+          watcher.on("changed", async evt => {
             console.log(evt);
-            const content = await dat.readFile<string>('/Untitled.ipynb', 'utf-8');
+            const content = await dat.readFile<string>(
+              "/Untitled.ipynb",
+              "utf-8"
+            );
             context.model.fromJSON(JSON.parse(content));
           });
         }
       },
-      tooltip: 'Activate Notebook Sync'
+      tooltip: "Activate Notebook Sync"
     });
 
-    panel.toolbar.insertItem(9, 'dat', button);
-    panel.toolbar.insertItem(9, 'dat-url', text);
+    panel.toolbar.insertItem(9, "dat", button);
+    panel.toolbar.insertItem(9, "dat-url", text);
 
     return new DisposableDelegate(() => {
       button.dispose();

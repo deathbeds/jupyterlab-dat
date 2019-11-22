@@ -15,13 +15,13 @@ commands:
 env_specs:
   default:
     packages:
-    - jsonpatch
-    - jupyterlab >=1.2.3,<1.3
-    - nodejs
-    - python >=3.7,<3.8.0a0
-    - ujson
-    - pip:
-      - watchgod
+      - jsonpatch
+      - jupyterlab >=1.2.3,<1.3
+      - nodejs
+      - python >=3.7,<3.8.0a0
+      - ujson
+      - pip:
+          - watchgod
 
 channels:
   - conda-forge

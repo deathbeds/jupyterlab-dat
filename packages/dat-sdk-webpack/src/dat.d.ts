@@ -1,13 +1,23 @@
-declare module 'dat-sdk/auto' {
+declare module "dat-sdk/auto" {
   export interface IDatArchive extends EventTarget {
     url: string;
-    readFile<T>(filepath: string, opts: string | IDatArchive.IReadOptions): Promise<T>;
-    writeFile(filepath: string, data: any, opts: string | IDatArchive.IWriteOptions): Promise<void>;
+    readFile<T>(
+      filepath: string,
+      opts: string | IDatArchive.IReadOptions
+    ): Promise<T>;
+    writeFile(
+      filepath: string,
+      data: any,
+      opts: string | IDatArchive.IWriteOptions
+    ): Promise<void>;
     watch(onInvalidated?: IDatArchive.IInvalidated): IWatcher;
-    watch(pathPattern: string, onInvalidated?: IDatArchive.IInvalidated): IWatcher;
+    watch(
+      pathPattern: string,
+      onInvalidated?: IDatArchive.IInvalidated
+    ): IWatcher;
   }
   export interface IWatcher {
-    on(evt: 'changed', callback: IChangeWatcher): void;
+    on(evt: "changed", callback: IChangeWatcher): void;
   }
   export interface IChangeWatcher {
     (evt: IChangeEvent): void;
@@ -38,7 +48,7 @@ declare module 'dat-sdk/auto' {
     export interface IOptions {
       storageOpts: {
         storageLocation: string;
-      }
+      };
     }
   }
 
