@@ -37,6 +37,10 @@
     "tslint": "tslint --fix -c tslint.json 'src/**/*{.ts,.tsx}'",
     "tslint:check": "tslint -c tslint.json 'src/**/*{.ts,.tsx}'"
   },
+  "dependencies": {
+    "dat-sdk": "^0.3.6",
+    "browser-builtins": "^3.3.1"
+  },
   "peerDependencies": {
     "@jupyterlab/notebook": "1",
     "@jupyterlab/application": "1"
