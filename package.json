@@ -19,8 +19,8 @@
   },
   "scripts": {
     "bootstrap": "jlpm --prefer-offline --ignore-optional && lerna bootstrap && jlpm run clean && jlpm lint && jlpm run build",
-    "build": "jlpm build:ts && jlpm build:webpack",
-    "build:webpack": "lerna run build:webpack --stream",
+    "build": "jlpm build:ts && jlpm build:browserify",
+    "build:browserify": "lerna run build:browserify --stream",
     "build:ts": "lerna run build:ts --stream",
     "clean": "lerna run clean --parallel",
     "lint:check": "jlpm prettier:check && jlpm tslint:check",
@@ -29,7 +29,8 @@
     "prettier": "prettier --write '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md,.yml}'",
     "tslint": "tslint --fix -c tslint.json 'packages/**/*{.ts,.tsx}'",
     "tslint:check": "tslint -c tslint.json 'packages/**/*{.ts,.tsx}'",
-    "watch": "lerna run watch --parallel"
+    "watch": "lerna run watch --parallel",
+    "swarm": "discovery-swarm-web --port 3472"
   },
   "devDependencies": {
     "dat": "^13.13.1",

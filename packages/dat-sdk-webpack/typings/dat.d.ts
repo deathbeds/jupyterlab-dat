@@ -1,4 +1,6 @@
-declare module "dat-sdk/auto" {
+declare module "random-access-*" {}
+
+declare module "dat-sdk/promise" {
   export interface IDatArchive extends EventTarget {
     url: string;
     readFile<T>(
@@ -15,7 +17,7 @@ declare module "dat-sdk/auto" {
       pathPattern: string,
       onInvalidated?: IDatArchive.IInvalidated
     ): IWatcher;
-    getInfo(): Promise<any>;
+    getInfo(): Promise<IDatArchive.IArchiveInfo>;
   }
   export interface IWatcher {
     addEventListener(
@@ -28,8 +30,14 @@ declare module "dat-sdk/auto" {
   }
   export interface IChangeEvent {}
   export namespace IDatArchive {
-    export interface ICreateOptions {
+    export interface ILoadOptions {
+      persist?: boolean;
+      storage?: Function;
+    }
+    export interface ICreateOptions extends ILoadOptions {
       title?: string;
+      description?: string;
+      author?: string;
     }
 
     export interface IIOOptions {
@@ -40,11 +48,24 @@ declare module "dat-sdk/auto" {
     export interface IInvalidated {
       (): void;
     }
+    export interface IArchiveInfo {
+      author: string;
+      description: string;
+      isOwner: boolean;
+      key: string;
+      mtime: number;
+      peers: number;
+      size: number;
+      title: string;
+      type: string;
+      url: string;
+      version: number;
+    }
   }
 
   export interface IDatArchiveStatic {
     create(opts?: IDatArchive.ICreateOptions): Promise<IDatArchive>;
-    load(url: string, options?: IDatArchive.IIOOptions): Promise<IDatArchive>;
+    load(url: string, options?: IDatArchive.ILoadOptions): Promise<IDatArchive>;
   }
 
   export interface ISDK {

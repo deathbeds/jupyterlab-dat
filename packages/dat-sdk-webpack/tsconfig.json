@@ -4,7 +4,9 @@
     "rootDir": "src",
     "outDir": "lib",
     "lib": ["es6", "dom", "scripthost"],
-    "tsBuildInfoFile": "lib/.tsbuildinfo"
+    "tsBuildInfoFile": "lib/.tsbuildinfo",
+    "module": "commonjs",
+    "types": ["node"]
   },
   "include": ["src", "src/*.d.ts"]
 }

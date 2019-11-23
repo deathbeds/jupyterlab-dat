@@ -1,1 +1,4 @@
-export const ICON_CLASS = 'jp-DatContents-Icon';
+export const CSS = {
+  ICON: 'jp-DatContents-Icon',
+  WIDGET: 'jp-DatContents-Widget'
+};

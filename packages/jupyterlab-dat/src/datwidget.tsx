@@ -8,31 +8,53 @@ import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 
 import { DatManager } from './manager';
 
-import { ICON_CLASS } from '.';
+import { CSS } from '.';
 
 export class DatWidget extends VDomRenderer<DatWidget.Model> {
   constructor(options: DatWidget.IOptions) {
     super();
     this.model = new DatWidget.Model(options);
-    this.title.label = options.context.path.split('/').slice(-1)[0];
-    this.title.iconClass = ICON_CLASS;
+    this.title.iconClass = CSS.ICON;
   }
   protected render() {
     const m = this.model;
+
+    const { title, shareUrl, loadUrl } = m;
+
+    this.title.label = title;
+
     return (
-      <div>
+      <div className={CSS.WIDGET}>
         <div>
-          <input readOnly={true} value={m.shareUrl} />
-          <button onClick={async () => await m.onShare()}>share</button>
+          <input
+            readOnly={true}
+            size={70}
+            defaultValue={shareUrl}
+            className="jp-mod-styled"
+          />
+          <button
+            className="jp-mod-styled"
+            onClick={async () => await m.onShare()}
+          >
+            share
+          </button>
         </div>
         <div>
           <input
-            defaultValue={m.loadUrl}
+            defaultValue={loadUrl}
+            size={70}
             onChange={e => (m.loadUrl = e.currentTarget.value)}
             placeholder="dat://"
+            className="jp-mod-styled"
           />
-          <button onClick={async () => await m.onLoad()}>load</button>
+          <button
+            className="jp-mod-styled"
+            onClick={async () => await m.onLoad()}
+          >
+            load
+          </button>
         </div>
+        <pre>{JSON.stringify(m.info || {}, null, 2)}</pre>
       </div>
     );
   }
@@ -46,16 +68,18 @@ export namespace DatWidget {
   }
 
   export class Model extends VDomModel {
+    private _status: string = 'zzz';
     private _dat: dat.IDatArchive;
     private _shareUrl: string;
     private _loadUrl: string;
-    // private _panel: NotebookPanel;
+    private _panel: NotebookPanel;
     private _context: DocumentRegistry.IContext<INotebookModel>;
     private _manager: DatManager;
+    private _info: dat.IDatArchive.IArchiveInfo;
 
     constructor(options: DatWidget.IOptions) {
       super();
-      // this._panel = options.panel;
+      this._panel = options.panel;
       this._context = options.context;
       this._manager = options.manager;
     }
@@ -70,33 +94,67 @@ export namespace DatWidget {
       return this._shareUrl;
     }
 
+    get info() {
+      return this._info;
+    }
+    set info(info) {
+      this._info = info;
+      this.stateChanged.emit(void 0);
+    }
+
+    get status() {
+      return this._status;
+    }
+    set status(status) {
+      this._status = status;
+      this.stateChanged.emit(void 0);
+    }
+
+    get title() {
+      const path = this._context.path.split('/').slice(-1)[0];
+      return `${path} - ${this.status}`;
+    }
+
     async onShare() {
+      this.status = 'sharing';
       const title = this._context.path.split('/').slice(-1)[0];
-      const dat = await this._manager.create({ title });
-      const onChange = () => {
-        dat.writeFile(
-          `${this._context.model.toJSON()}`,
+      this._dat = await this._manager.create({ title });
+      const onChange = async () => {
+        this.status = 'publishing';
+        await this._dat.writeFile(
           `/Untitled.ipynb`,
+          JSON.stringify(this._panel.model.toJSON()),
           'utf-8'
         );
+        this.status = 'published';
+        this.info = await this._dat.getInfo();
+        this.status = 'sharing';
       };
-      this._context.model.contentChanged.connect(onChange);
+      this._panel.model.contentChanged.connect(onChange);
       onChange();
-      this._shareUrl = dat.url;
+      this._shareUrl = this._dat.url;
       this.stateChanged.emit(void 0);
     }
 
     async onLoad() {
+      this.status = 'subscribing';
       this._dat = await this._manager.listen(this.loadUrl);
+      this.info = await this._dat.getInfo();
+      this.status = 'waiting';
       const watcher = this._dat.watch();
-      watcher.addEventListener('invalidated', async evt => {
-        console.log(evt);
+      const onChange = async (_evt: any) => {
+        this.status = 'updating';
         const content = await this._dat.readFile<string>(
           '/Untitled.ipynb',
           'utf-8'
         );
         this._context.model.fromJSON(JSON.parse(content));
-      });
+        this.status = 'updated';
+        this.info = await this._dat.getInfo();
+        this.status = 'waiting';
+      };
+      watcher.addEventListener('invalidated', onChange);
+      await onChange(void 0);
     }
   }
 }

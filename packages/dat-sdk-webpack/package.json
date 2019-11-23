@@ -4,13 +4,14 @@
   "description": "dat-sdk for webpack and typescript",
   "main": "dist/index.js",
   "module": "dist/index.js",
+  "browser": "dist/index.js",
   "files": [
     "{dist,typings}"
   ],
   "types": "lib/index.d.ts",
   "scripts": {
-    "build:webpack": "webpack",
-    "watch": "webpack --watch",
+    "build:browserify": "browserify ./lib/index.js --standalone dat-sdk-webpack -v -o ./dist/index.js",
+    "watch": "watchify ./lib/index.js --standalone dat-sdk-webpack -v -o ./dist/index.js",
     "clean": "rimraf lib dist"
   },
   "author": "dead pixels collective",
@@ -22,12 +23,12 @@
   ],
   "homepage": "https://github.com/deathbeds/jupyterlab-dat",
   "dependencies": {
-    "dat-sdk": "0.3.6"
+    "dat-sdk": "0.3.6",
+    "random-access-web": "^2.0.3"
   },
   "devDependencies": {
-    "file-loader": "~3.0.1",
-    "source-map-loader": "~0.2.1",
-    "webpack-cli": "^3.3.0",
-    "webpack": "^4.32.2"
+    "browserify": "^16.5.0",
+    "watchify": "^3.11.1",
+    "@types/node": "*"
   }
 }

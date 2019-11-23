@@ -5,3 +5,8 @@ body .jp-DatContents-Icon {
 body[data-jp-theme-light="true"] .jp-DatContents-Icon {
   background-image: url(./dat-light.svg);
 }
+
+.jp-DatContents-Widget {
+  padding: var(--jp-notebook-padding);
+  background-color: var(--jp-layout-color1);
+}

@@ -13,7 +13,7 @@ import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 import { DatManager } from './manager';
 import { DatWidget } from './datwidget';
 
-import { ICON_CLASS } from '.';
+import { CSS } from '.';
 
 export class DatNotebookButton
   implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
@@ -30,7 +30,7 @@ export class DatNotebookButton
     context: DocumentRegistry.IContext<INotebookModel>
   ): IDisposable {
     let button = new ToolbarButton({
-      iconClassName: ICON_CLASS + ' jp-Icon jp-Icon-16',
+      iconClassName: `jp-Icon jp-Icon-16 ${CSS.ICON}`,
       onClick: async () => {
         const widget = new DatWidget({
           panel,
@@ -39,7 +39,7 @@ export class DatNotebookButton
         });
         this.widgetRequested.emit(widget);
       },
-      tooltip: 'Activate Notebook Sync'
+      tooltip: 'Publish/Subscribe with dat'
     });
 
     panel.toolbar.insertItem(9, 'dat', button);
