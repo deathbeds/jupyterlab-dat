@@ -1,4 +1,16 @@
 export const CSS = {
-  ICON: 'jp-DatContents-Icon',
-  WIDGET: 'jp-DatContents-Widget'
+  ICON: 'jp-Dat-Icon',
+  ICONS: {
+    create: 'jp-Dat-Icon-create',
+    resume: 'jp-Dat-Icon-resume'
+  } as { [key: string]: string },
+  COLOR: {
+    brand: 'jp-mod-dat-brand'
+  },
+  WIDGET: 'jp-Dat-Widget',
+  MAIN: 'jp-Dat-Widget-Main',
+  SHIELD: 'jp-mod-dat-shield',
+  BTN: {
+    big: 'jp-mod-dat-btn-big'
+  }
 };

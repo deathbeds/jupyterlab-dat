@@ -29,7 +29,9 @@
   "scripts": {
     "clean": "rimraf lib"
   },
-  "dependencies": {},
+  "dependencies": {
+    "dat-icons": "^2.5.2"
+  },
   "peerDependencies": {
     "@deathbeds/dat-sdk-webpack": "0.3.6",
     "@jupyterlab/notebook": "1",

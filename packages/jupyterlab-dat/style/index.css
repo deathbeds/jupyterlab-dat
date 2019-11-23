@@ -1,12 +1,88 @@
-body .jp-DatContents-Icon {
-  background-image: url(./dat-dark.svg);
+:root {
+  --jp-dat-icon-light: url("./dat-light.svg");
+  --jp-dat-icon-dark: url("./dat-dark.svg");
+  --jp-dat-icon-create: url("~dat-icons/icons/create-new-dat.svg");
+  --jp-dat-icon-resume: url("~dat-icons/icons/hexagon-resume.svg");
+  --jp-dat-color-brand: #2aca4b;
 }
 
-body[data-jp-theme-light="true"] .jp-DatContents-Icon {
-  background-image: url(./dat-light.svg);
+body .jp-Dat-Icon {
+  background-image: var(--jp-dat-icon-dark);
 }
 
-.jp-DatContents-Widget {
+body[data-jp-theme-light="true"] .jp-Dat-Icon {
+  background-image: var(--jp-dat-icon-light);
+}
+
+.jp-mod-dat-brand {
+  background-color: var(--jp-dat-color-brand);
+}
+
+button.jp-mod-styled.jp-mod-dat-btn-big {
+  max-height: unset;
+  height: unset;
+  vertical-align: middle;
+  font-size: 150%;
+  display: flex;
+  align-items: center;
+}
+
+.jp-mod-dat-btn-big label {
+  text-align: center;
+  flex: 1;
+}
+
+.jp-mod-dat-shield {
+  background-size: 61%;
+  width: 5rem;
+  min-width: 5rem;
+  height: 5rem;
+  background-position: center;
+  background-repeat: no-repeat;
+  flex: 0;
+}
+
+.jp-Dat-Icon-create {
+  background-image: var(--jp-dat-icon-create);
+}
+
+.jp-Dat-Icon-resume {
+  background-image: var(--jp-dat-icon-resume);
+}
+
+.jp-Dat-Widget {
   padding: var(--jp-notebook-padding);
   background-color: var(--jp-layout-color1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.jp-Dat-Widget-Main {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.jp-Dat-Widget section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--jp-notebook-padding);
+  min-width: 20rem;
+}
+
+.jp-Dat-Widget header {
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-Dat-Widget input {
+  font-family: var(--jp-code-font-family);
+  text-overflow: ellipsis;
+  width: 100%;
+  margin: var(--jp-notebook-padding);
+  text-align: center;
 }

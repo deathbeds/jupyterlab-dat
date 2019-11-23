@@ -15,38 +15,14 @@ export class DatManager {
 
   private async SDK() {
     if (!this._SDK) {
-      const _raw = await import(
-        /* webpackChunkName: "dat-sdk" */ '!!raw-loader!@deathbeds/dat-sdk-webpack'
+      const _dat = await import(
+        /* webpackChunkName: "dat-sdk" */ '@deathbeds/dat-sdk-webpack'
       );
-      const script = document.createElement('script');
-      script.textContent = _raw.default;
-      const promise = new Promise((resolve, reject) => {
-        document.body.appendChild(script);
-        let i = 100;
-        const interval = setInterval(() => {
-          const _dat = (window as any).datSdkWebpack;
-          i--;
-          if (!i) {
-            reject('failed to load');
-            clearInterval(interval);
-          }
-          if (_dat) {
-            clearInterval(interval);
-            this._SDK = _dat.dat.default({
-              swarmOpts: {
-                discovery: NOTEBOOK_SERVER_DISCOVERY
-              }
-            });
-            this._RAM = _dat.RAM.default;
-            resolve(void 0);
-          }
-        }, 10);
+      this._SDK = (_dat.dat as any).default({
+        swarmOpts: {
+          discovery: NOTEBOOK_SERVER_DISCOVERY
+        }
       });
-      try {
-        await promise;
-      } catch (err) {
-        console.warn(err);
-      }
     }
     return this._SDK;
   }

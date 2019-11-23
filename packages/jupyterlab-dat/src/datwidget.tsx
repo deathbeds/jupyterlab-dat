@@ -10,52 +10,87 @@ import { DatManager } from './manager';
 
 import { CSS } from '.';
 
+const PLACEHOLDER = 'dat://';
+const BTN_CLASS = `jp-mod-styled jp-mod-accept ${CSS.BTN.big}`;
+
+const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
+  event.target.select();
+
 export class DatWidget extends VDomRenderer<DatWidget.Model> {
   constructor(options: DatWidget.IOptions) {
     super();
     this.model = new DatWidget.Model(options);
     this.title.iconClass = CSS.ICON;
+    this.addClass(CSS.WIDGET);
   }
   protected render() {
     const m = this.model;
 
-    const { title, shareUrl, loadUrl } = m;
+    const { title } = m;
 
     this.title.label = title;
 
+    const props = {
+      className: `${CSS.MAIN} jp-RenderedHTMLCommon`
+    };
+
     return (
-      <div className={CSS.WIDGET}>
-        <div>
-          <input
-            readOnly={true}
-            size={70}
-            defaultValue={shareUrl}
-            className="jp-mod-styled"
-          />
-          <button
-            className="jp-mod-styled"
-            onClick={async () => await m.onShare()}
-          >
-            share
-          </button>
-        </div>
-        <div>
-          <input
-            defaultValue={loadUrl}
-            size={70}
-            onChange={e => (m.loadUrl = e.currentTarget.value)}
-            placeholder="dat://"
-            className="jp-mod-styled"
-          />
-          <button
-            className="jp-mod-styled"
-            onClick={async () => await m.onLoad()}
-          >
-            load
-          </button>
-        </div>
-        <pre>{JSON.stringify(m.info || {}, null, 2)}</pre>
+      <div {...props}>
+        {this.renderPublish(m)}
+        {this.renderSubscribe(m)}
       </div>
+    );
+  }
+
+  renderPublish(m: DatWidget.Model) {
+    return (
+      <section>
+        <blockquote>
+          Shares the full contents of <code>{m.filename}</code> with the DAT
+          peer-to-peer network. Send the link to anybody with
+          <code>jupyterlab-dat</code>.
+        </blockquote>
+        <input
+          readOnly={true}
+          defaultValue={m.shareUrl}
+          className="jp-mod-styled"
+          placeholder={PLACEHOLDER}
+          onFocus={handleFocus}
+        />
+        <button className={BTN_CLASS} onClick={async () => await m.onShare()}>
+          <label>PUBLISH</label>
+          {this.renderShield('create')}
+        </button>
+      </section>
+    );
+  }
+
+  renderShield(icon: string) {
+    const props = {
+      className: `${CSS.ICONS[icon]} ${CSS.SHIELD}`
+    };
+    return <div {...props}></div>;
+  }
+
+  renderSubscribe(m: DatWidget.Model) {
+    return (
+      <section>
+        <blockquote>
+          Replace the in-browser contents of <code>{m.filename}</code> with the
+          notebook at the above dat URL, and watch for changes.
+        </blockquote>
+        <input
+          defaultValue={m.loadUrl}
+          onChange={e => (m.loadUrl = e.currentTarget.value)}
+          placeholder={PLACEHOLDER}
+          className="jp-mod-styled"
+          onFocus={handleFocus}
+        />
+        <button className={BTN_CLASS} onClick={async () => await m.onLoad()}>
+          <label>SUBSCRIBE</label>
+          {this.renderShield('resume')}
+        </button>
+      </section>
     );
   }
 }
@@ -110,9 +145,12 @@ export namespace DatWidget {
       this.stateChanged.emit(void 0);
     }
 
+    get filename() {
+      return this._context.path.split('/').slice(-1)[0];
+    }
+
     get title() {
-      const path = this._context.path.split('/').slice(-1)[0];
-      return `${path} - ${this.status}`;
+      return `${this.filename} - ${this.status}`;
     }
 
     async onShare() {
