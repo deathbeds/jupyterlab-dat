@@ -1,4 +1,4 @@
 envs/
 node_modules/
-_lab/
 lib/
+dist/

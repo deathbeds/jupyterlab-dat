@@ -18,7 +18,10 @@ declare module "dat-sdk/auto" {
     getInfo(): Promise<any>;
   }
   export interface IWatcher {
-    addEventListener(evt: "changed" | "invalidated", callback: IChangeWatcher): void;
+    addEventListener(
+      evt: "changed" | "invalidated",
+      callback: IChangeWatcher
+    ): void;
   }
   export interface IChangeWatcher {
     (evt: IChangeEvent): void;

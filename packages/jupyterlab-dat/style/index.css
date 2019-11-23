@@ -1,3 +1,7 @@
-.jp-DatContents-Icon {
-  background-image: url(./dat.svg);
+body .jp-DatContents-Icon {
+  background-image: url(./dat-dark.svg);
+}
+
+body[data-jp-theme-light="true"] .jp-DatContents-Icon {
+  background-image: url(./dat-light.svg);
 }
