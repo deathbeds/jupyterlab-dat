@@ -1,14 +1,8 @@
-name: jupyterlab-dat
-commands:
-  lab:
-    unix: jupyter lab --no-browser --debug
-
-env_specs:
   jupyterlab-dat:
     channels:
       - conda-forge
       - defaults
-    packages:
+    dependencies:
       - jsonpatch
       - jupyter-server-proxy
       - jupyterlab >=1.2.3,<1.3
