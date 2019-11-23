@@ -104,7 +104,8 @@ export namespace DatWidget {
 
   export class Model extends VDomModel {
     private _status: string = 'zzz';
-    private _dat: dat.IDatArchive;
+    private _publishDat: dat.IDatArchive;
+    private _subscribeDat: dat.IDatArchive;
     private _shareUrl: string;
     private _loadUrl: string;
     private _panel: NotebookPanel;
@@ -156,39 +157,39 @@ export namespace DatWidget {
     async onShare() {
       this.status = 'sharing';
       const title = this._context.path.split('/').slice(-1)[0];
-      this._dat = await this._manager.create({ title });
+      this._publishDat = await this._manager.create({ title });
       const onChange = async () => {
         this.status = 'publishing';
-        await this._dat.writeFile(
+        await this._publishDat.writeFile(
           `/Untitled.ipynb`,
           JSON.stringify(this._panel.model.toJSON()),
           'utf-8'
         );
         this.status = 'published';
-        this.info = await this._dat.getInfo();
+        this.info = await this._publishDat.getInfo();
         this.status = 'sharing';
       };
       this._panel.model.contentChanged.connect(onChange);
       onChange();
-      this._shareUrl = this._dat.url;
+      this._shareUrl = this._publishDat.url;
       this.stateChanged.emit(void 0);
     }
 
     async onLoad() {
       this.status = 'subscribing';
-      this._dat = await this._manager.listen(this.loadUrl);
-      this.info = await this._dat.getInfo();
+      this._subscribeDat = await this._manager.listen(this.loadUrl);
+      this.info = await this._subscribeDat.getInfo();
       this.status = 'waiting';
-      const watcher = this._dat.watch();
+      const watcher = this._subscribeDat.watch();
       const onChange = async (_evt: any) => {
         this.status = 'updating';
-        const content = await this._dat.readFile<string>(
+        const content = await this._subscribeDat.readFile<string>(
           '/Untitled.ipynb',
           'utf-8'
         );
         this._context.model.fromJSON(JSON.parse(content));
         this.status = 'updated';
-        this.info = await this._dat.getInfo();
+        this.info = await this._subscribeDat.getInfo();
         this.status = 'waiting';
       };
       watcher.addEventListener('invalidated', onChange);
