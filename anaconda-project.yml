@@ -1,7 +1,5 @@
-name: jupyterlab-ws-contents
+name: jupyterlab-dat
 commands:
-  setup:
-    unix: python -m pip install -e . --no-deps --ignore-installed
   lab:
     unix: jupyter lab --no-browser --debug
 
