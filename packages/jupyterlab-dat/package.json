@@ -27,8 +27,7 @@
     "url": "https://github.com/deathbeds/jupyterlab-dat.git"
   },
   "scripts": {
-    "clean": "rimraf lib",
-    "lab:link": "jupyter labextension link . --no-build"
+    "clean": "rimraf lib"
   },
   "dependencies": {},
   "peerDependencies": {

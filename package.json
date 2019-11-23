@@ -23,7 +23,6 @@
     "build:webpack": "lerna run build:webpack --stream",
     "build:ts": "lerna run build:ts --stream",
     "clean": "lerna run clean --parallel",
-    "lab:link": "lerna run lab:link --stream",
     "lint:check": "jlpm prettier:check && jlpm tslint:check",
     "lint": "jlpm prettier && jlpm tslint",
     "prettier:check": "prettier --check '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md,.yml}'",
@@ -33,13 +32,15 @@
     "watch": "lerna run watch --parallel"
   },
   "devDependencies": {
-    "rimraf": "^2.6.2",
-    "typescript": "~3.7",
+    "dat": "^13.13.1",
+    "discovery-swarm-web": "^2.0.0",
+    "lerna": "^3.13.2",
     "prettier": "^1.19.1",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.15.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "lerna": "^3.13.2",
     "tslint-react": "^4.0.0",
-    "tslint": "^5.15.0"
+    "typescript": "~3.7"
   }
 }

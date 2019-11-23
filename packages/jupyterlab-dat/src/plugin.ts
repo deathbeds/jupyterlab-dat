@@ -5,7 +5,6 @@ import {
 
 import { DatManager } from './manager';
 
-import { NotebookSyncButton } from './button';
 import { DatNotebookButton } from './datbutton';
 
 const extension: JupyterFrontEndPlugin<void> = {
@@ -14,10 +13,10 @@ const extension: JupyterFrontEndPlugin<void> = {
   activate: (app: JupyterFrontEnd) => {
     const manager = new DatManager();
 
-    const syncButton = new NotebookSyncButton();
     const datButton = new DatNotebookButton(manager);
+    console.log(datButton);
 
-    [syncButton, datButton].forEach(button => {
+    [datButton].forEach(button => {
       app.docRegistry.addWidgetExtension('Notebook', button);
     });
   }

@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  mode: "production",
+  mode: "development",
   entry: {
     index: "./lib/index.js"
   },
@@ -30,5 +30,6 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     library: "dat-sdk-webpack",
     libraryTarget: "umd"
-  }
+  },
+  devtool: "source-map"
 };

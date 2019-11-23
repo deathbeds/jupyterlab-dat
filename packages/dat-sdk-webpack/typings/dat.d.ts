@@ -15,16 +15,20 @@ declare module "dat-sdk/auto" {
       pathPattern: string,
       onInvalidated?: IDatArchive.IInvalidated
     ): IWatcher;
+    getInfo(): Promise<any>;
   }
   export interface IWatcher {
-    on(evt: "changed", callback: IChangeWatcher): void;
+    addEventListener(evt: "changed" | "invalidated", callback: IChangeWatcher): void;
   }
   export interface IChangeWatcher {
     (evt: IChangeEvent): void;
   }
   export interface IChangeEvent {}
   export namespace IDatArchive {
-    export interface IOptions extends IIOOptions {}
+    export interface ICreateOptions {
+      title?: string;
+    }
+
     export interface IIOOptions {
       encoding: string;
     }
@@ -35,21 +39,13 @@ declare module "dat-sdk/auto" {
     }
   }
 
-  export interface ISDK {
-    load(url: string, options?: IDatArchive.IOptions): Promise<IDatArchive>;
-    create(opts?: ISDK.ICreateOptions): Promise<IDatArchive>;
-    DatArchive(): IDatArchive;
+  export interface IDatArchiveStatic {
+    create(opts?: IDatArchive.ICreateOptions): Promise<IDatArchive>;
+    load(url: string, options?: IDatArchive.IIOOptions): Promise<IDatArchive>;
   }
 
-  export namespace ISDK {
-    export interface ICreateOptions {
-      title?: string;
-    }
-    export interface IOptions {
-      storageOpts: {
-        storageLocation: string;
-      };
-    }
+  export interface ISDK {
+    DatArchive: IDatArchiveStatic;
   }
 
   const SDK: ISDK;

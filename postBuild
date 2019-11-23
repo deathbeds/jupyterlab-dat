@@ -11,7 +11,10 @@ jupyter labextension list
 jlpm bootstrap
 
 # link all pieces to lab (no build)
-jlpm lab:link && jupyter labextension list
+jupyter labextension link $(cat labex.txt) --no-build
+
+# should show need for a build
+jupyter labextension list
 
 # actually build
 jupyter lab build && jupyter labextension list

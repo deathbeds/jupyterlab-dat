@@ -9,7 +9,6 @@
   ],
   "types": "lib/index.d.ts",
   "scripts": {
-    "lab:link": "jupyter labextension link . --no-build",
     "build:webpack": "webpack",
     "watch": "webpack --watch",
     "clean": "rimraf lib dist"

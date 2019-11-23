@@ -1,23 +1,16 @@
 name: jupyterlab-ws-contents
-
-variables:
-  JUPYTERLAB_DIR: _lab
-
 commands:
   setup:
     unix: python -m pip install -e . --no-deps --ignore-installed
   lab:
     unix: jupyter lab --no-browser --debug
 
-  lab:ext:
-    unix: jupyter labextension install . @jupyter-widgets/jupyterlab-manager
-
 env_specs:
   default:
     packages:
       - jsonpatch
       - jupyterlab >=1.2.3,<1.3
-      - nodejs
+      - nodejs >=11,<12
       - python >=3.7,<3.8.0a0
       - ujson
       - pip:

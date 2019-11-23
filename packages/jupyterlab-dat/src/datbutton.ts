@@ -59,7 +59,7 @@ export class DatNotebookButton
         } else {
           const dat = await this._manager.listen(datUrl);
           const watcher = dat.watch();
-          watcher.on('changed', async evt => {
+          watcher.addEventListener('invalidated', async evt => {
             console.log(evt);
             const content = await dat.readFile<string>(
               '/Untitled.ipynb',
