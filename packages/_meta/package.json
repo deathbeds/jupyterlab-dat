@@ -18,7 +18,7 @@
     "lib": "lib/"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build:ts": "tsc -b",
     "clean": "rimraf lib",
     "prepublishOnly": "npm run build",
     "watch": "tsc -b --watch"

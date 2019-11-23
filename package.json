@@ -19,17 +19,18 @@
   },
   "scripts": {
     "bootstrap": "jlpm --prefer-offline --ignore-optional && lerna bootstrap && jlpm run clean && jlpm lint && jlpm run build",
-    "build": "jlpm build:ts && jlpm build:dat",
+    "build": "jlpm build:ts && jlpm build:webpack",
     "build:webpack": "lerna run build:webpack --stream",
     "build:ts": "lerna run build:ts --stream",
     "clean": "lerna run clean --parallel",
-    "watch": "lerna run watch --parallel",
+    "lab:link": "lerna run lab:link --stream",
     "lint:check": "jlpm prettier:check && jlpm tslint:check",
     "lint": "jlpm prettier && jlpm tslint",
     "prettier:check": "prettier --check '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md,.yml}'",
     "prettier": "prettier --write '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md,.yml}'",
     "tslint": "tslint --fix -c tslint.json 'packages/**/*{.ts,.tsx}'",
-    "tslint:check": "tslint -c tslint.json 'packages/**/*{.ts,.tsx}'"
+    "tslint:check": "tslint -c tslint.json 'packages/**/*{.ts,.tsx}'",
+    "watch": "lerna run watch --parallel"
   },
   "devDependencies": {
     "rimraf": "^2.6.2",

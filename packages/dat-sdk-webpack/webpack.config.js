@@ -22,7 +22,8 @@ module.exports = {
   },
   target: "web",
   node: {
-    dns: "mock"
+    dns: "empty",
+    fs: "empty"
   },
   output: {
     filename: "[name].js",

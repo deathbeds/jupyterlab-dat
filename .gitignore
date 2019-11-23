@@ -1,8 +1,9 @@
+__pycache__
+_lab/
+.ipynb_checkpoints
 *.bundle.*
+*.egg-info/
+dist/
+envs/
 lib/
 node_modules/
-*.egg-info/
-.ipynb_checkpoints
-_lab/
-envs/
-__pycache__
