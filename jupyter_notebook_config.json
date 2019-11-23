@@ -1,9 +1,0 @@
-{
-  "ServerProxy": {
-    "servers": {
-      "discovery-swarm-web": {
-        "command": ["npx", "discovery-swarm-web", "--port", "{port}"]
-      }
-    }
-  }
-}
