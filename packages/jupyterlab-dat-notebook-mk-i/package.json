@@ -1,7 +1,7 @@
 {
-  "name": "@deathbeds/jupyterlab-dat",
+  "name": "@deathbeds/jupyterlab-dat-notebook-mk-i",
   "version": "0.2.0",
-  "description": "dat for JupyterLab",
+  "description": "a naive dat button for JupyterLab Notebooks",
   "keywords": [
     "jupyter",
     "jupyterlab",
@@ -33,12 +33,12 @@
     "dat-icons": "^2.5.2"
   },
   "peerDependencies": {
-    "@deathbeds/dat-sdk-webpack": "0.3.6",
+    "@deathbeds/jupyterlab-dat": "0.2",
     "@jupyterlab/notebook": "1",
     "@jupyterlab/application": "1"
   },
   "devDependencies": {
-    "@deathbeds/dat-sdk-webpack": "0.3.6",
+    "@deathbeds/jupyterlab-dat": "0.2",
     "@jupyterlab/notebook": "1",
     "@jupyterlab/application": "1"
   },
