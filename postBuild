@@ -10,8 +10,11 @@ jupyter labextension list
 # do a dev build of the client side
 jlpm bootstrap
 
+# install third-party lab extensions
+jupyter labextension install $(cat labex.txt) --no-build
+
 # link all pieces to lab (no build)
-jupyter labextension link $(cat labex.txt) --no-build
+jupyter labextension link $(cat labex.link.txt) --no-build
 
 # should show need for a build
 jupyter labextension list
