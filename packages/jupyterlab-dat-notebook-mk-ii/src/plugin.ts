@@ -10,7 +10,7 @@ import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 import { DatNotebookButton } from './datbutton';
 
 const extension: JupyterFrontEndPlugin<void> = {
-  id: 'jupyterlab-dat-notebook-mk-i',
+  id: 'jupyterlab-dat-notebook-mk-ii',
   autoStart: true,
   requires: [IDatManager],
   activate: (app: JupyterFrontEnd, dat: IDatManager) => {

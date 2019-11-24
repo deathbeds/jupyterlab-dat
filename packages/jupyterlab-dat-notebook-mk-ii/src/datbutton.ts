@@ -40,10 +40,10 @@ export class DatNotebookButton
         });
         this.widgetRequested.emit(widget);
       },
-      tooltip: 'Publish/Subscribe (mk i)'
+      tooltip: 'Publish/Subscribe (mk ii)'
     });
 
-    panel.toolbar.insertItem(1, 'dat-mk-i', button);
+    panel.toolbar.insertItem(1.1, 'dat-mk-ii', button);
 
     return new DisposableDelegate(() => {
       button.dispose();

@@ -4,7 +4,7 @@ import { dat } from '@deathbeds/dat-sdk-webpack';
 
 import { IStrategist } from '.';
 
-const DEFAULT_ENCODING = 'utf-8';
+export const DEFAULT_ENCODING = 'utf-8';
 
 export class NaiveStrategist implements IStrategist<string> {
   async save(

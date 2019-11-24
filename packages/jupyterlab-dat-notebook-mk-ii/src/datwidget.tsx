@@ -9,7 +9,7 @@ import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 
 import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
-import { NaiveJSONStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/naive';
+import { ExplodeJSONStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/explode';
 
 import { CSS } from '.';
 
@@ -25,7 +25,7 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
   constructor(options: DatWidget.IOptions) {
     super();
     this.model = new DatWidget.Model(options);
-    this.title.iconClass = CSS.ICON;
+    this.title.iconClass = CSS.ICONS.star;
     this.addClass(CSS.WIDGET);
   }
   protected render() {
@@ -43,7 +43,7 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
       <div {...props}>
         {this.renderPublish(m)}
         {this.renderSubscribe(m)}
-        <h1>mki</h1>
+        <h1>mkii</h1>
       </div>
     );
   }
@@ -53,7 +53,7 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
       <section>
         <blockquote>
           Shares the full contents of <code>{m.filename}</code> with the DAT
-          peer-to-peer network. Send the link to anybody with
+          peer-to-peer network as JSON fragments. Send the link to anybody with
           <code>jupyterlab-dat</code>.
         </blockquote>
         <input
@@ -83,7 +83,8 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
       <section>
         <blockquote>
           Replace the in-browser contents of <code>{m.filename}</code> with the
-          notebook at the above dat URL, and watch for changes.
+          notebook at the above dat URL, as reconstructed from JSON fragments,
+          and watch for changes.
         </blockquote>
         <input
           defaultValue={m.loadUrl}
@@ -119,7 +120,7 @@ export namespace DatWidget {
     private _manager: IDatManager;
     private _info: dat.IDatArchive.IArchiveInfo;
     private _throttleRate = 100;
-    private _strategist = new NaiveJSONStrategist();
+    private _strategist = new ExplodeJSONStrategist();
 
     constructor(options: DatWidget.IOptions) {
       super();
@@ -174,13 +175,17 @@ export namespace DatWidget {
           this._publishDat,
           this._panel.model.toJSON(),
           {
-            path: DEFAULT_NOTEBOOK
+            path: DEFAULT_NOTEBOOK,
+            jsonPath: []
           }
         );
 
         this.status = 'sharing';
       };
-      const throttledOnChange = new Throttler(onChange, this._throttleRate);
+      const throttledOnChange = new Throttler<void, any>(
+        onChange,
+        this._throttleRate
+      );
 
       this._panel.model.contentChanged.connect(
         async () => await throttledOnChange.invoke()
@@ -197,10 +202,12 @@ export namespace DatWidget {
       this.status = 'waiting';
       const watcher = this._subscribeDat.watch();
       const onChange = async (_evt: any) => {
+        console.log(_evt);
         const { activeCellIndex } = this._panel.content;
         this.status = 'updating';
         const content = await this._strategist.load(this._subscribeDat, {
-          path: DEFAULT_NOTEBOOK
+          path: DEFAULT_NOTEBOOK,
+          jsonPath: []
         });
         this._context.model.fromJSON(content);
         this._panel.content.activeCellIndex = activeCellIndex;
@@ -211,6 +218,7 @@ export namespace DatWidget {
         this.status = 'waiting';
       };
       watcher.addEventListener('invalidated', onChange);
+      watcher.addEventListener('sync', onChange);
       await onChange(void 0);
     }
   }

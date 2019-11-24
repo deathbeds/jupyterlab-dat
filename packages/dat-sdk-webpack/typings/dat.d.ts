@@ -21,7 +21,7 @@ declare module 'dat-sdk/promise' {
   }
   export interface IWatcher {
     addEventListener(
-      evt: 'changed' | 'invalidated',
+      evt: 'changed' | 'invalidated' | 'sync',
       callback: IChangeWatcher
     ): void;
   }

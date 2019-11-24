@@ -1,3 +1,4 @@
 packages/dat-sdk-webpack
 packages/jupyterlab-dat
 packages/jupyterlab-dat-notebook-mk-i
+packages/jupyterlab-dat-notebook-mk-ii
