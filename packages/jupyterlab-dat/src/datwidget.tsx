@@ -2,6 +2,7 @@ import React from 'react';
 
 import { dat } from '@deathbeds/dat-sdk-webpack';
 import { ElementExt } from '@phosphor/domutils';
+import { Throttler } from '@jupyterlab/coreutils';
 
 import { VDomModel, VDomRenderer } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
@@ -113,6 +114,7 @@ export namespace DatWidget {
     private _context: DocumentRegistry.IContext<INotebookModel>;
     private _manager: DatManager;
     private _info: dat.IDatArchive.IArchiveInfo;
+    private _throttleRate = 100;
 
     constructor(options: DatWidget.IOptions) {
       super();
@@ -159,18 +161,21 @@ export namespace DatWidget {
       this.status = 'sharing';
       const title = this._context.path.split('/').slice(-1)[0];
       this._publishDat = await this._manager.create({ title });
+
       const onChange = async () => {
         this.status = 'publishing';
         await this._publishDat.writeFile(
           `/Untitled.ipynb`,
-          JSON.stringify(this._panel.model.toJSON()),
+          JSON.stringify(this._panel.model.toJSON(), null, 2),
           'utf-8'
         );
-        this.status = 'published';
-        this.info = await this._publishDat.getInfo();
         this.status = 'sharing';
       };
-      this._panel.model.contentChanged.connect(onChange);
+      const throttledOnChange = new Throttler(onChange, this._throttleRate);
+
+      this._panel.model.contentChanged.connect(
+        async () => await throttledOnChange.invoke()
+      );
       onChange();
       this._shareUrl = this._publishDat.url;
       this.stateChanged.emit(void 0);
@@ -195,8 +200,6 @@ export namespace DatWidget {
           this._panel.content.node,
           this._panel.content.activeCell.node
         );
-        this.status = 'updated';
-        this.info = await this._subscribeDat.getInfo();
         this.status = 'waiting';
       };
       watcher.addEventListener('invalidated', onChange);
