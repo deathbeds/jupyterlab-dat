@@ -9,7 +9,7 @@ import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 
 import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
-import { NaiveStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/naive';
+import { NaiveJSONStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/naive';
 
 import { CSS } from '.';
 
@@ -118,7 +118,7 @@ export namespace DatWidget {
     private _manager: IDatManager;
     private _info: dat.IDatArchive.IArchiveInfo;
     private _throttleRate = 100;
-    private _strategist = new NaiveStrategist();
+    private _strategist = new NaiveJSONStrategist();
 
     constructor(options: DatWidget.IOptions) {
       super();
@@ -171,7 +171,7 @@ export namespace DatWidget {
 
         await this._strategist.save(
           this._publishDat,
-          JSON.stringify(this._panel.model.toJSON(), null, 2),
+          this._panel.model.toJSON(),
           {
             path: DEFAULT_NOTEBOOK
           }
@@ -201,7 +201,7 @@ export namespace DatWidget {
         const content = await this._strategist.load(this._subscribeDat, {
           path: DEFAULT_NOTEBOOK
         });
-        this._context.model.fromJSON(JSON.parse(content));
+        this._context.model.fromJSON(content);
         this._panel.content.activeCellIndex = activeCellIndex;
         ElementExt.scrollIntoViewIfNeeded(
           this._panel.content.node,
