@@ -14,3 +14,5 @@ export const CSS = {
     big: 'jp-mod-dat-btn-big'
   }
 };
+
+export { IDatManager } from './tokens';

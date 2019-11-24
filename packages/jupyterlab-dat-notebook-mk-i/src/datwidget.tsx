@@ -8,7 +8,7 @@ import { VDomModel, VDomRenderer } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 
-import { DatManager } from '@deathbeds/jupyterlab-dat/lib/manager';
+import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 
 import { CSS } from '.';
 
@@ -101,7 +101,7 @@ export namespace DatWidget {
   export interface IOptions {
     context: DocumentRegistry.IContext<INotebookModel>;
     panel: NotebookPanel;
-    manager: DatManager;
+    manager: IDatManager;
   }
 
   export class Model extends VDomModel {
@@ -112,7 +112,7 @@ export namespace DatWidget {
     private _loadUrl: string;
     private _panel: NotebookPanel;
     private _context: DocumentRegistry.IContext<INotebookModel>;
-    private _manager: DatManager;
+    private _manager: IDatManager;
     private _info: dat.IDatArchive.IArchiveInfo;
     private _throttleRate = 100;
 

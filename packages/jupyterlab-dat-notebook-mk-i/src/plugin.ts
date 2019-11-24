@@ -5,17 +5,17 @@ import {
 
 import { MainAreaWidget } from '@jupyterlab/apputils';
 
-import { DatManager } from '@deathbeds/jupyterlab-dat/lib/manager';
+import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 
 import { DatNotebookButton } from './datbutton';
 
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-dat-notebook-mki-i',
   autoStart: true,
-  activate: (app: JupyterFrontEnd) => {
-    const manager = new DatManager();
+  requires: [IDatManager],
+  activate: (app: JupyterFrontEnd, dat: IDatManager) => {
     const { shell } = app;
-    const datButton = new DatNotebookButton(manager);
+    const datButton = new DatNotebookButton(dat);
 
     datButton.widgetRequested.connect((_it, content) => {
       const main = new MainAreaWidget({ content });

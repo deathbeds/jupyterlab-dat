@@ -1,13 +1,15 @@
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { dat } from '@deathbeds/dat-sdk-webpack';
 
+import { IDatManager } from '.';
+
 const NOTEBOOK_SERVER_DISCOVERY =
   URLExt.join(
     PageConfig.getBaseUrl().replace(/^http/, 'ws'),
     'discovery-swarm-web'
   ) + '/';
 
-export class DatManager {
+export class DatManager implements IDatManager {
   private _archives = new Map<string, dat.IDatArchive>();
   private _SDK: dat.ISDK;
   private _RAM: any;

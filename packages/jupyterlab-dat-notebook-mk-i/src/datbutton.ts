@@ -10,7 +10,7 @@ import { DocumentRegistry } from '@jupyterlab/docregistry';
 
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 
-import { DatManager } from '@deathbeds/jupyterlab-dat/lib/manager';
+import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 
 import { DatWidget } from './datwidget';
 
@@ -20,9 +20,9 @@ export class DatNotebookButton
   implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
   readonly widgetRequested: Signal<any, Widget> = new Signal<any, Widget>(this);
 
-  private _manager: DatManager;
+  private _manager: IDatManager;
 
-  constructor(manager: DatManager) {
+  constructor(manager: IDatManager) {
     this._manager = manager;
   }
 

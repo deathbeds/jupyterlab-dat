@@ -1,6 +1,6 @@
 {
   "name": "@deathbeds/jupyterlab-dat-notebook-mk-i",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "description": "a naive dat button for JupyterLab Notebooks",
   "keywords": [
     "jupyter",
@@ -28,9 +28,6 @@
   },
   "scripts": {
     "clean": "rimraf lib"
-  },
-  "dependencies": {
-    "dat-icons": "^2.5.2"
   },
   "peerDependencies": {
     "@deathbeds/jupyterlab-dat": "0.2",
