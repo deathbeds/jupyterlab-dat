@@ -9,11 +9,14 @@ import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 
 import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
+import { NaiveStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/naive';
 
 import { CSS } from '.';
 
 const PLACEHOLDER = 'dat://';
 const BTN_CLASS = `jp-mod-styled jp-mod-accept ${CSS.BTN.big}`;
+
+const DEFAULT_NOTEBOOK = '/Untitled.ipynb';
 
 const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
   event.target.select();
@@ -115,6 +118,7 @@ export namespace DatWidget {
     private _manager: IDatManager;
     private _info: dat.IDatArchive.IArchiveInfo;
     private _throttleRate = 100;
+    private _strategist = new NaiveStrategist();
 
     constructor(options: DatWidget.IOptions) {
       super();
@@ -164,11 +168,15 @@ export namespace DatWidget {
 
       const onChange = async () => {
         this.status = 'publishing';
-        await this._publishDat.writeFile(
-          `/Untitled.ipynb`,
+
+        await this._strategist.save(
+          this._publishDat,
           JSON.stringify(this._panel.model.toJSON(), null, 2),
-          'utf-8'
+          {
+            path: DEFAULT_NOTEBOOK
+          }
         );
+
         this.status = 'sharing';
       };
       const throttledOnChange = new Throttler(onChange, this._throttleRate);
@@ -190,10 +198,9 @@ export namespace DatWidget {
       const onChange = async (_evt: any) => {
         const { activeCellIndex } = this._panel.content;
         this.status = 'updating';
-        const content = await this._subscribeDat.readFile<string>(
-          '/Untitled.ipynb',
-          'utf-8'
-        );
+        const content = await this._strategist.load(this._subscribeDat, {
+          path: DEFAULT_NOTEBOOK
+        });
         this._context.model.fromJSON(JSON.parse(content));
         this._panel.content.activeCellIndex = activeCellIndex;
         ElementExt.scrollIntoViewIfNeeded(
