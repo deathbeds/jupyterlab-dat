@@ -12,8 +12,28 @@ export class ExplodeJSONStrategist implements IStrategist<JSONValue> {
     data: JSONValue,
     opts: ExplodeJSONStrategist.IOptions
   ): Promise<void> {
+    const { jsonPath, path } = opts;
+    const finalPath = this.toPath(opts);
+    let i = 0;
+    while (i < jsonPath.length) {
+      const parentPath = this.toPath({
+        path,
+        jsonPath: jsonPath.slice(0, i)
+      });
+      if (parentPath === finalPath) {
+        break;
+      }
+      console.log('mkdir', parentPath);
+      try {
+        await archive.mkdir(parentPath);
+      } catch (err) {
+        console.warn(err);
+      }
+      i++;
+    }
+    console.log('write', finalPath);
     archive.writeFile(
-      this.toPath(opts),
+      finalPath,
       JSON.stringify(data, null, 2),
       DEFAULT_ENCODING
     );
@@ -22,9 +42,9 @@ export class ExplodeJSONStrategist implements IStrategist<JSONValue> {
     archive: dat.IDatArchive,
     opts: ExplodeJSONStrategist.IOptions
   ): Promise<JSONValue> {
-    return JSON.parse(
-      await archive.readFile<string>(this.toPath(opts), DEFAULT_ENCODING)
-    );
+    const path = this.toPath(opts);
+    console.log('load', path);
+    return JSON.parse(await archive.readFile<string>(path, DEFAULT_ENCODING));
   }
 
   toPath({ path, jsonPath }: ExplodeJSONStrategist.IOptions): string {

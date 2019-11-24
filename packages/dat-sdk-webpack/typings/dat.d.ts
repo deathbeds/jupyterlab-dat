@@ -18,6 +18,7 @@ declare module 'dat-sdk/promise' {
       onInvalidated?: IDatArchive.IInvalidated
     ): IWatcher;
     getInfo(): Promise<IDatArchive.IArchiveInfo>;
+    mkdir(filepath: string): Promise<void>;
   }
   export interface IWatcher {
     addEventListener(
@@ -28,7 +29,9 @@ declare module 'dat-sdk/promise' {
   export interface IChangeWatcher {
     (evt: IChangeEvent): void;
   }
-  export interface IChangeEvent {}
+  export interface IChangeEvent {
+    path: string;
+  }
   export namespace IDatArchive {
     export interface ILoadOptions {
       persist?: boolean;
