@@ -10,10 +10,15 @@ import { DocumentRegistry } from '@jupyterlab/docregistry';
 import {
   ICellModel,
   CodeCellModel,
+  Cell,
   isCodeCellModel
   // isCodeCellModel
 } from '@jupyterlab/cells';
-import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
+import {
+  NotebookPanel,
+  INotebookModel,
+  NotebookActions
+} from '@jupyterlab/notebook';
 
 import { nbformat } from '@jupyterlab/coreutils';
 
@@ -173,6 +178,8 @@ export namespace DatWidget {
       return `${this.filename} - ${this.status}`;
     }
 
+    private _previousShareActive: Cell;
+
     async onShare() {
       this.status = 'sharing';
       const title = this._context.path.split('/').slice(-1)[0];
@@ -193,6 +200,16 @@ export namespace DatWidget {
           cellIds.push(c.id);
         });
         await this.shareCellOrder(cellIds);
+      });
+      this._panel.content.activeCellChanged.connect(async (_notebook, cell) => {
+        if (this._previousShareActive) {
+          await this.shareOneCell(
+            this._previousShareActive.model.id,
+            this._previousShareActive.model
+          );
+          this._previousShareActive = cell;
+        }
+        await this.shareOneCell(cell.model.id, cell.model);
       });
       this._shareUrl = this._publishDat.url;
       this.stateChanged.emit(void 0);
@@ -279,11 +296,29 @@ export namespace DatWidget {
       }
     }
 
+    cellForModel(model: ICellModel) {
+      let { widgets } = this._panel.content;
+      for (let cell of widgets) {
+        if (cell.model === model) {
+          return cell;
+        }
+      }
+      return null;
+    }
+
     async loadOneCell(cellId: string, model: ICellModel) {
       const cellJSON = (await this._strategist.load(this._subscribeDat, {
         path: DEFAULT_NOTEBOOK,
         jsonPath: ['cell', cellId]
       })) as nbformat.ICell;
+
+      if (model.type !== cellJSON.cell_type) {
+        this._panel.content.select(this.cellForModel(model));
+        NotebookActions.changeCellType(
+          this._panel.content,
+          cellJSON.cell_type as any
+        );
+      }
 
       model.value.text = Array.isArray(cellJSON.source)
         ? cellJSON.source.join('')
@@ -345,7 +380,6 @@ export namespace DatWidget {
     async onLoadChange(_evt: dat.IChangeEvent) {
       const { path } = _evt;
       const jsonPath = (path || '').split('/');
-      console.log('loadChange', path);
       const { activeCellIndex } = this._panel.content;
       this.status = 'updating';
 
