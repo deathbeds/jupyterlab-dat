@@ -19,7 +19,7 @@ const extension: JupyterFrontEndPlugin<void> = {
 
     datButton.widgetRequested.connect((_it, content) => {
       const main = new MainAreaWidget({ content });
-      shell.add(main, 'main', { mode: 'split-right' });
+      shell.add(main, 'main', { mode: 'split-bottom' });
     });
 
     [datButton].forEach(button => {

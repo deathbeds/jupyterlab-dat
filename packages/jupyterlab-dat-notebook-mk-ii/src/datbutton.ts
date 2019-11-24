@@ -31,7 +31,7 @@ export class DatNotebookButton
     context: DocumentRegistry.IContext<INotebookModel>
   ): IDisposable {
     let button = new ToolbarButton({
-      iconClassName: `jp-Icon jp-Icon-16 ${CSS.ICON}`,
+      iconClassName: `jp-Icon jp-Icon-16 ${CSS.ICONS.star}`,
       onClick: async () => {
         const widget = new DatWidget({
           panel,
@@ -43,7 +43,7 @@ export class DatNotebookButton
       tooltip: 'Publish/Subscribe (mk ii)'
     });
 
-    panel.toolbar.insertItem(1.1, 'dat-mk-ii', button);
+    panel.toolbar.insertItem(2, 'dat-mk-ii', button);
 
     return new DisposableDelegate(() => {
       button.dispose();
