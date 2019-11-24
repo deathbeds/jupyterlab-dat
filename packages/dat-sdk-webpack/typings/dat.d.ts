@@ -1,6 +1,6 @@
-declare module "random-access-*" {}
+declare module 'random-access-*' {}
 
-declare module "dat-sdk/promise" {
+declare module 'dat-sdk/promise' {
   export interface IDatArchive extends EventTarget {
     url: string;
     readFile<T>(
@@ -21,7 +21,7 @@ declare module "dat-sdk/promise" {
   }
   export interface IWatcher {
     addEventListener(
-      evt: "changed" | "invalidated",
+      evt: 'changed' | 'invalidated',
       callback: IChangeWatcher
     ): void;
   }

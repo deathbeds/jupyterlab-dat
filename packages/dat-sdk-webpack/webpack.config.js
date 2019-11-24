@@ -1,49 +1,49 @@
-const path = require("path");
-const webpack = require("webpack");
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
-  mode: "development",
+  mode: 'development',
   entry: {
-    index: "./lib/index.js"
+    index: './lib/index.js'
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        use: ["source-map-loader"],
-        enforce: "pre",
+        use: ['source-map-loader'],
+        enforce: 'pre',
         // eslint-disable-next-line no-undef
         exclude: /node_modules/
       },
-      { test: /\.js.map$/, use: "file-loader" }
+      { test: /\.js.map$/, use: 'file-loader' }
     ]
   },
   externals: {
-    "graceful-fs": "{}"
+    'graceful-fs': '{}'
   },
   resolve: {
-    extensions: [".js"],
+    extensions: ['.js'],
     alias: {
-      fs: "browserify-fs",
-      "fs-extra": "browserify-fs",
-      path: "path-browserify"
+      fs: 'browserify-fs',
+      'fs-extra': 'browserify-fs',
+      path: 'path-browserify'
     }
   },
-  target: "web",
+  target: 'web',
   node: {
-    dns: "mock",
-    module: "empty",
-    net: "empty",
-    "graceful-fs": "empty",
-    fs: "empty",
-    "fs-extra": "empty",
-    path: "empty"
+    dns: 'mock',
+    module: 'empty',
+    net: 'empty',
+    'graceful-fs': 'empty',
+    fs: 'empty',
+    'fs-extra': 'empty',
+    path: 'empty'
   },
   output: {
-    filename: "[name].js",
-    path: path.resolve(__dirname, "dist"),
-    library: "dat-sdk-webpack",
-    libraryTarget: "umd"
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist'),
+    library: 'dat-sdk-webpack',
+    libraryTarget: 'umd'
   },
-  devtool: "source-map"
+  devtool: 'source-map'
 };

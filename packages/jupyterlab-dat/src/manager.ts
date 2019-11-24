@@ -10,7 +10,6 @@ const NOTEBOOK_SERVER_DISCOVERY =
 export class DatManager {
   private _archives = new Map<string, dat.IDatArchive>();
   private _SDK: dat.ISDK;
-  // private _RAW: any;
   private _RAM: any;
 
   private async SDK() {

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { dat } from '@deathbeds/dat-sdk-webpack';
+import { ElementExt } from '@phosphor/domutils';
 
 import { VDomModel, VDomRenderer } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
@@ -182,12 +183,18 @@ export namespace DatWidget {
       this.status = 'waiting';
       const watcher = this._subscribeDat.watch();
       const onChange = async (_evt: any) => {
+        const { activeCellIndex } = this._panel.content;
         this.status = 'updating';
         const content = await this._subscribeDat.readFile<string>(
           '/Untitled.ipynb',
           'utf-8'
         );
         this._context.model.fromJSON(JSON.parse(content));
+        this._panel.content.activeCellIndex = activeCellIndex;
+        ElementExt.scrollIntoViewIfNeeded(
+          this._panel.content.node,
+          this._panel.content.activeCell.node
+        );
         this.status = 'updated';
         this.info = await this._subscribeDat.getInfo();
         this.status = 'waiting';

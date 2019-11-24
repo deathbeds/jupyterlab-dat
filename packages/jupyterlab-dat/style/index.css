@@ -1,8 +1,8 @@
 :root {
-  --jp-dat-icon-light: url("./dat-light.svg");
-  --jp-dat-icon-dark: url("./dat-dark.svg");
-  --jp-dat-icon-create: url("~dat-icons/icons/create-new-dat.svg");
-  --jp-dat-icon-resume: url("~dat-icons/icons/hexagon-resume.svg");
+  --jp-dat-icon-light: url('./dat-light.svg');
+  --jp-dat-icon-dark: url('./dat-dark.svg');
+  --jp-dat-icon-create: url('~dat-icons/icons/create-new-dat.svg');
+  --jp-dat-icon-resume: url('~dat-icons/icons/hexagon-resume.svg');
   --jp-dat-color-brand: #2aca4b;
 }
 
@@ -10,7 +10,7 @@ body .jp-Dat-Icon {
   background-image: var(--jp-dat-icon-dark);
 }
 
-body[data-jp-theme-light="true"] .jp-Dat-Icon {
+body[data-jp-theme-light='true'] .jp-Dat-Icon {
   background-image: var(--jp-dat-icon-light);
 }
 

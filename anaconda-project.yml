@@ -9,6 +9,7 @@ env_specs:
       - conda-forge
       - defaults
     packages:
+      - ipywidgets
       - jsonpatch
       - jupyter-server-proxy
       - jupyterlab >=1.2.3,<1.3

@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - ipywidgets
   - jsonpatch
   - jupyter-server-proxy
   - jupyterlab >=1.2.3,<1.3
