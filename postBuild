@@ -20,4 +20,4 @@ jupyter labextension link $(cat labex.link.txt) --no-build
 jupyter labextension list
 
 # actually build
-jupyter lab build && jupyter labextension list
+jupyter lab build --dev-build=False --minimize=True && jupyter labextension list
