@@ -19,6 +19,7 @@ declare module 'dat-sdk/promise' {
     ): IWatcher;
     getInfo(): Promise<IDatArchive.IArchiveInfo>;
     mkdir(filepath: string): Promise<void>;
+    stat(filepath: string): Promise<IDatArchive.IStat>;
   }
   export interface IWatcher {
     addEventListener(
@@ -63,6 +64,25 @@ declare module 'dat-sdk/promise' {
       type: string;
       url: string;
       version: number;
+    }
+    export interface IStat {
+      atime: Date;
+      blksize: number;
+      blocks: number;
+      byteOffset: number;
+      ctime: Date;
+      dev: number;
+      downloaded: number;
+      gid: number;
+      ino: number;
+      linkname: string;
+      mode: number;
+      mtime: Date;
+      nlink: number;
+      offset: number;
+      rdev: number;
+      size: number;
+      uid: number;
     }
   }
 

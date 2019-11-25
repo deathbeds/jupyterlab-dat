@@ -20,16 +20,24 @@ export class ExplodeJSONStrategist implements IStrategist<JSONValue> {
         path,
         jsonPath: jsonPath.slice(0, i)
       });
+      i++;
       if (parentPath === finalPath) {
         break;
       }
+
+      try {
+        await archive.stat(parentPath);
+        continue;
+      } catch {
+        // doesn't exist, continue
+      }
+
       console.log('mkdir', parentPath);
       try {
         await archive.mkdir(parentPath);
       } catch (err) {
         console.warn(err);
       }
-      i++;
     }
     console.log('write', finalPath);
     archive.writeFile(

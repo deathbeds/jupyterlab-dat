@@ -134,7 +134,7 @@ export namespace DatWidget {
     private _context: DocumentRegistry.IContext<INotebookModel>;
     private _manager: IDatManager;
     private _info: dat.IDatArchive.IArchiveInfo;
-    private _throttleRate = 100;
+    private _throttleRate = 200;
     private _strategist = new ExplodeJSONStrategist();
 
     constructor(options: DatWidget.IOptions) {
@@ -282,7 +282,7 @@ export namespace DatWidget {
     }
 
     async loadAllCells() {
-      const cellIdToModel = await this.cellIdToModels();
+      const cellIdToModel = await this.loadCellIdToModels();
       const cellIds = await this.loadCellIds();
 
       let i = 0;
@@ -334,7 +334,7 @@ export namespace DatWidget {
 
       if (isCodeCellModel(model)) {
         model.outputs.clear();
-        (cellJSON as nbformat.ICodeCell).outputs.map(output => {
+        ((cellJSON as nbformat.ICodeCell).outputs || []).map(output => {
           model.outputs.add(output);
         });
       }
@@ -352,28 +352,59 @@ export namespace DatWidget {
       return this._loadCellIds;
     }
 
-    async cellIdToModels() {
-      const cellIds = await this.loadCellIds();
+    async loadCellIdToModels() {
       const cellIdToModels = new Map<string, ICellModel>();
-      each(this._panel.model.cells, (cell, i) => {
-        let cellId = ((cell.metadata.get('dat') as any) || {})['@id'];
-        cellId = cellId || cellIds[i];
-        cellIdToModels.set(cellId, cell);
+      each(this._panel.model.cells, model => {
+        let cellId = ((model.metadata.get('dat') as any) || {})['@id'];
+        if (cellId != null) {
+          cellIdToModels.set(cellId, model);
+        }
       });
       return cellIdToModels;
     }
 
     async fixCellsOnLoad() {
-      this._loadCellIds = null;
-      const cellIds = await this.loadCellIds(true);
-
-      const { cells } = this._panel.model;
-      if (cells.length < cellIds.length) {
-        let i = cells.length;
-        while (i < cellIds.length) {
-          cells.push(new CodeCellModel({}));
-          i++;
+      const { cells } = this._panel.content.model;
+      const newCellIds = await this.loadCellIds(true);
+      const unmanaged = [] as ICellModel[];
+      const oldCellModels = {} as { [key: string]: ICellModel };
+      const oldCellIds = [] as string[];
+      let needsUpdate = false;
+      each(cells, model => {
+        const cellId = ((model.metadata.get('dat') as any) || {})['@id'];
+        if (cellId == null || newCellIds.indexOf(cellId) === -1) {
+          unmanaged.push(model);
+          needsUpdate = true;
+        } else {
+          oldCellModels[cellId] = model;
+          oldCellIds.push(cellId);
         }
+      });
+
+      const newCellModels = newCellIds.map(cellId => {
+        let model = oldCellModels[cellId];
+        if (model == null) {
+          model = new CodeCellModel({});
+          (model.metadata as any).set('dat', { '@id': cellId });
+          needsUpdate = true;
+        }
+        return model;
+      });
+
+      if (!needsUpdate) {
+        for (let i = 0; i < newCellIds.length; i++) {
+          if (oldCellIds[i] !== newCellIds[i]) {
+            needsUpdate = true;
+            break;
+          }
+        }
+      }
+
+      if (needsUpdate) {
+        cells.beginCompoundOperation();
+        cells.clear();
+        cells.insertAll(0, newCellModels);
+        cells.endCompoundOperation();
       }
     }
 
@@ -383,17 +414,19 @@ export namespace DatWidget {
       const { activeCellIndex } = this._panel.content;
       this.status = 'updating';
 
-      if (path == null || path.endsWith('/cells')) {
+      if (path == null) {
         await this.fixCellsOnLoad();
         await this.loadAllCells();
+      } else if (path.endsWith('/cells')) {
+        await this.fixCellsOnLoad();
       } else if (jsonPath.length >= 3 && jsonPath[2] === 'cell') {
-        const cellIdToModels = await this.cellIdToModels();
+        const cellIdToModels = await this.loadCellIdToModels();
         const cellId = jsonPath[3];
         const model = cellIdToModels.get(cellId);
         if (model) {
           await this.loadOneCell(cellId, model);
         } else {
-          console.warn('unhandled cellid', cellId);
+          await this.loadOneCell(cellId, model);
         }
       } else {
         console.warn('unhandled path', path);
