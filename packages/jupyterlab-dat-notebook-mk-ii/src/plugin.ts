@@ -41,7 +41,9 @@ const extension: JupyterFrontEndPlugin<void> = {
       app.docRegistry.addWidgetExtension('Notebook', button);
     });
 
-    const datPattern = new RegExp(`^${paths.urls.tree}/dat/([0-9a-f]{64})`);
+    const datPattern = new RegExp(
+      `^${paths.urls.tree}/dat-mkii/([0-9a-f]{64})`
+    );
 
     commands.addCommand(CommandIDs.openDatNotebook, {
       execute: async (args: any) => {
