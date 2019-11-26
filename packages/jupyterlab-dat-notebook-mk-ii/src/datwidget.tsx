@@ -257,16 +257,6 @@ export namespace DatWidget {
       );
     }
 
-    async shareOneCell(cellId: string, model: ICellModel) {
-      let modelJSON = model.toJSON();
-      let datMeta = modelJSON.metadata.dat || (modelJSON.metadata.dat = {});
-      (datMeta as any)['@id'] = cellId;
-      await this._strategist.save(this._publishDat, modelJSON, {
-        path: DEFAULT_NOTEBOOK,
-        jsonPath: ['cell', cellId]
-      });
-    }
-
     async onShareChange(force = false) {
       this.status = 'publishing';
 
@@ -304,6 +294,16 @@ export namespace DatWidget {
         }
       }
       return null;
+    }
+
+    async shareOneCell(cellId: string, model: ICellModel) {
+      let modelJSON = model.toJSON();
+      let datMeta = modelJSON.metadata.dat || (modelJSON.metadata.dat = {});
+      (datMeta as any)['@id'] = cellId;
+      await this._strategist.save(this._publishDat, modelJSON, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId]
+      });
     }
 
     async loadOneCell(cellId: string, model: ICellModel) {
@@ -426,7 +426,7 @@ export namespace DatWidget {
         if (model) {
           await this.loadOneCell(cellId, model);
         } else {
-          await this.loadOneCell(cellId, model);
+          console.warn('no model for', cellId);
         }
       } else {
         console.warn('unhandled path', path);
