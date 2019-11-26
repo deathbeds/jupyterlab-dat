@@ -29,6 +29,7 @@ declare module 'dat-sdk/promise' {
       options: IDatArchive.IStatReaddirOptions
     ): Promise<IDatArchive.IDirInfo>;
     rmdir(filepath: string, options?: IDatArchive.IRmdirOptions): Promise<void>;
+    configure(options: IDatArchive.IConfigureOptions): Promise<void>;
   }
   export interface IWatcher {
     addEventListener(
@@ -47,12 +48,18 @@ declare module 'dat-sdk/promise' {
       persist?: boolean;
       storage?: Function;
     }
-    export interface ICreateOptions extends ILoadOptions {
+    export interface IConfigureOptions {
       title?: string;
       description?: string;
-      author?: string;
+      type?: string | string[];
+      author?:
+        | string
+        | {
+            name: string;
+            url?: string;
+          };
     }
-
+    export interface ICreateOptions extends ILoadOptions, IConfigureOptions {}
     export interface IIOOptions {
       encoding: string;
     }
@@ -61,15 +68,12 @@ declare module 'dat-sdk/promise' {
     export interface IInvalidated {
       (): void;
     }
-    export interface IArchiveInfo {
-      author: string;
-      description: string;
+    export interface IArchiveInfo extends IConfigureOptions {
       isOwner: boolean;
       key: string;
       mtime: number;
       peers: number;
       size: number;
-      title: string;
       type: string;
       url: string;
       version: number;

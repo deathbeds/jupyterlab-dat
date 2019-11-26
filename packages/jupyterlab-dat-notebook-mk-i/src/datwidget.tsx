@@ -27,6 +27,7 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
     this.model = new DatWidget.Model(options);
     this.title.iconClass = CSS.ICON;
     this.addClass(CSS.WIDGET);
+    this.addClass('jp-dat-mki');
   }
   protected render() {
     const m = this.model;

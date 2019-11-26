@@ -43,13 +43,14 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
     this.model = new DatWidget.Model(options);
     this.title.iconClass = CSS.ICONS.star;
     this.addClass(CSS.WIDGET);
+    this.addClass('jp-dat-mkii');
   }
   protected render() {
     const m = this.model;
 
-    const { title } = m;
+    const { tabTitle } = m;
 
-    this.title.label = title;
+    this.title.label = tabTitle;
 
     const props = {
       className: `${CSS.MAIN} jp-RenderedHTMLCommon`
@@ -66,15 +67,15 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
 
   renderPublish(m: DatWidget.Model) {
     const buttonProps = {
-      disabled: !!m.shareUrl,
-      onClick: async () => await m.onShare(),
+      disabled: !!m.publishUrl,
+      onClick: async () => await m.onPublish(),
       className: BTN_CLASS + (!m.isPublishing ? ' jp-mod-accept' : '')
     };
     return (
       <section>
         <input
           readOnly={true}
-          defaultValue={m.shareUrl}
+          defaultValue={m.publishUrl}
           className="jp-mod-styled"
           placeholder={PLACEHOLDER}
           onFocus={handleFocus}
@@ -84,19 +85,55 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
           {this.renderShield('create')}
         </button>
         {this.renderPublishInfo(m)}
+        {this.renderInfoForm(m)}
       </section>
+    );
+  }
+
+  renderInfoForm(m: DatWidget.Model) {
+    return (
+      <details>
+        <summary>Manifest</summary>
+        <label>
+          <i>Title</i>
+          <input
+            defaultValue={m.title}
+            className="jp-mod-styled"
+            onChange={evt => (m.title = evt.currentTarget.value)}
+          />
+        </label>
+        <label>
+          <i>Author</i>
+          <input
+            defaultValue={m.author}
+            className="jp-mod-styled"
+            onChange={evt => (m.author = evt.currentTarget.value)}
+          />
+        </label>
+        <label>
+          <i>Description</i>
+          <textarea
+            defaultValue={m.description}
+            className="jp-mod-styled"
+            onChange={evt => (m.description = evt.currentTarget.value)}
+            rows={5}
+          />
+        </label>
+      </details>
     );
   }
 
   renderPublishInfo(m: DatWidget.Model) {
     if (m.isPublishing && m.publishInfo) {
-      return <code>{JSON.stringify(m.publishInfo, null, 2)}</code>;
+      return this.renderInfo(m.publishInfo);
     } else {
       return (
         <blockquote>
-          Shares the full contents of <code>{m.filename}</code> with the DAT
-          peer-to-peer network as JSON fragments. Send the link to anybody with
-          <code>jupyterlab-dat</code>.
+          <i>
+            Publish the full contents of <code>{m.filename}</code> with the DAT
+            peer-to-peer network as JSON fragments. Send the link to anybody
+            with <code>jupyterlab-dat</code>.
+          </i>
         </blockquote>
       );
     }
@@ -114,7 +151,7 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
       className:
         BTN_CLASS + (m.loadUrl && !m.isSubscribed ? ' jp-mod-accept' : ''),
       disabled: !m.loadUrl || m.isSubscribed,
-      onClick: async () => await m.onLoad()
+      onClick: async () => await m.onSubscribe()
     };
     return (
       <section>
@@ -136,16 +173,53 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
 
   renderSubscribeInfo(m: DatWidget.Model) {
     if (m.isSubscribed && m.subscribeInfo) {
-      return <code>{JSON.stringify(m.subscribeInfo, null, 2)}</code>;
+      return this.renderInfo(m.subscribeInfo);
     } else {
       return (
         <blockquote>
-          Replace the in-browser contents of <code>{m.filename}</code> with the
-          notebook at the above dat URL, as reconstructed from JSON fragments,
-          and watch for changes.
+          <i>
+            Replace the in-browser contents of <code>{m.filename}</code> with
+            the notebook at the above dat URL, as reconstructed from JSON
+            fragments, and watch for changes.
+          </i>
         </blockquote>
       );
     }
+  }
+
+  renderInfo(info: dat.IDatArchive.IArchiveInfo) {
+    let author = '';
+
+    if (info.author) {
+      if (typeof info.author === 'string') {
+        author = info.author;
+      } else if (info.author.name) {
+        author = info.author.name;
+      }
+    }
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Version</th>
+            <th>Peers</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{info.version || 0}</td>
+            <td>{info.peers || 0}</td>
+            <td>{info.title || ''}</td>
+            <td>{info.description || ''}</td>
+            <td>{author}</td>
+          </tr>
+        </tbody>
+      </table>
+    );
   }
 }
 
@@ -160,7 +234,7 @@ export namespace DatWidget {
     private _status: string = 'zzz';
     private _publishDat: dat.IDatArchive;
     private _subscribeDat: dat.IDatArchive;
-    private _shareUrl: string;
+    private _publishUrl: string;
     private _loadUrl: string;
     private _panel: NotebookPanel;
     private _context: DocumentRegistry.IContext<INotebookModel>;
@@ -169,6 +243,9 @@ export namespace DatWidget {
     private _subscribeInfo: dat.IDatArchive.IArchiveInfo;
     private _throttleRate = 100;
     private _strategist = new ExplodeJSONStrategist();
+    private _title: string;
+    private _author: string;
+    private _description: string;
 
     constructor(options: DatWidget.IOptions) {
       super();
@@ -193,8 +270,8 @@ export namespace DatWidget {
       this._loadUrl = loadUrl;
       this.stateChanged.emit(void 0);
     }
-    get shareUrl() {
-      return this._shareUrl;
+    get publishUrl() {
+      return this._publishUrl;
     }
 
     get publishInfo() {
@@ -217,44 +294,82 @@ export namespace DatWidget {
       return this._context.path.split('/').slice(-1)[0];
     }
 
-    get title() {
+    get tabTitle() {
       return `${this.filename} - ${this.status}`;
     }
 
-    private _previousShareActive: Cell;
+    get title() {
+      return this._title;
+    }
+    set title(title) {
+      this._title = title;
+      this.stateChanged.emit(void 0);
+      if (this._publishDat) {
+        this._publishDat.configure({ title }).catch(console.warn);
+      }
+    }
 
-    async onShare() {
+    get author() {
+      return this._author;
+    }
+    set author(author) {
+      this._author = author;
+      this.stateChanged.emit(void 0);
+      if (this._publishDat) {
+        this._publishDat.configure({ author }).catch(console.warn);
+      }
+    }
+
+    get description() {
+      return this._description;
+    }
+    set description(description) {
+      this._description = description;
+      this.stateChanged.emit(void 0);
+      if (this._publishDat) {
+        this._publishDat.configure({ description }).catch(console.warn);
+      }
+    }
+
+    private _previousPublishActive: Cell;
+
+    async onPublish() {
       this.status = 'sharing';
-      const title = this._context.path.split('/').slice(-1)[0];
-      this._publishDat = await this._manager.create({ title });
+      const { title, description, author } = this;
+      this._publishDat = await this._manager.create({
+        type: 'notebook',
+        title,
+        description,
+        author
+      });
 
       const throttledOnChange = new Debouncer<void, any>(
-        () => this.onShareChange(),
+        () => this.onPublishChange(),
         this._throttleRate
       );
 
       this._panel.model.contentChanged.connect(
         async () => await throttledOnChange.invoke()
       );
-      this.onShareChange(true);
+      this.onPublishChange(true);
       this._panel.content.model.cells.changed.connect(async cells => {
         const cellIds = [] as string[];
         each(cells, c => {
           cellIds.push(c.id);
         });
-        await this.shareCellOrder(cellIds);
+        await this.publishCellOrder(cellIds);
       });
       this._panel.content.activeCellChanged.connect(async (_notebook, cell) => {
-        if (this._previousShareActive) {
-          await this.shareOneCell(
-            this._previousShareActive.model.id,
-            this._previousShareActive.model
+        if (this._previousPublishActive) {
+          await this.publishOneCell(
+            this._previousPublishActive.model.id,
+            this._previousPublishActive.model
           );
-          this._previousShareActive = cell;
+          this._previousPublishActive = cell;
         }
-        await this.shareOneCell(cell.model.id, cell.model);
+        await this.publishOneCell(cell.model.id, cell.model);
       });
-      this._shareUrl = this._publishDat.url;
+      this._publishUrl = this._publishDat.url;
       this.stateChanged.emit(void 0);
     }
 
@@ -273,18 +388,21 @@ export namespace DatWidget {
       }
     }
 
-    async onLoad() {
+    async onSubscribe() {
       this.status = 'subscribing';
       this._subscribeDat = await this._manager.listen(this.loadUrl);
-      this.status = 'waiting';
+      this.status = 'ready';
       const watcher = this._subscribeDat.watch();
 
-      watcher.addEventListener('invalidated', evt => this.onLoadChange(evt));
-      watcher.addEventListener('sync', evt => this.onLoadChange(evt));
-      await this.onLoadChange({ path: null });
+      watcher.addEventListener('invalidated', evt =>
+        this.onSubscribeChange(evt)
+      );
+      watcher.addEventListener('sync', evt => this.onSubscribeChange(evt));
+      await this.getInfo();
+      await this.onSubscribeChange({ path: null });
     }
 
-    async shareAllCells() {
+    async publishAllCells() {
       const { cells } = this._panel.model;
 
       let promises = [] as Promise<void>[];
@@ -293,15 +411,15 @@ export namespace DatWidget {
       for (let i = 0; i < cells.length; i++) {
         let cell = cells.get(i);
         cellIds.push(cell.id);
-        promises.push(this.shareOneCell(cell.id, cell));
+        promises.push(this.publishOneCell(cell.id, cell));
       }
 
       await Promise.all(promises);
 
-      await this.shareCellOrder(cellIds);
+      await this.publishCellOrder(cellIds);
     }
 
-    async shareCellOrder(cellIds: string[]) {
+    async publishCellOrder(cellIds: string[]) {
       await this._strategist.save(
         this._publishDat,
         {
@@ -314,18 +432,18 @@ export namespace DatWidget {
       );
     }
 
-    async onShareChange(force = false) {
+    async onPublishChange(force = false) {
       this.status = 'publishing';
 
       if (force) {
-        await this.shareAllCells();
+        await this.publishAllCells();
       } else {
         const { activeCell } = this._panel.content;
         const { model } = activeCell;
-        await this.shareOneCell(model.id, model);
+        await this.publishOneCell(model.id, model);
       }
 
-      this.status = 'sharing';
+      this.status = 'ready';
     }
 
     async loadAllCells() {
@@ -353,7 +471,7 @@ export namespace DatWidget {
       return null;
     }
 
-    async shareOneCell(cellId: string, model: ICellModel) {
+    async publishOneCell(cellId: string, model: ICellModel) {
       let modelJSON = model.toJSON();
       let datMeta = modelJSON.metadata.dat || (modelJSON.metadata.dat = {});
       (datMeta as any)['@id'] = cellId;
@@ -534,7 +652,7 @@ export namespace DatWidget {
       return cellIdToModels;
     }
 
-    async fixCellsOnLoad() {
+    async fixCellsonSubscribe() {
       const { cells } = this._panel.content.model;
       const newCellIds = await this.loadCellIds(true);
       const unmanaged = [] as ICellModel[];
@@ -579,17 +697,17 @@ export namespace DatWidget {
       }
     }
 
-    async onLoadChange(_evt: dat.IChangeEvent) {
+    async onSubscribeChange(_evt: dat.IChangeEvent) {
       const { path } = _evt;
       const jsonPath = (path || '').split('/');
       const { activeCellIndex } = this._panel.content;
       this.status = 'updating';
 
       if (path == null) {
-        await this.fixCellsOnLoad();
+        await this.fixCellsonSubscribe();
         await this.loadAllCells();
       } else if (path.endsWith('/cells')) {
-        await this.fixCellsOnLoad();
+        await this.fixCellsonSubscribe();
       } else if (jsonPath.length >= 3 && jsonPath[2] === 'cell') {
         // for now, only load on a full index change
         if (jsonPath[4] === 'index') {
@@ -611,7 +729,7 @@ export namespace DatWidget {
         this._panel.content.node,
         this._panel.content.activeCell.node
       );
-      this.status = 'waiting';
+      this.status = 'ready';
     }
   }
 }

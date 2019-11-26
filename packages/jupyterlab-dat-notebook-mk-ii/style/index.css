@@ -1,4 +1,4 @@
-.jp-Dat-Widget {
+.jp-Dat-Widget.jp-dat-mkii {
   padding: var(--jp-notebook-padding);
   background-color: var(--jp-layout-color1);
   display: flex;
@@ -6,14 +6,14 @@
   overflow-y: auto;
 }
 
-.jp-Dat-Widget-Main {
+.jp-Dat-Widget.jp-dat-mkii .jp-Dat-Widget-Main {
   display: flex;
   flex-direction: row;
   flex: 1;
   flex-wrap: wrap;
 }
 
-.jp-Dat-Widget section {
+.jp-Dat-Widget.jp-dat-mkii section {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -22,15 +22,30 @@
   min-width: 20rem;
 }
 
-.jp-Dat-Widget header {
+.jp-Dat-Widget.jp-dat-mkii header {
   display: flex;
   flex-direction: row;
 }
 
-.jp-Dat-Widget input {
-  font-family: var(--jp-code-font-family);
-  text-overflow: ellipsis;
+.jp-Dat-Widget.jp-dat-mkii input {
   width: 100%;
-  margin: var(--jp-notebook-padding);
-  text-align: center;
+  margin: 0 0 var(--jp-notebook-padding);
+}
+
+.jp-Dat-Widget.jp-dat-mkii details {
+  width: 100%;
+}
+.jp-Dat-Widget.jp-dat-mkii details label {
+  display: flex;
+  align-items: baseline;
+}
+.jp-Dat-Widget.jp-dat-mkii details label i {
+  flex: 0;
+  min-width: 7em;
+  text-align: right;
+}
+.jp-Dat-Widget.jp-dat-mkii details label input,
+.jp-Dat-Widget.jp-dat-mkii details label textarea {
+  flex: 1;
+  margin: 0 0 var(--jp-notebook-padding) var(--jp-notebook-padding);
 }
