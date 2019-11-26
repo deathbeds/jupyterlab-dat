@@ -31,7 +31,7 @@ const extension: JupyterFrontEndPlugin<void> = {
 
     function addMainAreaWidget(content: Widget) {
       const main = new MainAreaWidget({ content });
-      shell.add(main, 'main', { mode: 'tab-after' });
+      shell.add(main, 'main', { mode: 'split-right' });
     }
 
     datButton.widgetRequested.connect((_it, content) => {
