@@ -1,4 +1,3 @@
-import { Widget } from '@phosphor/widgets';
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin,
@@ -16,6 +15,8 @@ import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 
 import { DatNotebookButton } from './datbutton';
 
+import { DatWidget } from './datwidget';
+
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-dat-notebook-mk-ii',
   autoStart: true,
@@ -29,13 +30,16 @@ const extension: JupyterFrontEndPlugin<void> = {
     const { shell, commands } = app;
     const datButton = new DatNotebookButton(dat);
 
-    function addMainAreaWidget(content: Widget) {
+    function addMainAreaWidget(content: DatWidget) {
       const main = new MainAreaWidget({ content });
-      shell.add(main, 'main', { mode: 'split-bottom' });
+      shell.add(main, 'main', {
+        mode: 'split-bottom',
+        ref: content.model.panel.id
+      });
     }
 
     datButton.widgetRequested.connect((_it, content) => {
-      addMainAreaWidget(content);
+      addMainAreaWidget(content as DatWidget);
     });
 
     [datButton].forEach(button => {

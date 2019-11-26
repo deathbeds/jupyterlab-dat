@@ -47,6 +47,7 @@ declare module 'dat-sdk/promise' {
     export interface ILoadOptions {
       persist?: boolean;
       storage?: Function;
+      sparse?: boolean;
     }
     export interface IConfigureOptions {
       title?: string;

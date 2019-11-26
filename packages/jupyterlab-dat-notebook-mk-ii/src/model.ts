@@ -27,24 +27,26 @@ const CELL_IDS_PATH = ['cells'];
 const INFO_INTERVAL = 10000;
 
 export class DatNotebookModel extends VDomModel {
-  private _status: string = 'zzz';
-  private _publishDat: dat.IDatArchive;
-  private _publishUrl: string;
-  private _loadUrl: string;
   private _panel: NotebookPanel;
   private _context: DocumentRegistry.IContext<INotebookModel>;
   private _manager: IDatManager;
-  private _publishInfo: dat.IDatArchive.IArchiveInfo;
-  private _subscribeInfo: dat.IDatArchive.IArchiveInfo;
-  // private _throttleRate = 100;
   private _strategist = new ExplodeJSONStrategist();
+  private _status: string = 'zzz';
+  // publisher stuff
+  private _publishDat: dat.IDatArchive;
+  private _publishUrl: string;
+  private _publishInfo: dat.IDatArchive.IArchiveInfo;
   private _title: string;
   private _author: string;
   private _description: string;
+  // subscriber stuff
+  private _loadUrl: string;
+  private _subscribeDat: dat.IDatArchive;
+  private _subscribeInfo: dat.IDatArchive.IArchiveInfo;
   private _outputModelPublishers = new Map<string, Function>();
   private _metadataModelPublishers = new Map<string, Function>();
   private _sourceModelPublishers = new Map<string, Function>();
-  private _subscribeDat: dat.IDatArchive;
+  private _follow = true;
 
   constructor(options: DatNotebookModel.IOptions) {
     super();
@@ -54,8 +56,21 @@ export class DatNotebookModel extends VDomModel {
     setInterval(async () => await this.getInfo(), INFO_INTERVAL);
   }
 
+  get panel() {
+    return this._panel;
+  }
+
   get isPublishing() {
     return !!this._publishDat;
+  }
+
+  get follow() {
+    return this._follow;
+  }
+
+  set follow(follow) {
+    this._follow = follow;
+    this.stateChanged.emit(void 0);
   }
 
   get isSubscribed() {
@@ -162,15 +177,6 @@ export class DatNotebookModel extends VDomModel {
       author
     });
 
-    // const throttledOnChange = new Debouncer<void, any>(
-    //   () => this.onPublishChange(),
-    //   this._throttleRate
-    // );
-    //
-    // this._panel.model.contentChanged.connect(
-    //   async () => await throttledOnChange.invoke()
-    // );
-
     this._panel.content.model.cells.changed.connect(async cells => {
       const cellIds = [] as string[];
       each(cells, model => {
@@ -181,6 +187,7 @@ export class DatNotebookModel extends VDomModel {
     });
 
     this._panel.content.activeCellChanged.connect(async (_notebook, cell) => {
+      await this.publishActiveCell(cell.model.id);
       await this.publishOneCell(cell.model.id, cell.model);
     });
 
@@ -212,7 +219,9 @@ export class DatNotebookModel extends VDomModel {
 
   async onSubscribe() {
     this.status = 'subscribing';
-    this._subscribeDat = await this._manager.listen(this.loadUrl);
+    this._subscribeDat = await this._manager.listen(this.loadUrl, {
+      sparse: true
+    });
     this.status = 'ready';
     const watcher = this._subscribeDat.watch();
 
@@ -237,6 +246,13 @@ export class DatNotebookModel extends VDomModel {
     await Promise.all(promises);
 
     await this.publishCellOrder(cellIds);
+  }
+
+  async publishActiveCell(cellId: string) {
+    await this._strategist.save(this._publishDat, cellId, {
+      path: DEFAULT_NOTEBOOK,
+      jsonPath: ['active_cell']
+    });
   }
 
   async publishCellOrder(cellIds: string[]) {
@@ -289,6 +305,29 @@ export class DatNotebookModel extends VDomModel {
       }
       await this.loadOneCell(cellId, model);
       i++;
+    }
+  }
+
+  async fixActiveCell() {
+    if (!this._follow) {
+      return;
+    }
+    const cellIds = await this.loadCellIds();
+
+    const activeCell = (await this._strategist.load(this._subscribeDat, {
+      path: DEFAULT_NOTEBOOK,
+      jsonPath: ['active_cell']
+    })) as string;
+
+    const cellIndex = cellIds.indexOf(activeCell);
+
+    if (cellIndex >= 0) {
+      this._panel.content.activeCellIndex = cellIds.indexOf(activeCell);
+
+      ElementExt.scrollIntoViewIfNeeded(
+        this._panel.content.node,
+        this._panel.content.activeCell.node
+      );
     }
   }
 
@@ -611,16 +650,18 @@ export class DatNotebookModel extends VDomModel {
     const { path } = _evt;
     const jsonPath = (path || '').split('/');
     const jsonPathLength = jsonPath.length;
-    const { activeCellIndex } = this._panel.content;
     this.status = 'updating';
 
     if (path == null) {
       await this.fixCellsonSubscribe();
       await this.loadAllCells();
+      await this.fixActiveCell();
     } else if (jsonPath.length >= 3 && jsonPath[2] === 'metadata') {
       await this.loadMetadata();
     } else if (path.endsWith('/cells')) {
       await this.fixCellsonSubscribe();
+    } else if (path.endsWith('/active_cell')) {
+      await this.fixActiveCell();
     } else if (jsonPath.length >= 5 && jsonPath[2] === 'cell') {
       const cellId = jsonPath[3];
       const cellIdToModels = await this.loadCellIdToModels();
@@ -667,11 +708,6 @@ export class DatNotebookModel extends VDomModel {
       console.warn('unhandled path', path);
     }
 
-    this._panel.content.activeCellIndex = activeCellIndex;
-    ElementExt.scrollIntoViewIfNeeded(
-      this._panel.content.node,
-      this._panel.content.activeCell.node
-    );
     this.status = 'ready';
   }
 }

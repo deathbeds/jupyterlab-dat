@@ -144,6 +144,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           {this.renderShield('resume')}
         </button>
         {this.renderSubscribeInfo(m)}
+        {this.renderSubscribeForm(m)}
       </section>
     );
   }
@@ -161,6 +162,22 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
         </blockquote>
       );
     }
+  }
+
+  renderSubscribeForm(m: DatNotebookModel) {
+    return (
+      <details>
+        <label>
+          <i>Follow</i>
+          <input
+            type="checkbox"
+            defaultChecked={m.follow}
+            className="jp-mod-styled"
+            onChange={() => (m.follow = !m.follow)}
+          />
+        </label>
+      </details>
+    );
   }
 
   renderInfo(info: dat.IDatArchive.IArchiveInfo) {
