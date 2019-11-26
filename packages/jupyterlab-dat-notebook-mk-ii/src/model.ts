@@ -1,7 +1,7 @@
 import { dat } from '@deathbeds/dat-sdk-webpack';
 import { each } from '@phosphor/algorithm';
 import { ElementExt } from '@phosphor/domutils';
-import { Debouncer } from '@jupyterlab/coreutils';
+// import { Debouncer } from '@jupyterlab/coreutils';
 
 import { VDomModel } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
@@ -29,7 +29,6 @@ const INFO_INTERVAL = 10000;
 export class DatNotebookModel extends VDomModel {
   private _status: string = 'zzz';
   private _publishDat: dat.IDatArchive;
-  private _subscribeDat: dat.IDatArchive;
   private _publishUrl: string;
   private _loadUrl: string;
   private _panel: NotebookPanel;
@@ -37,11 +36,15 @@ export class DatNotebookModel extends VDomModel {
   private _manager: IDatManager;
   private _publishInfo: dat.IDatArchive.IArchiveInfo;
   private _subscribeInfo: dat.IDatArchive.IArchiveInfo;
-  private _throttleRate = 100;
+  // private _throttleRate = 100;
   private _strategist = new ExplodeJSONStrategist();
   private _title: string;
   private _author: string;
   private _description: string;
+  private _outputModelPublishers = new Map<string, Function>();
+  private _metadataModelPublishers = new Map<string, Function>();
+  private _sourceModelPublishers = new Map<string, Function>();
+  private _subscribeDat: dat.IDatArchive;
 
   constructor(options: DatNotebookModel.IOptions) {
     super();
@@ -127,13 +130,24 @@ export class DatNotebookModel extends VDomModel {
     }
   }
 
-  private _outputModelPublishers = new Map<string, Function>();
-
   private _makeOutputPublisher(model: ICodeCellModel) {
-    return async (outputs: any, change: any) => {
-      console.log('writing outputs', model.id, change, outputs);
-      await this.publishOutputs(model.id, model.toJSON());
-      console.log('writing outputs', model.id);
+    return async (_outputs: any, _change: any) => {
+      await this.publishCellOutputs(model.id, model);
+    };
+  }
+
+  private _makeSourcePublisher(model: ICellModel) {
+    return async (_outputs: any, _change: any) => {
+      await this.publishCellSource(model.id, model.value.text);
+    };
+  }
+
+  private _makeMetadataPublisher(model: ICellModel) {
+    return async (_metadata: any, _change: any) => {
+      await this.publishCellMetadata(
+        model.id,
+        model.metadata.toJSON() as nbformat.ICellMetadata
+      );
     };
   }
 
@@ -148,14 +162,14 @@ export class DatNotebookModel extends VDomModel {
       author
     });
 
-    const throttledOnChange = new Debouncer<void, any>(
-      () => this.onPublishChange(),
-      this._throttleRate
-    );
-
-    this._panel.model.contentChanged.connect(
-      async () => await throttledOnChange.invoke()
-    );
+    // const throttledOnChange = new Debouncer<void, any>(
+    //   () => this.onPublishChange(),
+    //   this._throttleRate
+    // );
+    //
+    // this._panel.model.contentChanged.connect(
+    //   async () => await throttledOnChange.invoke()
+    // );
 
     this._panel.content.model.cells.changed.connect(async cells => {
       const cellIds = [] as string[];
@@ -171,12 +185,12 @@ export class DatNotebookModel extends VDomModel {
     });
 
     this._panel.content.model.metadata.changed.connect(async () => {
-      await this.publishMetadata();
+      await this.publishNotebookMetadata();
     });
 
     this._publishUrl = this._publishDat.url;
 
-    await this.publishMetadata();
+    await this.publishNotebookMetadata();
     await this.onPublishChange(true);
     await this.getInfo();
   }
@@ -238,7 +252,7 @@ export class DatNotebookModel extends VDomModel {
     );
   }
 
-  async publishMetadata() {
+  async publishNotebookMetadata() {
     await this._strategist.save(
       this._publishDat,
       this._panel.content.model.metadata.toJSON(),
@@ -289,13 +303,22 @@ export class DatNotebookModel extends VDomModel {
   }
 
   async publishOneCell(cellId: string, model: ICellModel) {
-    console.log('about to write cell', cellId);
-
     if (isCodeCellModel(model) && !this._outputModelPublishers.has(cellId)) {
-      console.log('subscribing to outputs', cellId);
       const publisher = this._makeOutputPublisher(model);
       this._outputModelPublishers.set(cellId, publisher);
       model.outputs.changed.connect(publisher);
+    }
+
+    if (!this._metadataModelPublishers.has(cellId)) {
+      const publisher = this._makeMetadataPublisher(model);
+      this._outputModelPublishers.set(cellId, publisher);
+      model.metadata.changed.connect(publisher);
+    }
+
+    if (!this._sourceModelPublishers.has(cellId)) {
+      const publisher = this._makeSourcePublisher(model);
+      this._sourceModelPublishers.set(cellId, publisher);
+      model.value.changed.connect(publisher);
     }
 
     let modelJSON = model.toJSON();
@@ -330,15 +353,12 @@ export class DatNotebookModel extends VDomModel {
       });
     }
 
-    await this._strategist.save(this._publishDat, modelJSON.metadata, {
-      path: DEFAULT_NOTEBOOK,
-      jsonPath: ['cell', cellId, 'metadata']
-    });
+    await this.publishCellMetadata(
+      cellId,
+      modelJSON.metadata as nbformat.ICellMetadata
+    );
 
-    await this._strategist.save(this._publishDat, modelJSON.source, {
-      path: DEFAULT_NOTEBOOK,
-      jsonPath: ['cell', cellId, 'source']
-    });
+    await this.publishCellSource(cellId, model.value.text);
 
     let cellIndex = {
       cell_type: modelJSON.cell_type,
@@ -351,8 +371,7 @@ export class DatNotebookModel extends VDomModel {
         let codeModel = modelJSON as nbformat.ICodeCell;
         cellIndex.execution_count = codeModel.execution_count;
         if (isCodeCellModel(model)) {
-          console.log('\twriting cell', cellId);
-          await this.publishOutputs(cellId, codeModel);
+          await this.publishCellOutputs(cellId, model);
         }
         for (const output of codeModel.outputs) {
           await this._strategist.save(this._publishDat, output, {
@@ -366,22 +385,16 @@ export class DatNotebookModel extends VDomModel {
         break;
     }
 
-    await this._strategist.save(this._publishDat, modelJSON.source, {
-      path: DEFAULT_NOTEBOOK,
-      jsonPath: ['cell', cellId, 'source']
-    });
-
     // write this last
     await this._strategist.save(this._publishDat, cellIndex, {
       path: DEFAULT_NOTEBOOK,
       jsonPath: ['cell', cellId, 'index']
     });
-
-    console.log('wrote cell', cellId);
   }
 
-  async publishOutputs(cellId: string, codeModel: nbformat.ICodeCell) {
+  async publishCellOutputs(cellId: string, model: ICodeCellModel) {
     let i = 0;
+    let codeModel = model.toJSON();
     for (const output of codeModel.outputs) {
       await this._strategist.save(this._publishDat, output, {
         path: DEFAULT_NOTEBOOK,
@@ -389,6 +402,26 @@ export class DatNotebookModel extends VDomModel {
       });
       i++;
     }
+    setTimeout(async () => {
+      await this._strategist.save(this._publishDat, model.executionCount, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId, 'execution_count']
+      });
+    }, 100);
+  }
+
+  async publishCellMetadata(cellId: string, source: nbformat.ICellMetadata) {
+    await this._strategist.save(this._publishDat, source, {
+      path: DEFAULT_NOTEBOOK,
+      jsonPath: ['cell', cellId, 'metadata']
+    });
+  }
+
+  async publishCellSource(cellId: string, source: string) {
+    await this._strategist.save(this._publishDat, source, {
+      path: DEFAULT_NOTEBOOK,
+      jsonPath: ['cell', cellId, 'source']
+    });
   }
 
   async loadOneOutput(cellId: string, outputIdx: number) {
@@ -402,6 +435,35 @@ export class DatNotebookModel extends VDomModel {
     }
   }
 
+  async loadOneSource(cellId: string) {
+    return [
+      (await this._strategist.load(this._subscribeDat, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId, 'source']
+      })) as string
+    ];
+  }
+
+  async loadOneExecutionCount(cellId: string) {
+    let executionCount: number = null;
+    try {
+      executionCount = (await this._strategist.load(this._subscribeDat, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId, 'execution_count']
+      })) as number;
+    } catch (err) {
+      console.warn(err);
+    }
+    return executionCount;
+  }
+
+  async loadOneCellMedata(cellId: string) {
+    return (await this._strategist.load(this._subscribeDat, {
+      path: DEFAULT_NOTEBOOK,
+      jsonPath: ['cell', cellId, 'metadata']
+    })) as nbformat.ICellMetadata;
+  }
+
   async loadOneCell(cellId: string, model: ICellModel) {
     // read this first
     const cellJSON = (await this._strategist.load(this._subscribeDat, {
@@ -409,15 +471,9 @@ export class DatNotebookModel extends VDomModel {
       jsonPath: ['cell', cellId, 'index']
     })) as nbformat.ICell;
 
-    cellJSON.source = (await this._strategist.load(this._subscribeDat, {
-      path: DEFAULT_NOTEBOOK,
-      jsonPath: ['cell', cellId, 'source']
-    })) as nbformat.MultilineString;
+    cellJSON.source = await this.loadOneSource(cellId);
 
-    cellJSON.metadata = (await this._strategist.load(this._subscribeDat, {
-      path: DEFAULT_NOTEBOOK,
-      jsonPath: ['cell', cellId, 'metadata']
-    })) as nbformat.ICellMetadata;
+    cellJSON.metadata = await this.loadOneCellMedata(cellId);
 
     try {
       cellJSON.attachments = (await this._strategist.load(this._subscribeDat, {
@@ -450,10 +506,7 @@ export class DatNotebookModel extends VDomModel {
         }
         i++;
       }
-    }
-
-    if (isCodeCellModel(model)) {
-      model.executionCount = (cellJSON as nbformat.ICodeCell).execution_count;
+      model.executionCount = await this.loadOneExecutionCount(cellId);
     }
 
     model.value.text = Array.isArray(cellJSON.source)
@@ -557,6 +610,7 @@ export class DatNotebookModel extends VDomModel {
   async onSubscribeChange(_evt: dat.IChangeEvent) {
     const { path } = _evt;
     const jsonPath = (path || '').split('/');
+    const jsonPathLength = jsonPath.length;
     const { activeCellIndex } = this._panel.content;
     this.status = 'updating';
 
@@ -567,28 +621,47 @@ export class DatNotebookModel extends VDomModel {
       await this.loadMetadata();
     } else if (path.endsWith('/cells')) {
       await this.fixCellsonSubscribe();
-    } else if (jsonPath.length >= 4 && jsonPath[2] === 'cell') {
+    } else if (jsonPath.length >= 5 && jsonPath[2] === 'cell') {
       const cellId = jsonPath[3];
-      // for now, only load on a full index change
-      if (jsonPath[4] === 'index') {
-        const cellIdToModels = await this.loadCellIdToModels();
-        const model = cellIdToModels.get(cellId);
-        if (model) {
-          await this.loadOneCell(cellId, model);
-        }
-      } else if (jsonPath.length >= 6 && jsonPath[4] === 'output') {
-        const cellIdToModels = await this.loadCellIdToModels();
-        const model = cellIdToModels.get(cellId);
-        if (model && isCodeCellModel(model)) {
-          const outputIdx = parseInt(jsonPath[5], 10);
-          const output = await this.loadOneOutput(cellId, outputIdx);
-          if (output) {
-            console.log('setting output', cellId, outputIdx);
-            model.outputs.set(outputIdx, output);
+      const cellIdToModels = await this.loadCellIdToModels();
+      const model = cellIdToModels.get(cellId);
+
+      switch (jsonPath[4]) {
+        case 'index':
+          if (model) {
+            await this.loadOneCell(cellId, model);
           }
-        }
-      } else {
-        console.log('unhandled path', jsonPath);
+          break;
+        case 'output':
+          if (jsonPathLength >= 6 && model && isCodeCellModel(model)) {
+            const outputIdx = parseInt(jsonPath[5], 10);
+            const output = await this.loadOneOutput(cellId, outputIdx);
+            if (output) {
+              model.outputs.set(outputIdx, output);
+            }
+          }
+          break;
+        case 'execution_count':
+          if (model && isCodeCellModel(model)) {
+            model.executionCount = await this.loadOneExecutionCount(cellId);
+          }
+          break;
+        case 'metadata':
+          if (model) {
+            const meta = await this.loadOneCellMedata(cellId);
+            for (const key of Object.keys(meta)) {
+              model.metadata.set(key, meta[key]);
+            }
+          }
+          break;
+        case 'source':
+          if (model) {
+            const source = await this.loadOneSource(cellId);
+            model.value.text = Array.isArray(source) ? source.join('') : source;
+          }
+          break;
+        default:
+          break;
       }
     } else {
       console.warn('unhandled path', path);
