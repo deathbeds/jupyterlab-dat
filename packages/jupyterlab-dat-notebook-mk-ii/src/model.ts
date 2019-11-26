@@ -25,6 +25,7 @@ import { ExplodeJSONStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/
 const DEFAULT_NOTEBOOK = '/Untitled.ipynb';
 const CELL_IDS_PATH = ['cells'];
 const INFO_INTERVAL = 10000;
+const NOOP_PATH = /\/(dat.json|Untitled\.ipynb|cell|cell\/[^\/]+)$/;
 
 export class DatNotebookModel extends VDomModel {
   private _panel: NotebookPanel;
@@ -514,13 +515,13 @@ export class DatNotebookModel extends VDomModel {
 
     cellJSON.metadata = await this.loadOneCellMedata(cellId);
 
-    try {
-      cellJSON.attachments = (await this._strategist.load(this._subscribeDat, {
-        path: DEFAULT_NOTEBOOK,
-        jsonPath: ['cell', cellId, 'attachments']
-      })) as nbformat.IAttachments;
-    } catch {
-      //
+    const attachments = (await this._strategist.load(this._subscribeDat, {
+      path: DEFAULT_NOTEBOOK,
+      jsonPath: ['cell', cellId, 'attachments']
+    })) as nbformat.IAttachments;
+
+    if (attachments) {
+      cellJSON.attachments = attachments;
     }
 
     if (model.type !== cellJSON.cell_type) {
@@ -648,6 +649,9 @@ export class DatNotebookModel extends VDomModel {
 
   async onSubscribeChange(_evt: dat.IChangeEvent) {
     const { path } = _evt;
+    if (path?.match(NOOP_PATH)) {
+      return;
+    }
     const jsonPath = (path || '').split('/');
     const jsonPathLength = jsonPath.length;
     this.status = 'updating';

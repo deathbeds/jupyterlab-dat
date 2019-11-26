@@ -30,6 +30,7 @@ declare module 'dat-sdk/promise' {
     ): Promise<IDatArchive.IDirInfo>;
     rmdir(filepath: string, options?: IDatArchive.IRmdirOptions): Promise<void>;
     configure(options: IDatArchive.IConfigureOptions): Promise<void>;
+    close(): Promise<void>;
   }
   export interface IWatcher {
     addEventListener(

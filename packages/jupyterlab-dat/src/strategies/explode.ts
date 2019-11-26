@@ -50,7 +50,11 @@ export class ExplodeJSONStrategist implements IStrategist<JSONValue> {
     opts: ExplodeJSONStrategist.IOptions
   ): Promise<JSONValue> {
     const path = this.toPath(opts);
-    return JSON.parse(await archive.readFile<string>(path, DEFAULT_ENCODING));
+    try {
+      return JSON.parse(await archive.readFile<string>(path, DEFAULT_ENCODING));
+    } catch {
+      return null;
+    }
   }
 
   toPath({ path, jsonPath }: ExplodeJSONStrategist.IOptions): string {
