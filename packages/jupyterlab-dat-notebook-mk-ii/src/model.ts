@@ -1,7 +1,6 @@
 import { dat } from '@deathbeds/dat-sdk-webpack';
 import { each } from '@phosphor/algorithm';
 import { ElementExt } from '@phosphor/domutils';
-// import { Debouncer } from '@jupyterlab/coreutils';
 
 import { VDomModel } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
@@ -270,14 +269,12 @@ export class DatNotebookModel extends VDomModel {
   }
 
   async publishNotebookMetadata() {
-    await this._strategist.save(
-      this._publishDat,
-      this._panel.content.model.metadata.toJSON(),
-      {
-        path: DEFAULT_NOTEBOOK,
-        jsonPath: ['metadata']
-      }
-    );
+    const metadataJSON = this._panel.content.model.metadata.toJSON();
+    console.log(metadataJSON);
+    await this._strategist.save(this._publishDat, metadataJSON, {
+      path: DEFAULT_NOTEBOOK,
+      jsonPath: ['metadata']
+    });
   }
 
   async onPublishChange(force = false) {
@@ -592,13 +589,13 @@ export class DatNotebookModel extends VDomModel {
     return cellIdToModels;
   }
 
-  async loadMetadata() {
-    const metadata = ((await this._strategist.load(this._subscribeDat, {
+  async loadNotebookMetadata() {
+    const metadataJSON = ((await this._strategist.load(this._subscribeDat, {
       path: DEFAULT_NOTEBOOK,
       jsonPath: ['metadata']
     })) as any) as nbformat.INotebookMetadata;
-    for (const key of Object.keys(metadata)) {
-      this._panel.content.model.metadata.set(key, metadata[key]);
+    for (const key of Object.keys(metadataJSON || {})) {
+      this._panel.content.model.metadata.set(key, metadataJSON[key]);
     }
   }
 
@@ -661,7 +658,7 @@ export class DatNotebookModel extends VDomModel {
       await this.loadAllCells();
       await this.fixActiveCell();
     } else if (jsonPath.length >= 3 && jsonPath[2] === 'metadata') {
-      await this.loadMetadata();
+      await this.loadNotebookMetadata();
     } else if (path.endsWith('/cells')) {
       await this.fixCellsonSubscribe();
     } else if (path.endsWith('/active_cell')) {
