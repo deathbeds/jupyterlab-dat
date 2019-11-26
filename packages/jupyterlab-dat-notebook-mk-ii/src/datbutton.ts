@@ -26,20 +26,23 @@ export class DatNotebookButton
     this._manager = manager;
   }
 
+  async requestWidget(panel: NotebookPanel) {
+    const widget = new DatWidget({
+      panel,
+      context: panel.context,
+      manager: this._manager
+    });
+    this.widgetRequested.emit(widget);
+    return widget;
+  }
+
   createNew(
     panel: NotebookPanel,
     context: DocumentRegistry.IContext<INotebookModel>
   ): IDisposable {
     let button = new ToolbarButton({
       iconClassName: `jp-Icon jp-Icon-16 ${CSS.ICONS.star}`,
-      onClick: async () => {
-        const widget = new DatWidget({
-          panel,
-          context,
-          manager: this._manager
-        });
-        this.widgetRequested.emit(widget);
-      },
+      onClick: async () => await this.requestWidget(panel),
       tooltip: 'Publish/Subscribe (mk ii)'
     });
 

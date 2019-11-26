@@ -107,9 +107,9 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
       return (
         <blockquote>
           <i>
-            Publish the full contents of <code>{m.filename}</code> with the DAT
-            peer-to-peer network as JSON fragments. Send the link to anybody
-            with <code>jupyterlab-dat</code>.
+            Publish the full contents of this notebook with the DAT peer-to-peer
+            network as JSON fragments. Send the link to anybody with
+            <code>jupyterlab-dat</code>.
           </i>
         </blockquote>
       );
@@ -155,9 +155,8 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
       return (
         <blockquote>
           <i>
-            Replace the in-browser contents of <code>{m.filename}</code> with
-            the notebook at the above dat URL, as reconstructed from JSON
-            fragments, and watch for changes.
+            Replace the contents of this notebook with the notebook published at
+            the above dat URL, and watch for changes.
           </i>
         </blockquote>
       );
