@@ -32,14 +32,13 @@ export class ExplodeJSONStrategist implements IStrategist<JSONValue> {
         // doesn't exist, continue
       }
 
-      console.log('mkdir', parentPath);
       try {
         await archive.mkdir(parentPath);
       } catch (err) {
         console.warn(err);
       }
     }
-    console.log('write', finalPath);
+
     archive.writeFile(
       finalPath,
       JSON.stringify(data, null, 2),
@@ -51,7 +50,6 @@ export class ExplodeJSONStrategist implements IStrategist<JSONValue> {
     opts: ExplodeJSONStrategist.IOptions
   ): Promise<JSONValue> {
     const path = this.toPath(opts);
-    console.log('load', path);
     return JSON.parse(await archive.readFile<string>(path, DEFAULT_ENCODING));
   }
 

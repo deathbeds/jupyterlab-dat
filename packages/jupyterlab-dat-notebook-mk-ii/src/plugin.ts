@@ -2,6 +2,7 @@ import { Widget } from '@phosphor/widgets';
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin,
+  JupyterLab,
   IRouter
 } from '@jupyterlab/application';
 
@@ -30,7 +31,7 @@ const extension: JupyterFrontEndPlugin<void> = {
 
     function addMainAreaWidget(content: Widget) {
       const main = new MainAreaWidget({ content });
-      shell.add(main, 'main', { mode: 'split-bottom' });
+      shell.add(main, 'main', { mode: 'tab-after' });
     }
 
     datButton.widgetRequested.connect((_it, content) => {
@@ -57,16 +58,24 @@ const extension: JupyterFrontEndPlugin<void> = {
           );
           const url = URLExt.join(paths.urls.tree, nb.context.path);
           router.navigate(url);
-          const datWidget = await datButton.requestWidget(nb);
+          const datWidget = await datButton.requestWidget(nb, false);
           datWidget.model.loadUrl = `dat://${datKey}`;
           await datWidget.model.onSubscribe();
           addMainAreaWidget(datWidget);
+          const lab = app as JupyterLab;
+          lab.shell.presentationMode = true;
+          lab.shell.mode = 'single-document';
+          lab.shell.collapseLeft();
+          lab.shell.collapseRight();
+          lab.shell.activateById(nb.id);
+          setTimeout(() => {
+            lab.shell.activateById(nb.id);
+          }, 100);
           return router.stop;
         }
       }
     });
 
-    console.log('dat pattern', datPattern);
     router.register({
       command: CommandIDs.openDatNotebook,
       pattern: datPattern,

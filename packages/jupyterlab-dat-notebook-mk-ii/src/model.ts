@@ -132,6 +132,7 @@ export class DatNotebookModel extends VDomModel {
   async onPublish() {
     this.status = 'sharing';
     const { title, description, author } = this;
+
     this._publishDat = await this._manager.create({
       type: 'notebook',
       title,
@@ -147,7 +148,7 @@ export class DatNotebookModel extends VDomModel {
     this._panel.model.contentChanged.connect(
       async () => await throttledOnChange.invoke()
     );
-    this.onPublishChange(true);
+
     this._panel.content.model.cells.changed.connect(async cells => {
       const cellIds = [] as string[];
       each(cells, c => {
@@ -155,6 +156,7 @@ export class DatNotebookModel extends VDomModel {
       });
       await this.publishCellOrder(cellIds);
     });
+
     this._panel.content.activeCellChanged.connect(async (_notebook, cell) => {
       if (this._previousPublishActive) {
         await this.publishOneCell(
@@ -165,8 +167,16 @@ export class DatNotebookModel extends VDomModel {
       }
       await this.publishOneCell(cell.model.id, cell.model);
     });
+
+    this._panel.content.model.metadata.changed.connect(async () => {
+      await this.publishMetadata();
+    });
+
     this._publishUrl = this._publishDat.url;
-    this.stateChanged.emit(void 0);
+
+    await this.publishMetadata();
+    await this.onPublishChange(true);
+    await this.getInfo();
   }
 
   async getInfo() {
@@ -222,6 +232,17 @@ export class DatNotebookModel extends VDomModel {
       {
         path: DEFAULT_NOTEBOOK,
         jsonPath: CELL_IDS_PATH
+      }
+    );
+  }
+
+  async publishMetadata() {
+    await this._strategist.save(
+      this._publishDat,
+      this._panel.content.model.metadata.toJSON(),
+      {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['metadata']
       }
     );
   }
@@ -443,6 +464,16 @@ export class DatNotebookModel extends VDomModel {
     return cellIdToModels;
   }
 
+  async loadMetadata() {
+    const metadata = ((await this._strategist.load(this._subscribeDat, {
+      path: DEFAULT_NOTEBOOK,
+      jsonPath: ['metadata']
+    })) as any) as nbformat.INotebookMetadata;
+    for (const key of Object.keys(metadata)) {
+      this._panel.content.model.metadata.set(key, metadata[key]);
+    }
+  }
+
   async fixCellsonSubscribe() {
     const { cells } = this._panel.content.model;
     const newCellIds = await this.loadCellIds(true);
@@ -497,6 +528,8 @@ export class DatNotebookModel extends VDomModel {
     if (path == null) {
       await this.fixCellsonSubscribe();
       await this.loadAllCells();
+    } else if (jsonPath.length >= 3 && jsonPath[2] === 'metadata') {
+      await this.loadMetadata();
     } else if (path.endsWith('/cells')) {
       await this.fixCellsonSubscribe();
     } else if (jsonPath.length >= 3 && jsonPath[2] === 'cell') {
@@ -507,8 +540,6 @@ export class DatNotebookModel extends VDomModel {
         const model = cellIdToModels.get(cellId);
         if (model) {
           await this.loadOneCell(cellId, model);
-        } else {
-          console.warn('no model for', cellId);
         }
       }
     } else {
