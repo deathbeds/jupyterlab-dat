@@ -300,17 +300,127 @@ export namespace DatWidget {
       let modelJSON = model.toJSON();
       let datMeta = modelJSON.metadata.dat || (modelJSON.metadata.dat = {});
       (datMeta as any)['@id'] = cellId;
-      await this._strategist.save(this._publishDat, modelJSON, {
+
+      let dirInfo: string[];
+
+      try {
+        dirInfo = await this._publishDat.readdir(
+          [DEFAULT_NOTEBOOK, 'cell', cellId].join('/')
+        );
+      } catch {
+        // doesn't exist
+      }
+
+      if (dirInfo && dirInfo.indexOf('output') >= 0) {
+        try {
+          await this._publishDat.rmdir(
+            [DEFAULT_NOTEBOOK, 'cell', cellId, 'output'].join('/'),
+            { recursive: true }
+          );
+        } catch (err) {
+          // no big deal
+        }
+      }
+
+      if (modelJSON.attachments) {
+        await this._strategist.save(this._publishDat, modelJSON.attachments, {
+          path: DEFAULT_NOTEBOOK,
+          jsonPath: ['cell', cellId, 'attachments']
+        });
+      }
+
+      await this._strategist.save(this._publishDat, modelJSON.metadata, {
         path: DEFAULT_NOTEBOOK,
-        jsonPath: ['cell', cellId]
+        jsonPath: ['cell', cellId, 'metadata']
+      });
+
+      await this._strategist.save(this._publishDat, modelJSON.source, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId, 'source']
+      });
+
+      let cellIndex = {
+        cell_type: modelJSON.cell_type,
+        execution_count: null as number
+      };
+
+      switch (modelJSON.cell_type) {
+        case 'code':
+          let i = 0;
+          let codeModel = modelJSON as nbformat.ICodeCell;
+          cellIndex.execution_count = codeModel.execution_count;
+          for (const output of codeModel.outputs) {
+            await this._strategist.save(this._publishDat, output, {
+              path: DEFAULT_NOTEBOOK,
+              jsonPath: ['cell', cellId, 'output', `${i}`]
+            });
+            i++;
+          }
+          break;
+        default:
+          break;
+      }
+
+      await this._strategist.save(this._publishDat, modelJSON.source, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId, 'source']
+      });
+
+      // write this last
+      await this._strategist.save(this._publishDat, cellIndex, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId, 'index']
       });
     }
 
     async loadOneCell(cellId: string, model: ICellModel) {
+      // read this first
       const cellJSON = (await this._strategist.load(this._subscribeDat, {
         path: DEFAULT_NOTEBOOK,
-        jsonPath: ['cell', cellId]
+        jsonPath: ['cell', cellId, 'index']
       })) as nbformat.ICell;
+
+      cellJSON.source = (await this._strategist.load(this._subscribeDat, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId, 'source']
+      })) as nbformat.MultilineString;
+
+      cellJSON.metadata = (await this._strategist.load(this._subscribeDat, {
+        path: DEFAULT_NOTEBOOK,
+        jsonPath: ['cell', cellId, 'metadata']
+      })) as nbformat.ICellMetadata;
+
+      try {
+        cellJSON.attachments = (await this._strategist.load(
+          this._subscribeDat,
+          {
+            path: DEFAULT_NOTEBOOK,
+            jsonPath: ['cell', cellId, 'attachments']
+          }
+        )) as nbformat.IAttachments;
+      } catch {
+        //
+      }
+
+      if (cellJSON.cell_type === 'code') {
+        let codeCell = cellJSON as nbformat.ICodeCell;
+        codeCell.outputs = [];
+        let errored = false;
+        let i = 0;
+        while (!errored) {
+          try {
+            codeCell.outputs.push(
+              (await this._strategist.load(this._subscribeDat, {
+                path: DEFAULT_NOTEBOOK,
+                jsonPath: ['cell', cellId, 'output', `${i}`]
+              })) as nbformat.IOutput
+            );
+          } catch {
+            errored = true;
+          }
+          i++;
+        }
+      }
 
       if (model.type !== cellJSON.cell_type) {
         this._panel.content.select(this.cellForModel(model));
@@ -318,6 +428,10 @@ export namespace DatWidget {
           this._panel.content,
           cellJSON.cell_type as any
         );
+      }
+
+      if (isCodeCellModel(model)) {
+        model.executionCount = (cellJSON as nbformat.ICodeCell).execution_count;
       }
 
       model.value.text = Array.isArray(cellJSON.source)
@@ -420,13 +534,16 @@ export namespace DatWidget {
       } else if (path.endsWith('/cells')) {
         await this.fixCellsOnLoad();
       } else if (jsonPath.length >= 3 && jsonPath[2] === 'cell') {
-        const cellIdToModels = await this.loadCellIdToModels();
-        const cellId = jsonPath[3];
-        const model = cellIdToModels.get(cellId);
-        if (model) {
-          await this.loadOneCell(cellId, model);
-        } else {
-          console.warn('no model for', cellId);
+        // for now, only load on a full index change
+        if (jsonPath[4] === 'index') {
+          const cellIdToModels = await this.loadCellIdToModels();
+          const cellId = jsonPath[3];
+          const model = cellIdToModels.get(cellId);
+          if (model) {
+            await this.loadOneCell(cellId, model);
+          } else {
+            console.warn('no model for', cellId);
+          }
         }
       } else {
         console.warn('unhandled path', path);

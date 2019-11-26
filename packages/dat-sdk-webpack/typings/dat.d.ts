@@ -18,8 +18,17 @@ declare module 'dat-sdk/promise' {
       onInvalidated?: IDatArchive.IInvalidated
     ): IWatcher;
     getInfo(): Promise<IDatArchive.IArchiveInfo>;
-    mkdir(filepath: string): Promise<void>;
     stat(filepath: string): Promise<IDatArchive.IStat>;
+    mkdir(filepath: string): Promise<void>;
+    readdir(
+      filepath: string,
+      options?: IDatArchive.IReaddirOptions
+    ): Promise<string[]>;
+    readdir(
+      filepath: string,
+      options: IDatArchive.IStatReaddirOptions
+    ): Promise<IDatArchive.IDirInfo>;
+    rmdir(filepath: string, options?: IDatArchive.IRmdirOptions): Promise<void>;
   }
   export interface IWatcher {
     addEventListener(
@@ -83,6 +92,21 @@ declare module 'dat-sdk/promise' {
       rdev: number;
       size: number;
       uid: number;
+    }
+    export interface IReaddirOptions {
+      stat?: boolean;
+    }
+    export interface IStatReaddirOptions extends IReaddirOptions {
+      stat: true;
+    }
+    export interface IDirInfo {
+      [key: string]: {
+        name: string;
+        stat: IStat;
+      };
+    }
+    export interface IRmdirOptions {
+      recursive?: boolean;
     }
   }
 
