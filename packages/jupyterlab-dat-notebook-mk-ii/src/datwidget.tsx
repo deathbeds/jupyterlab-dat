@@ -3,7 +3,7 @@ import React from 'react';
 import { dat } from '@deathbeds/dat-sdk-webpack';
 import { each } from '@phosphor/algorithm';
 import { ElementExt } from '@phosphor/domutils';
-import { Throttler } from '@jupyterlab/coreutils';
+import { Debouncer } from '@jupyterlab/coreutils';
 
 import { VDomModel, VDomRenderer } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
@@ -28,10 +28,11 @@ import { ExplodeJSONStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/
 import { CSS } from '.';
 
 const PLACEHOLDER = 'dat://';
-const BTN_CLASS = `jp-mod-styled jp-mod-accept ${CSS.BTN.big}`;
+const BTN_CLASS = `jp-mod-styled ${CSS.BTN.big}`;
 
 const DEFAULT_NOTEBOOK = '/Untitled.ipynb';
 const CELL_IDS_PATH = ['cells'];
+const INFO_INTERVAL = 10000;
 
 const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
   event.target.select();
@@ -64,6 +65,11 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
   }
 
   renderPublish(m: DatWidget.Model) {
+    const buttonProps = {
+      disabled: !!m.shareUrl,
+      onClick: async () => await m.onShare(),
+      className: BTN_CLASS + (!m.isPublishing ? ' jp-mod-accept' : '')
+    };
     return (
       <section>
         <input
@@ -73,17 +79,27 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
           placeholder={PLACEHOLDER}
           onFocus={handleFocus}
         />
-        <button className={BTN_CLASS} onClick={async () => await m.onShare()}>
-          <label>PUBLISH</label>
+        <button {...buttonProps}>
+          <label>{m.isPublishing ? 'PUBLISHING' : 'PUBLISH'}</label>
           {this.renderShield('create')}
         </button>
+        {this.renderPublishInfo(m)}
+      </section>
+    );
+  }
+
+  renderPublishInfo(m: DatWidget.Model) {
+    if (m.isPublishing && m.publishInfo) {
+      return <code>{JSON.stringify(m.publishInfo, null, 2)}</code>;
+    } else {
+      return (
         <blockquote>
           Shares the full contents of <code>{m.filename}</code> with the DAT
           peer-to-peer network as JSON fragments. Send the link to anybody with
           <code>jupyterlab-dat</code>.
         </blockquote>
-      </section>
-    );
+      );
+    }
   }
 
   renderShield(icon: string) {
@@ -94,6 +110,12 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
   }
 
   renderSubscribe(m: DatWidget.Model) {
+    const buttonProps = {
+      className:
+        BTN_CLASS + (m.loadUrl && !m.isSubscribed ? ' jp-mod-accept' : ''),
+      disabled: !m.loadUrl || m.isSubscribed,
+      onClick: async () => await m.onLoad()
+    };
     return (
       <section>
         <input
@@ -103,17 +125,27 @@ export class DatWidget extends VDomRenderer<DatWidget.Model> {
           className="jp-mod-styled"
           onFocus={handleFocus}
         />
-        <button className={BTN_CLASS} onClick={async () => await m.onLoad()}>
-          <label>SUBSCRIBE</label>
+        <button {...buttonProps}>
+          <label>{m.isSubscribed ? 'SUBSCRIBED' : 'SUBSCRIBE'}</label>
           {this.renderShield('resume')}
         </button>
+        {this.renderSubscribeInfo(m)}
+      </section>
+    );
+  }
+
+  renderSubscribeInfo(m: DatWidget.Model) {
+    if (m.isSubscribed && m.subscribeInfo) {
+      return <code>{JSON.stringify(m.subscribeInfo, null, 2)}</code>;
+    } else {
+      return (
         <blockquote>
           Replace the in-browser contents of <code>{m.filename}</code> with the
           notebook at the above dat URL, as reconstructed from JSON fragments,
           and watch for changes.
         </blockquote>
-      </section>
-    );
+      );
+    }
   }
 }
 
@@ -133,8 +165,9 @@ export namespace DatWidget {
     private _panel: NotebookPanel;
     private _context: DocumentRegistry.IContext<INotebookModel>;
     private _manager: IDatManager;
-    private _info: dat.IDatArchive.IArchiveInfo;
-    private _throttleRate = 200;
+    private _publishInfo: dat.IDatArchive.IArchiveInfo;
+    private _subscribeInfo: dat.IDatArchive.IArchiveInfo;
+    private _throttleRate = 100;
     private _strategist = new ExplodeJSONStrategist();
 
     constructor(options: DatWidget.IOptions) {
@@ -142,7 +175,17 @@ export namespace DatWidget {
       this._panel = options.panel;
       this._context = options.context;
       this._manager = options.manager;
+      setInterval(async () => await this.getInfo(), INFO_INTERVAL);
     }
+
+    get isPublishing() {
+      return !!this._publishDat;
+    }
+
+    get isSubscribed() {
+      return !!this._subscribeDat;
+    }
+
     get loadUrl() {
       return this._loadUrl;
     }
@@ -154,12 +197,12 @@ export namespace DatWidget {
       return this._shareUrl;
     }
 
-    get info() {
-      return this._info;
+    get publishInfo() {
+      return this._publishInfo;
     }
-    set info(info) {
-      this._info = info;
-      this.stateChanged.emit(void 0);
+
+    get subscribeInfo() {
+      return this._subscribeInfo;
     }
 
     get status() {
@@ -185,7 +228,7 @@ export namespace DatWidget {
       const title = this._context.path.split('/').slice(-1)[0];
       this._publishDat = await this._manager.create({ title });
 
-      const throttledOnChange = new Throttler<void, any>(
+      const throttledOnChange = new Debouncer<void, any>(
         () => this.onShareChange(),
         this._throttleRate
       );
@@ -215,10 +258,24 @@ export namespace DatWidget {
       this.stateChanged.emit(void 0);
     }
 
+    async getInfo() {
+      let infoUpdated = false;
+      if (this._publishDat) {
+        this._publishInfo = await this._publishDat.getInfo();
+        infoUpdated = true;
+      }
+      if (this._subscribeDat) {
+        this._subscribeInfo = await this._subscribeDat.getInfo();
+        infoUpdated = true;
+      }
+      if (infoUpdated) {
+        this.stateChanged.emit(void 0);
+      }
+    }
+
     async onLoad() {
       this.status = 'subscribing';
       this._subscribeDat = await this._manager.listen(this.loadUrl);
-      this.info = await this._subscribeDat.getInfo();
       this.status = 'waiting';
       const watcher = this._subscribeDat.watch();
 
