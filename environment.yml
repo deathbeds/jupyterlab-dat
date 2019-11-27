@@ -18,5 +18,6 @@ dependencies:
   - qrcode
   - ujson
   - pip:
-      - watchgod
       - jupyter_bokeh
+      - vdom
+      - watchgod

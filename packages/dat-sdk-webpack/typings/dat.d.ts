@@ -34,14 +34,8 @@ declare module 'dat-sdk/promise' {
   }
   export type TWatchEvent = 'changed' | 'invalidated' | 'sync';
   export interface IWatcher {
-    addEventListener(
-      evt: TWatchEvent,
-      callback: IChangeWatcher
-    ): void;
-    removeEventListener(
-      evt: TWatchEvent,
-      callback: IChangeWatcher
-    ): void;
+    addEventListener(evt: TWatchEvent, callback: IChangeWatcher): void;
+    removeEventListener(evt: TWatchEvent, callback: IChangeWatcher): void;
   }
   export interface IChangeWatcher {
     (evt: IChangeEvent): void;

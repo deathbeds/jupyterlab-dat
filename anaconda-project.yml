@@ -24,5 +24,6 @@ env_specs:
       - qrcode
       - ujson
       - pip:
-          - watchgod
           - jupyter_bokeh
+          - vdom
+          - watchgod

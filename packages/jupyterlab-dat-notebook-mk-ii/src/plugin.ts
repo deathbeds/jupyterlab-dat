@@ -64,7 +64,7 @@ const extension: JupyterFrontEndPlugin<void> = {
           const url = URLExt.join(paths.urls.tree, nb.context.path);
           router.navigate(url);
           const datWidget = await datButton.requestWidget(nb, false);
-          datWidget.model.loadUrl = `dat://${datKey}`;
+          datWidget.model.loadUrl = datKey;
           await datWidget.model.onSubscribe();
           addMainAreaWidget(datWidget);
           const lab = app as JupyterLab;

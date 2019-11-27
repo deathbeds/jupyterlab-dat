@@ -6,9 +6,12 @@ import { VDomModel } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import {
   ICellModel,
+  MarkdownCellModel,
   CodeCellModel,
+  RawCellModel,
   ICodeCellModel,
-  isCodeCellModel
+  isCodeCellModel,
+  isMarkdownCellModel
 } from '@jupyterlab/cells';
 import {
   NotebookPanel,
@@ -25,6 +28,7 @@ const DEFAULT_NOTEBOOK = '/Untitled.ipynb';
 const CELL_IDS_PATH = ['cells'];
 const INFO_INTERVAL = 10000;
 const NOOP_PATH = /\/(dat.json|Untitled\.ipynb|cell|cell\/[^\/]+)$/;
+const METADATA_KEY = 'jupyterlab-dat-mkii';
 
 export class DatNotebookModel extends VDomModel {
   private _panel: NotebookPanel;
@@ -47,6 +51,7 @@ export class DatNotebookModel extends VDomModel {
   private _metadataModelPublishers = new Map<ICellModel, Function>();
   private _sourceModelPublishers = new Map<ICellModel, Function>();
   private _follow = true;
+  private _autoRender = true;
   private _watcher: dat.IWatcher;
 
   constructor(options: DatNotebookModel.IOptions) {
@@ -199,7 +204,7 @@ export class DatNotebookModel extends VDomModel {
       this
     );
 
-    this._publishUrl = this._publishDat.url;
+    this._publishUrl = this._publishDat.url.split('/').slice(-1)[0];
 
     await this.publishNotebookMetadata();
     await this.onPublishChange(true);
@@ -317,7 +322,6 @@ export class DatNotebookModel extends VDomModel {
 
   async publishNotebookMetadata() {
     const metadataJSON = this._panel.content.model.metadata.toJSON();
-    console.log(metadataJSON);
     await this._strategist.save(this._publishDat, metadataJSON, {
       path: DEFAULT_NOTEBOOK,
       jsonPath: ['metadata']
@@ -475,25 +479,16 @@ export class DatNotebookModel extends VDomModel {
 
     switch (modelJSON.cell_type) {
       case 'code':
-        let i = 0;
         let codeModel = modelJSON as nbformat.ICodeCell;
         cellIndex.execution_count = codeModel.execution_count;
         if (isCodeCellModel(model)) {
           await this.publishCellOutputs(cellId, model);
-        }
-        for (const output of codeModel.outputs) {
-          await this._strategist.save(this._publishDat, output, {
-            path: DEFAULT_NOTEBOOK,
-            jsonPath: ['cell', cellId, 'output', `${i}`]
-          });
-          i++;
         }
         break;
       default:
         break;
     }
 
-    // write this last
     await this._strategist.save(this._publishDat, cellIndex, {
       path: DEFAULT_NOTEBOOK,
       jsonPath: ['cell', cellId, 'index']
@@ -572,12 +567,26 @@ export class DatNotebookModel extends VDomModel {
     })) as nbformat.ICellMetadata;
   }
 
-  async loadOneCell(cellId: string, model: ICellModel) {
-    // read this first
-    const cellJSON = (await this._strategist.load(this._subscribeDat, {
+  renderOneMarkdownCell(model: ICellModel) {
+    for (const widget of this._panel.content.widgets) {
+      if (widget.model === model) {
+        this._panel.content.select(widget);
+        NotebookActions.run(this._panel.content);
+        break;
+      }
+    }
+  }
+
+  async loadOneCellIndex(cellId: string) {
+    return (await this._strategist.load(this._subscribeDat, {
       path: DEFAULT_NOTEBOOK,
       jsonPath: ['cell', cellId, 'index']
     })) as nbformat.ICell;
+  }
+
+  async loadOneCell(cellId: string, model: ICellModel) {
+    // read this first
+    const cellJSON = await this.loadOneCellIndex(cellId);
 
     cellJSON.source = await this.loadOneSource(cellId);
 
@@ -598,6 +607,10 @@ export class DatNotebookModel extends VDomModel {
         this._panel.content,
         cellJSON.cell_type as any
       );
+    }
+
+    if (this._autoRender && isMarkdownCellModel(model)) {
+      this.renderOneMarkdownCell(model);
     }
 
     if (cellJSON.cell_type === 'code' && isCodeCellModel(model)) {
@@ -625,7 +638,7 @@ export class DatNotebookModel extends VDomModel {
       model.metadata.set(k, cellJSON.metadata[k]);
     }
 
-    model.metadata.set('dat', {
+    model.metadata.set(METADATA_KEY, {
       '@id': cellId
     });
 
@@ -652,7 +665,7 @@ export class DatNotebookModel extends VDomModel {
   async loadCellIdToModels() {
     const cellIdToModels = new Map<string, ICellModel>();
     each(this._panel.model.cells, model => {
-      let cellId = ((model.metadata.get('dat') as any) || {})['@id'];
+      let cellId = ((model.metadata.get(METADATA_KEY) as any) || {})['@id'];
       if (cellId != null) {
         cellIdToModels.set(cellId, model);
       }
@@ -678,7 +691,7 @@ export class DatNotebookModel extends VDomModel {
     const oldCellIds = [] as string[];
     let needsUpdate = false;
     each(cells, model => {
-      const cellId = ((model.metadata.get('dat') as any) || {})['@id'];
+      const cellId = ((model.metadata.get(METADATA_KEY) as any) || {})['@id'];
       if (cellId == null || newCellIds.indexOf(cellId) === -1) {
         unmanaged.push(model);
         needsUpdate = true;
@@ -688,15 +701,37 @@ export class DatNotebookModel extends VDomModel {
       }
     });
 
-    const newCellModels = newCellIds.map(cellId => {
+    const newCellModels = [] as ICellModel[];
+
+    for (const cellId of newCellIds) {
       let model = oldCellModels[cellId];
       if (model == null) {
-        model = new CodeCellModel({});
-        (model.metadata as any).set('dat', { '@id': cellId });
+        console.log('making new cell');
+        const index = await this.loadOneCellIndex(cellId);
+        const cellType = index?.cell_type || 'markdown';
+        const source = (await this.loadOneSource(cellId)) || '';
+
+        switch (cellType) {
+          case 'markdown':
+            model = new MarkdownCellModel({});
+            break;
+          case 'code':
+            model = new CodeCellModel({});
+            break;
+          case 'raw':
+            model = new RawCellModel({});
+            break;
+          default:
+            console.warn('unhandled cell type', cellId, cellType);
+            model = new RawCellModel({});
+            break;
+        }
+        (model.metadata as any).set(METADATA_KEY, { '@id': cellId });
+        model.value.text = Array.isArray(source) ? source.join('') : source;
         needsUpdate = true;
       }
-      return model;
-    });
+      newCellModels.push(model);
+    }
 
     if (!needsUpdate) {
       for (let i = 0; i < newCellIds.length; i++) {
@@ -771,6 +806,9 @@ export class DatNotebookModel extends VDomModel {
           if (model) {
             const source = await this.loadOneSource(cellId);
             model.value.text = Array.isArray(source) ? source.join('') : source;
+            if (isMarkdownCellModel(model)) {
+              this.renderOneMarkdownCell(model);
+            }
           }
           break;
         default:
