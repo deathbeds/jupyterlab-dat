@@ -4,6 +4,7 @@
 
 > An experimental approach for publishing/subscribing to streams of notebook
 > contents in JupyterLab over the [dat](https://dat.foundation) peer-to-peer network
+> This is not [real-time collaboration][rtc].
 
 ## Usage
 
@@ -12,7 +13,7 @@
 ### Publish
 
 - Open a notebook
-- Click the `⬡+` icon in the notebook toolbar
+- Click the `⬡⭐` icon in the notebook toolbar
 - Click `PUBLISH`
 - Copy the `dat://` url, send it to someone else with `jupyterlab-dat` installed
 - Change the notebook
@@ -20,7 +21,7 @@
 ### Subscribe
 
 - Open a new Untitled notebook
-- Click the `⬡+` icon in the notebook toolbar
+- Click the `⬡⭐` icon in the notebook toolbar
 - Paste a `dat://` url into the text box above `SUBSCRIBE`
 - Click `SUBSCRIBE`
 - Watch the notebook change
@@ -79,3 +80,4 @@
 [nbexplode]: https://github.com/takluyver/nbexplode
 [jupyter-server-proxy]: https://github.com/jupyterhub/jupyter-server-proxy
 [discovery-swarm-web]: https://github.com/RangerMauve/discovery-swarm-web
+[rtc]: https://github.com/jupyterlab/jupyterlab/issues/5382

@@ -168,6 +168,7 @@ export class DatNotebookModel extends VDomModel {
 
   private _makeSourcePublisher(model: ICellModel) {
     return async (_outputs: any, _change: any) => {
+      await this.publishActiveCellIndex(model.id);
       await this.publishCellSource(model.id, model.value.text);
     };
   }
@@ -292,12 +293,16 @@ export class DatNotebookModel extends VDomModel {
     await this.publishCellOrder();
   }
 
-  async publishActiveCell() {
-    const { model } = this._panel.content.activeCell;
-    await this._strategist.save(this._publishDat, model.id, {
+  async publishActiveCellIndex(cellId: string) {
+    await this._strategist.save(this._publishDat, cellId, {
       path: DEFAULT_NOTEBOOK,
       jsonPath: ['active_cell']
     });
+  }
+
+  async publishActiveCell() {
+    const { model } = this._panel.content.activeCell;
+    await this.publishActiveCellIndex(model.id);
     await this.publishOneCell(model.id, model);
   }
 
@@ -706,7 +711,6 @@ export class DatNotebookModel extends VDomModel {
     for (const cellId of newCellIds) {
       let model = oldCellModels[cellId];
       if (model == null) {
-        console.log('making new cell');
         const index = await this.loadOneCellIndex(cellId);
         const cellType = index?.cell_type || 'markdown';
         const source = (await this.loadOneSource(cellId)) || '';
@@ -727,6 +731,7 @@ export class DatNotebookModel extends VDomModel {
             break;
         }
         (model.metadata as any).set(METADATA_KEY, { '@id': cellId });
+        model.trusted = true;
         model.value.text = Array.isArray(source) ? source.join('') : source;
         needsUpdate = true;
       }
