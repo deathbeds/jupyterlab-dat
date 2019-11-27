@@ -43,10 +43,11 @@ export class DatNotebookModel extends VDomModel {
   private _loadUrl: string;
   private _subscribeDat: dat.IDatArchive;
   private _subscribeInfo: dat.IDatArchive.IArchiveInfo;
-  private _outputModelPublishers = new Map<string, Function>();
-  private _metadataModelPublishers = new Map<string, Function>();
-  private _sourceModelPublishers = new Map<string, Function>();
+  private _outputModelPublishers = new Map<ICellModel, Function>();
+  private _metadataModelPublishers = new Map<ICellModel, Function>();
+  private _sourceModelPublishers = new Map<ICellModel, Function>();
   private _follow = true;
+  private _watcher: dat.IWatcher;
 
   constructor(options: DatNotebookModel.IOptions) {
     super();
@@ -54,6 +55,15 @@ export class DatNotebookModel extends VDomModel {
     this._context = options.context;
     this._manager = options.manager;
     setInterval(async () => await this.getInfo(), INFO_INTERVAL);
+  }
+
+  dispose() {
+    if (this.isDisposed) {
+      return;
+    }
+    this.unpublish().catch(console.warn);
+    this.unsubscribe().catch(console.warn);
+    super.dispose();
   }
 
   get panel() {
@@ -177,29 +187,46 @@ export class DatNotebookModel extends VDomModel {
       author
     });
 
-    this._panel.content.model.cells.changed.connect(async cells => {
-      const cellIds = [] as string[];
-      each(cells, model => {
-        const cellId = model.id;
-        cellIds.push(cellId);
-      });
-      await this.publishCellOrder(cellIds);
-    });
+    this._panel.content.model.cells.changed.connect(
+      this.publishCellOrder,
+      this
+    );
 
-    this._panel.content.activeCellChanged.connect(async (_notebook, cell) => {
-      await this.publishActiveCell(cell.model.id);
-      await this.publishOneCell(cell.model.id, cell.model);
-    });
+    this._panel.content.activeCellChanged.connect(this.publishActiveCell, this);
 
-    this._panel.content.model.metadata.changed.connect(async () => {
-      await this.publishNotebookMetadata();
-    });
+    this._panel.content.model.metadata.changed.connect(
+      this.publishNotebookMetadata,
+      this
+    );
 
     this._publishUrl = this._publishDat.url;
 
     await this.publishNotebookMetadata();
     await this.onPublishChange(true);
     await this.getInfo();
+  }
+
+  async unpublish() {
+    if (!this._publishDat) {
+      return;
+    }
+    const { _publishDat } = this;
+    this._publishDat = null;
+    await this._manager.close(_publishDat);
+    this._panel.content.model?.cells.changed.disconnect(
+      this.publishCellOrder,
+      this
+    );
+    this._panel.content.activeCellChanged.disconnect(
+      this.publishActiveCell,
+      this
+    );
+    this._panel.content.model?.metadata.changed.disconnect(
+      this.publishNotebookMetadata,
+      this
+    );
+    this.uninstrumentAllCells();
+    this.status = 'zzz';
   }
 
   async getInfo() {
@@ -223,12 +250,24 @@ export class DatNotebookModel extends VDomModel {
       sparse: true
     });
     this.status = 'ready';
-    const watcher = this._subscribeDat.watch();
+    this._watcher = this._subscribeDat.watch();
 
-    watcher.addEventListener('invalidated', evt => this.onSubscribeChange(evt));
-    watcher.addEventListener('sync', evt => this.onSubscribeChange(evt));
+    this._watcher.addEventListener('invalidated', evt =>
+      this.onSubscribeChange(evt)
+    );
+    this._watcher.addEventListener('sync', evt => this.onSubscribeChange(evt));
     await this.getInfo();
     await this.onSubscribeChange({ path: null });
+  }
+
+  async unsubscribe() {
+    if (!this._subscribeDat) {
+      return;
+    }
+    const { _subscribeDat } = this;
+    this._subscribeDat = null;
+    await this._manager.close(_subscribeDat);
+    delete this._watcher;
   }
 
   async publishAllCells() {
@@ -245,17 +284,25 @@ export class DatNotebookModel extends VDomModel {
 
     await Promise.all(promises);
 
-    await this.publishCellOrder(cellIds);
+    await this.publishCellOrder();
   }
 
-  async publishActiveCell(cellId: string) {
-    await this._strategist.save(this._publishDat, cellId, {
+  async publishActiveCell() {
+    const { model } = this._panel.content.activeCell;
+    await this._strategist.save(this._publishDat, model.id, {
       path: DEFAULT_NOTEBOOK,
       jsonPath: ['active_cell']
     });
+    await this.publishOneCell(model.id, model);
   }
 
-  async publishCellOrder(cellIds: string[]) {
+  async publishCellOrder() {
+    const { cells } = this._panel.model;
+    const cellIds = [] as string[];
+    each(cells, model => {
+      const cellId = model.id;
+      cellIds.push(cellId);
+    });
     await this._strategist.save(
       this._publishDat,
       {
@@ -339,24 +386,48 @@ export class DatNotebookModel extends VDomModel {
     return null;
   }
 
-  async publishOneCell(cellId: string, model: ICellModel) {
-    if (isCodeCellModel(model) && !this._outputModelPublishers.has(cellId)) {
+  instrumentCell(model: ICellModel) {
+    if (isCodeCellModel(model) && !this._outputModelPublishers.has(model)) {
       const publisher = this._makeOutputPublisher(model);
-      this._outputModelPublishers.set(cellId, publisher);
+      this._outputModelPublishers.set(model, publisher);
       model.outputs.changed.connect(publisher);
     }
 
-    if (!this._metadataModelPublishers.has(cellId)) {
+    if (!this._metadataModelPublishers.has(model)) {
       const publisher = this._makeMetadataPublisher(model);
-      this._outputModelPublishers.set(cellId, publisher);
+      this._metadataModelPublishers.set(model, publisher);
       model.metadata.changed.connect(publisher);
     }
 
-    if (!this._sourceModelPublishers.has(cellId)) {
+    if (!this._sourceModelPublishers.has(model)) {
       const publisher = this._makeSourcePublisher(model);
-      this._sourceModelPublishers.set(cellId, publisher);
+      this._sourceModelPublishers.set(model, publisher);
       model.value.changed.connect(publisher);
     }
+  }
+
+  uninstrumentAllCells() {
+    for (const model of this._outputModelPublishers.keys()) {
+      const publisher = this._outputModelPublishers.get(model);
+      (model as ICodeCellModel).outputs.changed.disconnect(publisher as any);
+      this._outputModelPublishers.delete(model);
+    }
+
+    for (const model of this._metadataModelPublishers.keys()) {
+      const publisher = this._metadataModelPublishers.get(model);
+      model.metadata.changed.disconnect(publisher as any);
+      this._metadataModelPublishers.delete(model);
+    }
+
+    for (const model of this._sourceModelPublishers.keys()) {
+      const publisher = this._sourceModelPublishers.get(model);
+      model.value.changed.disconnect(publisher as any);
+      this._sourceModelPublishers.delete(model);
+    }
+  }
+
+  async publishOneCell(cellId: string, model: ICellModel) {
+    this.instrumentCell(model);
 
     let modelJSON = model.toJSON();
     let datMeta = modelJSON.metadata.dat || (modelJSON.metadata.dat = {});
@@ -599,7 +670,7 @@ export class DatNotebookModel extends VDomModel {
     }
   }
 
-  async fixCellsonSubscribe() {
+  async fixCellsOnSubscribe() {
     const { cells } = this._panel.content.model;
     const newCellIds = await this.loadCellIds(true);
     const unmanaged = [] as ICellModel[];
@@ -654,13 +725,13 @@ export class DatNotebookModel extends VDomModel {
     this.status = 'updating';
 
     if (path == null) {
-      await this.fixCellsonSubscribe();
+      await this.fixCellsOnSubscribe();
       await this.loadAllCells();
       await this.fixActiveCell();
     } else if (jsonPath.length >= 3 && jsonPath[2] === 'metadata') {
       await this.loadNotebookMetadata();
     } else if (path.endsWith('/cells')) {
-      await this.fixCellsonSubscribe();
+      await this.fixCellsOnSubscribe();
     } else if (path.endsWith('/active_cell')) {
       await this.fixActiveCell();
     } else if (jsonPath.length >= 5 && jsonPath[2] === 'cell') {

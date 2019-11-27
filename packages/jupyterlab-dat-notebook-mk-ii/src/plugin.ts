@@ -36,6 +36,7 @@ const extension: JupyterFrontEndPlugin<void> = {
         mode: 'split-bottom',
         ref: content.model.panel.id
       });
+      content.model.panel.disposed.connect(main.dispose, main);
     }
 
     datButton.widgetRequested.connect((_it, content) => {

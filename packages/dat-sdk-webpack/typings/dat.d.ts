@@ -32,9 +32,14 @@ declare module 'dat-sdk/promise' {
     configure(options: IDatArchive.IConfigureOptions): Promise<void>;
     close(): Promise<void>;
   }
+  export type TWatchEvent = 'changed' | 'invalidated' | 'sync';
   export interface IWatcher {
     addEventListener(
-      evt: 'changed' | 'invalidated' | 'sync',
+      evt: TWatchEvent,
+      callback: IChangeWatcher
+    ): void;
+    removeEventListener(
+      evt: TWatchEvent,
       callback: IChangeWatcher
     ): void;
   }

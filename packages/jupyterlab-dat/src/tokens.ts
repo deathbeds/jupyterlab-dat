@@ -14,6 +14,7 @@ export interface IDatManager {
     url: string,
     opts?: dat.IDatArchive.ILoadOptions
   ): Promise<dat.IDatArchive>;
+  close(archive: dat.IDatArchive): Promise<void>;
 }
 
 export namespace IDatManager {

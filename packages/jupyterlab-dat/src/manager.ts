@@ -49,4 +49,8 @@ export class DatManager implements IDatManager {
     this._archives.set(d.url, d);
     return d;
   }
+
+  async close(archive: dat.IDatArchive): Promise<void> {
+    await archive.close();
+  }
 }

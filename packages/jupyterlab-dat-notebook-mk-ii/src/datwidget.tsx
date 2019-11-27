@@ -22,6 +22,16 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
     this.addClass(CSS.WIDGET);
     this.addClass('jp-dat-mkii');
   }
+
+  dispose() {
+    if (this.isDisposed) {
+      return;
+    }
+    this.model.dispose();
+    this.model = null;
+    super.dispose();
+  }
+
   protected render() {
     const m = this.model;
 

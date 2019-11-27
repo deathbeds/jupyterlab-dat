@@ -7,7 +7,7 @@ import { DatManager } from './manager';
 import { IDatManager } from './tokens';
 
 const extension: JupyterFrontEndPlugin<IDatManager> = {
-  id: 'jupyterlab-ws-contents',
+  id: 'jupyterlab-dat',
   autoStart: true,
   provides: IDatManager,
   activate: (_app: JupyterFrontEnd) => {
