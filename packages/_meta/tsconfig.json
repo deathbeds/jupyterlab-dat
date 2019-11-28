@@ -14,10 +14,7 @@
       "path": "../dat-sdk-webpack"
     },
     {
-      "path": "../jupyterlab-dat-notebook-mk-i"
-    },
-    {
-      "path": "../jupyterlab-dat-notebook-mk-ii"
+      "path": "../jupyterlab-dat-notebook"
     }
   ]
 }

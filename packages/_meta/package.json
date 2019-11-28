@@ -26,8 +26,7 @@
   "peerDependencies": {
     "@deathbeds/dat-sdk-webpack": "*",
     "@deathbeds/jupyterlab-dat": "*",
-    "@deathbeds/jupyterlab-dat-notebook-mk-i": "*",
-    "@deathbeds/jupyterlab-dat-notebook-mk-ii": "*"
+    "@deathbeds/jupyterlab-dat-notebook": "*"
   },
   "publishConfig": {
     "access": "public"

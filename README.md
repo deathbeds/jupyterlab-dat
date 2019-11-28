@@ -36,7 +36,7 @@
 - trust cells (enabled by default)
 - single-link sharing, e.g.
   ```
-  https://mybinder.org/v2/gh/{:repo}/{:branch}?urlpath=lab/tree/dat-mkii/{:dat-hash}
+  https://mybinder.org/v2/gh/{:repo}/{:branch}?urlpath=lab/tree/dat/notebook/{:dat-hash}
   ```
   - opens an Untitled notebook
   - starts subscribing

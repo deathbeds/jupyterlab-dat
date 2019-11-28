@@ -1,7 +1,7 @@
 {
-  "name": "@deathbeds/jupyterlab-dat-notebook-mk-i",
+  "name": "@deathbeds/jupyterlab-dat-notebook",
   "version": "0.1.0",
-  "description": "a naive dat button for JupyterLab Notebooks",
+  "description": "a hopeful dat button for JupyterLab Notebooks",
   "keywords": [
     "jupyter",
     "jupyterlab",

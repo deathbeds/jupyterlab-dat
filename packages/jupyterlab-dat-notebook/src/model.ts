@@ -29,7 +29,7 @@ const DEFAULT_NOTEBOOK = '/Untitled.ipynb';
 const CELL_IDS_PATH = ['cells'];
 const INFO_INTERVAL = 10000;
 const NOOP_PATH = /\/(dat.json|Untitled\.ipynb|cell|cell\/[^\/]+)$/;
-const METADATA_KEY = 'jupyterlab-dat-mkii';
+const METADATA_KEY = 'jupyterlab-dat';
 const VALID_DAT = /(dat:\/\/)?[\da-f]{64}/;
 
 export class DatNotebookModel extends VDomModel {

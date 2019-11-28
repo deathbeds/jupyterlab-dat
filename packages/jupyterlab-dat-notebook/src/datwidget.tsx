@@ -20,7 +20,6 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
     this.model = new DatNotebookModel(options);
     this.title.iconClass = CSS.ICONS.star;
     this.addClass(CSS.WIDGET);
-    this.addClass('jp-dat-mkii');
   }
 
   dispose() {
@@ -47,7 +46,6 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
       <div {...props}>
         {this.renderPublish(m)}
         {this.renderSubscribe(m)}
-        <h1>mkii</h1>
       </div>
     );
   }

@@ -19,7 +19,7 @@ import { DatNotebookButton } from './datbutton';
 import { DatWidget } from './datwidget';
 
 const extension: JupyterFrontEndPlugin<void> = {
-  id: 'jupyterlab-dat-notebook-mk-ii',
+  id: 'jupyterlab-dat-notebook',
   autoStart: true,
   requires: [JupyterFrontEnd.IPaths, IRouter, IIconRegistry, IDatManager],
   activate: (
@@ -50,7 +50,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     });
 
     const datPattern = new RegExp(
-      `^${paths.urls.tree}/dat-mkii/([0-9a-f]{64})`
+      `^${paths.urls.tree}/dat/notebook/([0-9a-f]{64})`
     );
 
     commands.addCommand(CommandIDs.openDatNotebook, {
