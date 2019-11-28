@@ -57,6 +57,7 @@ export class DatNotebookModel extends VDomModel {
   private _autoRender = true;
   private _autoTrust = true;
   private _watcher: dat.IWatcher;
+  private _infoInterval: number;
 
   constructor(options: DatNotebookModel.IOptions) {
     super();
@@ -64,7 +65,6 @@ export class DatNotebookModel extends VDomModel {
     this._context = options.context;
     this._manager = options.manager;
     this._icons = options.icons;
-    setInterval(async () => await this.getInfo(), INFO_INTERVAL);
   }
 
   dispose() {
@@ -73,6 +73,7 @@ export class DatNotebookModel extends VDomModel {
     }
     this.unpublish().catch(console.warn);
     this.unsubscribe().catch(console.warn);
+    this.unwatchInfo();
     super.dispose();
   }
 
@@ -213,6 +214,20 @@ export class DatNotebookModel extends VDomModel {
     };
   }
 
+  watchInfo() {
+    if (this._infoInterval != null) {
+      return;
+    }
+    this._infoInterval = setInterval(
+      async () => await this.getInfo(),
+      INFO_INTERVAL
+    );
+  }
+
+  async unwatchInfo() {
+    clearInterval(this._infoInterval);
+  }
+
   async onPublish() {
     this.status = 'sharing';
     const { title, description, author } = this;
@@ -241,6 +256,7 @@ export class DatNotebookModel extends VDomModel {
     await this.publishNotebookMetadata();
     await this.onPublishChange(true);
     await this.getInfo();
+    this.watchInfo();
   }
 
   async unpublish() {
@@ -294,6 +310,7 @@ export class DatNotebookModel extends VDomModel {
     );
     await this.getInfo();
     await this.onSubscribeChange({ path: null });
+    this.watchInfo();
   }
 
   async unsubscribe() {
@@ -568,7 +585,8 @@ export class DatNotebookModel extends VDomModel {
         path: DEFAULT_NOTEBOOK,
         jsonPath: ['cell', cellId, 'output', `${outputIdx}`]
       })) as nbformat.IOutput;
-    } catch {
+    } catch (err) {
+      console.warn('error loading output', cellId, outputIdx);
       return null;
     }
   }
@@ -605,6 +623,7 @@ export class DatNotebookModel extends VDomModel {
   renderOneMarkdownCell(model: ICellModel) {
     for (const widget of this._panel.content.widgets) {
       if (widget.model === model) {
+        this._panel.content.deselectAll();
         this._panel.content.select(widget);
         NotebookActions.run(this._panel.content);
         break;
@@ -637,6 +656,7 @@ export class DatNotebookModel extends VDomModel {
     }
 
     if (model.type !== cellJSON.cell_type) {
+      this._panel.content.deselectAll();
       this._panel.content.select(this.cellForModel(model));
       NotebookActions.changeCellType(
         this._panel.content,
@@ -742,7 +762,7 @@ export class DatNotebookModel extends VDomModel {
       let model = oldCellModels[cellId];
       if (model == null) {
         const index = await this.loadOneCellIndex(cellId);
-        const cellType = index?.cell_type || 'markdown';
+        const cellType = index?.cell_type || 'code';
         const source = (await this.loadOneSource(cellId)) || '';
 
         switch (cellType) {
@@ -834,7 +854,7 @@ export class DatNotebookModel extends VDomModel {
         case 'metadata':
           if (model) {
             const meta = await this.loadOneCellMedata(cellId);
-            for (const key of Object.keys(meta)) {
+            for (const key of Object.keys(meta || {})) {
               model.metadata.set(key, meta[key]);
             }
           }

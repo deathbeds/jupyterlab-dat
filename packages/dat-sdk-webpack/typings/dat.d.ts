@@ -1,8 +1,37 @@
 declare module 'random-access-*' {}
 
 declare module 'dat-sdk/promise' {
+  export interface IHyperdrive {
+    peers: IHyperdrive.IPeer[];
+    on(event: 'extension', listener: IHyperdrive.IExtensionListener): void;
+    on(event: 'peer-add', listener: IHyperdrive.IPeerListener): void;
+    on(event: 'peer-remove', listener: IHyperdrive.IPeerListener): void;
+    on(event: 'close', listener: Function): void;
+    on(event: 'ready', listener: Function): void;
+    on(event: 'error', listener: IHyperdrive.IErrorListener): void;
+  }
+
+  export namespace IHyperdrive {
+    export interface IExtensionListener {
+      (name: string, message: Buffer, peer: IPeer): void;
+    }
+
+    export interface IPeerListener {
+      (peer: IPeer): void;
+    }
+
+    export interface IErrorListener {
+      (err: any): void;
+    }
+
+    export interface IPeer {
+      extension(name: string, message: Buffer): void;
+    }
+  }
+
   export interface IDatArchive extends EventTarget {
     url: string;
+    _archve: IHyperdrive;
     readFile<T>(
       filepath: string,
       opts: string | IDatArchive.IReadOptions
@@ -48,6 +77,7 @@ declare module 'dat-sdk/promise' {
       persist?: boolean;
       storage?: Function;
       sparse?: boolean;
+      extension?: string[];
     }
     export interface IConfigureOptions {
       title?: string;

@@ -12,6 +12,9 @@ export class ExplodeJSONStrategist implements IStrategist<JSONValue> {
     data: JSONValue,
     opts: ExplodeJSONStrategist.IOptions
   ): Promise<void> {
+    if (!archive) {
+      return;
+    }
     const { jsonPath, path } = opts;
     const finalPath = this.toPath(opts);
     let i = 0;
@@ -49,6 +52,9 @@ export class ExplodeJSONStrategist implements IStrategist<JSONValue> {
     archive: dat.IDatArchive,
     opts: ExplodeJSONStrategist.IOptions
   ): Promise<JSONValue> {
+    if (!archive) {
+      return;
+    }
     const path = this.toPath(opts);
     try {
       return JSON.parse(await archive.readFile<string>(path, DEFAULT_ENCODING));
