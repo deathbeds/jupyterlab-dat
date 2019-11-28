@@ -448,19 +448,19 @@ export class DatNotebookModel extends VDomModel {
   uninstrumentAllCells() {
     for (const model of this._outputModelPublishers.keys()) {
       const publisher = this._outputModelPublishers.get(model);
-      (model as ICodeCellModel).outputs.changed.disconnect(publisher as any);
+      (model as ICodeCellModel)?.outputs?.changed.disconnect(publisher as any);
       this._outputModelPublishers.delete(model);
     }
 
     for (const model of this._metadataModelPublishers.keys()) {
       const publisher = this._metadataModelPublishers.get(model);
-      model.metadata.changed.disconnect(publisher as any);
+      model.metadata?.changed.disconnect(publisher as any);
       this._metadataModelPublishers.delete(model);
     }
 
     for (const model of this._sourceModelPublishers.keys()) {
       const publisher = this._sourceModelPublishers.get(model);
-      model.value.changed.disconnect(publisher as any);
+      model?.value.changed.disconnect(publisher as any);
       this._sourceModelPublishers.delete(model);
     }
   }
