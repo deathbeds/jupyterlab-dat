@@ -69,7 +69,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
         />
         <button {...buttonProps}>
           <label>{m.isPublishing ? 'PUBLISHING' : 'PUBLISH'}</label>
-          {this.renderShield('create')}
+          {this.renderShield('dat-create-new-dat')}
         </button>
         {this.renderPublishInfo(m)}
         {this.renderInfoForm(m)}
@@ -127,31 +127,32 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
   }
 
   renderShield(icon: string) {
-    const props = {
-      className: `${CSS.ICONS[icon]} ${CSS.SHIELD}`
-    };
-    return <div {...props}></div>;
+    return (
+      <div className={CSS.SHIELD}>
+        {this.model.icons.iconReact({ name: icon })}
+      </div>
+    );
   }
 
   renderSubscribe(m: DatNotebookModel) {
     const buttonProps = {
       className:
-        BTN_CLASS + (m.loadUrl && !m.isSubscribed ? ' jp-mod-accept' : ''),
-      disabled: !m.loadUrl || m.isSubscribed,
+        BTN_CLASS + (m.subscribeUrl && !m.isSubscribed ? ' jp-mod-accept' : ''),
+      disabled: !m.subscribeURLisValid || m.isSubscribed,
       onClick: async () => await m.onSubscribe()
     };
     return (
       <section>
         <input
-          defaultValue={m.loadUrl}
-          onChange={e => (m.loadUrl = e.currentTarget.value)}
+          defaultValue={m.subscribeUrl}
+          onChange={e => (m.subscribeUrl = e.currentTarget.value)}
           placeholder={PLACEHOLDER}
           className="jp-mod-styled"
           onFocus={handleFocus}
         />
         <button {...buttonProps}>
           <label>{m.isSubscribed ? 'SUBSCRIBED' : 'SUBSCRIBE'}</label>
-          {this.renderShield('resume')}
+          {this.renderShield('dat-hexagon-resume')}
         </button>
         {this.renderSubscribeInfo(m)}
         {this.renderSubscribeForm(m)}
@@ -184,6 +185,24 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
             defaultChecked={m.follow}
             className="jp-mod-styled"
             onChange={() => (m.follow = !m.follow)}
+          />
+        </label>
+        <label>
+          <i>Render Markdown</i>
+          <input
+            type="checkbox"
+            defaultChecked={m.autoRender}
+            className="jp-mod-styled"
+            onChange={() => (m.autoRender = !m.autoRender)}
+          />
+        </label>
+        <label>
+          <i>Trust Content</i>
+          <input
+            type="checkbox"
+            defaultChecked={m.autoTrust}
+            className="jp-mod-styled"
+            onChange={() => (m.autoTrust = !m.autoTrust)}
           />
         </label>
       </details>

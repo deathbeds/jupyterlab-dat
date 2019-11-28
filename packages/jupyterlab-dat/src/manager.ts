@@ -10,7 +10,6 @@ const NOTEBOOK_SERVER_DISCOVERY =
   ) + '/';
 
 export class DatManager implements IDatManager {
-  private _archives = new Map<string, dat.IDatArchive>();
   private _SDK: dat.ISDK;
   private _RAM: any;
 
@@ -35,7 +34,6 @@ export class DatManager implements IDatManager {
       persist: false,
       storage: this._RAM
     });
-    this._archives.set(d.url, d);
     return d;
   }
 
@@ -46,7 +44,6 @@ export class DatManager implements IDatManager {
       persist: false,
       storage: this._RAM
     });
-    this._archives.set(d.url, d);
     return d;
   }
 

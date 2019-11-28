@@ -1,9 +1,6 @@
 :root {
   --jp-dat-icon-light: url('./dat-light.svg');
   --jp-dat-icon-dark: url('./dat-dark.svg');
-  --jp-dat-icon-create: url('~dat-icons/icons/create-new-dat.svg');
-  --jp-dat-icon-resume: url('~dat-icons/icons/hexagon-resume.svg');
-  --jp-dat-icon-star: url('~dat-icons/icons/star-dat.svg');
   --jp-dat-color-brand: #2aca4b;
 }
 
@@ -34,23 +31,10 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
 }
 
 .jp-mod-dat-shield {
-  background-size: 61%;
-  width: 5rem;
-  min-width: 5rem;
-  height: 5rem;
-  background-position: center;
-  background-repeat: no-repeat;
+  padding: 1rem;
+  width: 4rem;
+  min-width: 4rem;
+  height: 4rem;
+  min-height: 4rem;
   flex: 0;
-}
-
-.jp-Dat-Icon-create {
-  background-image: var(--jp-dat-icon-create);
-}
-
-.jp-Dat-Icon-resume {
-  background-image: var(--jp-dat-icon-resume);
-}
-
-.jp-Dat-Icon-star {
-  background-image: var(--jp-dat-icon-star);
 }

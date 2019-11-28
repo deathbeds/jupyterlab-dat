@@ -31,7 +31,9 @@
 - two-or-three click publish/subscribe
 - optional metadata sharing
 - live view of peer count and version
-- optional active cell following (enabled by default)
+- active cell following (enabled by default)
+- markdown rendering (enabled by default)
+- trust cells (enabled by default)
 - single-link sharing, e.g.
   ```
   https://mybinder.org/v2/gh/{:repo}/{:branch}?urlpath=lab/tree/dat-mkii/{:dat-hash}

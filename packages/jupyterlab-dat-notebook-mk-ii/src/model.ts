@@ -3,6 +3,7 @@ import { each } from '@phosphor/algorithm';
 import { ElementExt } from '@phosphor/domutils';
 
 import { VDomModel } from '@jupyterlab/apputils';
+import { IIconRegistry } from '@jupyterlab/ui-components';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import {
   ICellModel,
@@ -29,6 +30,7 @@ const CELL_IDS_PATH = ['cells'];
 const INFO_INTERVAL = 10000;
 const NOOP_PATH = /\/(dat.json|Untitled\.ipynb|cell|cell\/[^\/]+)$/;
 const METADATA_KEY = 'jupyterlab-dat-mkii';
+const VALID_DAT = /(dat:\/\/)?[\da-f]{64}/;
 
 export class DatNotebookModel extends VDomModel {
   private _panel: NotebookPanel;
@@ -36,6 +38,7 @@ export class DatNotebookModel extends VDomModel {
   private _manager: IDatManager;
   private _strategist = new ExplodeJSONStrategist();
   private _status: string = 'zzz';
+  private _icons: IIconRegistry;
   // publisher stuff
   private _publishDat: dat.IDatArchive;
   private _publishUrl: string;
@@ -44,7 +47,7 @@ export class DatNotebookModel extends VDomModel {
   private _author: string;
   private _description: string;
   // subscriber stuff
-  private _loadUrl: string;
+  private _subscribeUrl: string;
   private _subscribeDat: dat.IDatArchive;
   private _subscribeInfo: dat.IDatArchive.IArchiveInfo;
   private _outputModelPublishers = new Map<ICellModel, Function>();
@@ -52,6 +55,7 @@ export class DatNotebookModel extends VDomModel {
   private _sourceModelPublishers = new Map<ICellModel, Function>();
   private _follow = true;
   private _autoRender = true;
+  private _autoTrust = true;
   private _watcher: dat.IWatcher;
 
   constructor(options: DatNotebookModel.IOptions) {
@@ -59,6 +63,7 @@ export class DatNotebookModel extends VDomModel {
     this._panel = options.panel;
     this._context = options.context;
     this._manager = options.manager;
+    this._icons = options.icons;
     setInterval(async () => await this.getInfo(), INFO_INTERVAL);
   }
 
@@ -69,6 +74,10 @@ export class DatNotebookModel extends VDomModel {
     this.unpublish().catch(console.warn);
     this.unsubscribe().catch(console.warn);
     super.dispose();
+  }
+
+  get icons() {
+    return this._icons;
   }
 
   get panel() {
@@ -82,9 +91,27 @@ export class DatNotebookModel extends VDomModel {
   get follow() {
     return this._follow;
   }
-
   set follow(follow) {
     this._follow = follow;
+    this.stateChanged.emit(void 0);
+  }
+
+  get autoTrust() {
+    return this._autoTrust;
+  }
+  set autoTrust(autoTrust) {
+    this._autoTrust = autoTrust;
+    this.stateChanged.emit(void 0);
+    each(this.panel.model.cells, model => {
+      model.trusted = this._autoTrust;
+    });
+  }
+
+  get autoRender() {
+    return this._autoRender;
+  }
+  set autoRender(autoRender) {
+    this._autoRender = autoRender;
     this.stateChanged.emit(void 0);
   }
 
@@ -92,11 +119,11 @@ export class DatNotebookModel extends VDomModel {
     return !!this._subscribeDat;
   }
 
-  get loadUrl() {
-    return this._loadUrl;
+  get subscribeUrl() {
+    return this._subscribeUrl;
   }
-  set loadUrl(loadUrl) {
-    this._loadUrl = loadUrl;
+  set subscribeUrl(subscribeUrl) {
+    this._subscribeUrl = subscribeUrl;
     this.stateChanged.emit(void 0);
   }
   get publishUrl() {
@@ -158,6 +185,10 @@ export class DatNotebookModel extends VDomModel {
     if (this._publishDat) {
       this._publishDat.configure({ description }).catch(console.warn);
     }
+  }
+
+  get subscribeURLisValid() {
+    return !!(this._subscribeUrl || '').match(VALID_DAT);
   }
 
   private _makeOutputPublisher(model: ICodeCellModel) {
@@ -252,7 +283,7 @@ export class DatNotebookModel extends VDomModel {
 
   async onSubscribe() {
     this.status = 'subscribing';
-    this._subscribeDat = await this._manager.listen(this.loadUrl, {
+    this._subscribeDat = await this._manager.listen(this.subscribeUrl, {
       sparse: true
     });
     this.status = 'ready';
@@ -261,7 +292,6 @@ export class DatNotebookModel extends VDomModel {
     this._watcher.addEventListener('invalidated', evt =>
       this.onSubscribeChange(evt)
     );
-    this._watcher.addEventListener('sync', evt => this.onSubscribeChange(evt));
     await this.getInfo();
     await this.onSubscribeChange({ path: null });
   }
@@ -731,7 +761,9 @@ export class DatNotebookModel extends VDomModel {
             break;
         }
         (model.metadata as any).set(METADATA_KEY, { '@id': cellId });
-        model.trusted = true;
+        if (this._autoTrust) {
+          model.trusted = true;
+        }
         model.value.text = Array.isArray(source) ? source.join('') : source;
         needsUpdate = true;
       }
@@ -832,5 +864,6 @@ export namespace DatNotebookModel {
     context: DocumentRegistry.IContext<INotebookModel>;
     panel: NotebookPanel;
     manager: IDatManager;
+    icons: IIconRegistry;
   }
 }

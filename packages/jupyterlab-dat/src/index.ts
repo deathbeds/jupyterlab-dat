@@ -1,9 +1,9 @@
 export const CSS = {
   ICON: 'jp-Dat-Icon',
   ICONS: {
-    create: 'jp-Dat-Icon-create',
-    resume: 'jp-Dat-Icon-resume',
-    star: 'jp-Dat-Icon-star'
+    create: 'jp-DatCreateNewDatIcon',
+    resume: 'jp-DatHexagonResumeIcon',
+    star: 'jp-DatStarDatIcon'
   } as { [key: string]: string },
   COLOR: {
     brand: 'jp-mod-dat-brand'
