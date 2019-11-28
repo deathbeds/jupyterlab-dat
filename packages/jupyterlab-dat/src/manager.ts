@@ -13,6 +13,8 @@ export class DatManager implements IDatManager {
   private _SDK: dat.ISDK;
   private _RAM: any;
 
+  private _extensions = new Map<string, Set<IDatManager.IExtensionListener>>();
+
   private async SDK() {
     if (!this._SDK) {
       const _dat = await import(
@@ -29,25 +31,65 @@ export class DatManager implements IDatManager {
 
   async create(opts?: dat.IDatArchive.ICreateOptions) {
     const sdk = await this.SDK();
-    const d = await sdk.DatArchive.create({
+    const registeredExtensions = Array.from(this._extensions.keys());
+    const extensions = [...(opts.extension || []), ...registeredExtensions];
+    const archive = await sdk.DatArchive.create({
       ...opts,
       persist: false,
-      storage: this._RAM
+      storage: this._RAM,
+      extension: extensions
     });
-    return d;
+
+    archive._archve.on('extension', (name, message, peer) => {
+      const registered = this._extensions.get(name);
+      if (registered) {
+        registered.forEach(listener => listener(archive, name, message, peer));
+      }
+    });
+
+    return archive;
   }
 
   async listen(url: string, opts?: dat.IDatArchive.ILoadOptions) {
     const sdk = await this.SDK();
+    const extension = [
+      ...(opts.extension || []),
+      ...Array.from(this._extensions.keys())
+    ];
     const d = await sdk.DatArchive.load(url, {
       ...opts,
       persist: false,
-      storage: this._RAM
+      storage: this._RAM,
+      extension
     });
     return d;
   }
 
   async close(archive: dat.IDatArchive): Promise<void> {
     await archive.close();
+  }
+
+  registerExtension(
+    name: string,
+    listener: IDatManager.IExtensionListener
+  ): void {
+    const listeners =
+      this._extensions.get(name) || new Set<IDatManager.IExtensionListener>();
+    if (!listeners.has(listener)) {
+      listeners.add(listener);
+      this._extensions.set(name, listeners);
+    }
+  }
+
+  unregisterExtension(
+    name: string,
+    listener: IDatManager.IExtensionListener
+  ): void {
+    const listeners =
+      this._extensions.get(name) || new Set<IDatManager.IExtensionListener>();
+    if (listeners.has(listener)) {
+      listeners.delete(listener);
+      this._extensions.set(name, listeners);
+    }
   }
 }

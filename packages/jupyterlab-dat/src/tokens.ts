@@ -15,10 +15,26 @@ export interface IDatManager {
     opts?: dat.IDatArchive.ILoadOptions
   ): Promise<dat.IDatArchive>;
   close(archive: dat.IDatArchive): Promise<void>;
+  registerExtension(
+    name: string,
+    listener: IDatManager.IExtensionListener
+  ): void;
+  unregisterExtension(
+    name: string,
+    listener: IDatManager.IExtensionListener
+  ): void;
 }
 
 export namespace IDatManager {
   export interface IOptions {}
+  export interface IExtensionListener {
+    (
+      archive: dat.IDatArchive,
+      name: string,
+      message: Buffer,
+      peer: dat.IHyperdrive.IPeer
+    ): void;
+  }
 }
 
 /* tslint:disable */

@@ -57,7 +57,7 @@ export class DatNotebookModel extends VDomModel {
   private _autoRender = true;
   private _autoTrust = true;
   private _watcher: dat.IWatcher;
-  private _infoInterval: number;
+  private _infoInterval: any;
 
   constructor(options: DatNotebookModel.IOptions) {
     super();

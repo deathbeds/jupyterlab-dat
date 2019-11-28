@@ -3,12 +3,12 @@ declare module 'random-access-*' {}
 declare module 'dat-sdk/promise' {
   export interface IHyperdrive {
     peers: IHyperdrive.IPeer[];
+    on(event: 'close', listener: Function): void;
+    on(event: 'error', listener: IHyperdrive.IErrorListener): void;
     on(event: 'extension', listener: IHyperdrive.IExtensionListener): void;
     on(event: 'peer-add', listener: IHyperdrive.IPeerListener): void;
     on(event: 'peer-remove', listener: IHyperdrive.IPeerListener): void;
-    on(event: 'close', listener: Function): void;
     on(event: 'ready', listener: Function): void;
-    on(event: 'error', listener: IHyperdrive.IErrorListener): void;
   }
 
   export namespace IHyperdrive {
