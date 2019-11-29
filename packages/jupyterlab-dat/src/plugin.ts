@@ -7,6 +7,7 @@ import { IIconRegistry } from '@jupyterlab/ui-components';
 
 import { DatManager } from './manager';
 import { IDatManager } from './tokens';
+import { ICONS } from './icons';
 
 const extension: JupyterFrontEndPlugin<IDatManager> = {
   id: 'jupyterlab-dat',
@@ -14,10 +15,7 @@ const extension: JupyterFrontEndPlugin<IDatManager> = {
   provides: IDatManager,
   requires: [IIconRegistry],
   activate: (_app: JupyterFrontEnd, icons: IIconRegistry) => {
-    import('./icons')
-      .then(datIcons => icons.addIcon(...datIcons.ICONS))
-      .catch(console.warn);
-
+    icons.addIcon(...ICONS);
     const manager = new DatManager();
     return manager;
   }
