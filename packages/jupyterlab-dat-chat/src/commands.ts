@@ -39,6 +39,7 @@ export function setupCommands(
       model.value.text = '';
       cell.editor.focus();
       content.activeCellIndex = content.widgets.indexOf(cell);
+      content.node.scrollTo(0, content.node.clientHeight);
     } else {
       return;
     }
