@@ -1,6 +1,6 @@
 import { Token } from '@phosphor/coreutils';
 // import { Widget } from '@phosphor/widgets';
-// import { Signal } from '@phosphor/signaling';
+import { ISignal } from '@phosphor/signaling';
 import { dat } from '@deathbeds/dat-sdk-webpack';
 
 export const NS = '@deathbeds/jupyterlab-dat';
@@ -23,6 +23,9 @@ export interface IDatManager {
     name: string,
     listener: IDatManager.IExtensionListener
   ): void;
+  getArchive(url: string): dat.IDatArchive;
+  datUrls: Set<string>;
+  datsChanged: ISignal<IDatManager, void>;
 }
 
 export namespace IDatManager {

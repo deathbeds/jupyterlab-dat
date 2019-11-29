@@ -9,6 +9,7 @@ declare module 'dat-sdk/promise' {
     on(event: 'peer-add', listener: IHyperdrive.IPeerListener): void;
     on(event: 'peer-remove', listener: IHyperdrive.IPeerListener): void;
     on(event: 'ready', listener: Function): void;
+    extension(name: string, message: Buffer): void;
   }
 
   export namespace IHyperdrive {
@@ -31,7 +32,7 @@ declare module 'dat-sdk/promise' {
 
   export interface IDatArchive extends EventTarget {
     url: string;
-    _archve: IHyperdrive;
+    _archive: IHyperdrive;
     readFile<T>(
       filepath: string,
       opts: string | IDatArchive.IReadOptions
@@ -77,7 +78,7 @@ declare module 'dat-sdk/promise' {
       persist?: boolean;
       storage?: Function;
       sparse?: boolean;
-      extension?: string[];
+      extensions?: string[];
     }
     export interface IConfigureOptions {
       title?: string;

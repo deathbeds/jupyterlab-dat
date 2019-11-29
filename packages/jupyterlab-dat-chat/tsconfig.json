@@ -3,21 +3,13 @@
   "compilerOptions": {
     "outDir": "lib",
     "rootDir": "src",
-    "tsBuildInfoFile": "lib/.tsbuildinfo"
+    "tsBuildInfoFile": "lib/.tsbuildinfo",
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "references": [
     {
       "path": "../jupyterlab-dat"
-    },
-    {
-      "path": "../dat-sdk-webpack"
-    },
-    {
-      "path": "../jupyterlab-dat-notebook"
-    },
-    {
-      "path": "../jupyterlab-dat-chat"
     }
   ]
 }

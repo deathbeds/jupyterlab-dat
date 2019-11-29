@@ -1,0 +1,30 @@
+.jp-DatChat {
+  background-color: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Main > header {
+  flex: 0;
+  min-height: var(--jp-ui-font-size2);
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-DatChat-Main > section {
+  flex: 1;
+}
+
+.jp-DatChat-Main > footer {
+  flex: 0;
+  min-height: calc(5 * var(--jp-ui-font-size1));
+  display: flex;
+  flex-direction: row;
+}

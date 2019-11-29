@@ -2,6 +2,7 @@ export const CSS = {
   ICON: 'jp-Dat-Icon',
   ICONS: {
     create: 'jp-DatCreateNewDatIcon',
+    happy: 'jp-DatHappyDatIcon',
     resume: 'jp-DatHexagonResumeIcon',
     star: 'jp-DatStarDatIcon'
   } as { [key: string]: string },
