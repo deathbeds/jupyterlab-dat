@@ -2,6 +2,10 @@ import React from 'react';
 import { dat } from '@deathbeds/dat-sdk-webpack';
 
 export function renderInfoTable(info: dat.IDatArchive.IArchiveInfo) {
+  if (info == null) {
+    return <blockquote>No metadata yet</blockquote>;
+  }
+
   let author = '';
 
   if (info.author) {

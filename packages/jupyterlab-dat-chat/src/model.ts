@@ -35,19 +35,27 @@ export class DatChatModel extends VDomModel {
     return this._archiveInfo;
   }
 
-  get nextUrl() {
-    return this._nextUrl || this.urls.length ? this.urls[0] : null;
-  }
-  set nextUrl(nextUrl) {
-    this._nextUrl = nextUrl;
-    this.stateChanged.emit(void 0);
+  updateArchiveInfo() {
     this._manager.getInfo(this._nextUrl).then(info => {
       this._archiveInfo = info;
       this.stateChanged.emit(void 0);
     });
   }
 
-  addMessage(url: string, message: Buffer, peer: dat.IHyperdrive.IPeer) {
+  get nextUrl() {
+    const nextUrl = this._nextUrl || this.urls.length ? this.urls[0] : null;
+    if (nextUrl && !this._archiveInfo) {
+      this.updateArchiveInfo();
+    }
+    return nextUrl;
+  }
+  set nextUrl(nextUrl) {
+    this._nextUrl = nextUrl;
+    this.stateChanged.emit(void 0);
+    this.updateArchiveInfo();
+  }
+
+  addMessage(url: string, message: Buffer, peer?: dat.IHyperdrive.IPeer) {
     this._messages.push({ url, message, peer });
     this.stateChanged.emit(void 0);
   }
@@ -56,10 +64,9 @@ export class DatChatModel extends VDomModel {
     const url = this.nextUrl;
     const archive = this._manager.getArchive(url);
     const modelJson = model.toJSON();
-    archive._archive.extension(
-      ID,
-      Buffer.from(JSON.stringify(modelJson, null, 2))
-    );
+    const buffer = Buffer.from(JSON.stringify(modelJson, null, 2));
+    archive._archive.extension(ID, buffer);
+    return buffer;
   }
 }
 

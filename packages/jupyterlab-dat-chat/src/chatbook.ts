@@ -9,7 +9,7 @@ import {
   NotebookWidgetFactory
 } from '@jupyterlab/notebook';
 
-import { MarkdownCellModel } from '@jupyterlab/cells';
+import { MarkdownCellModel, MarkdownCell } from '@jupyterlab/cells';
 
 import { IIconRegistry } from '@jupyterlab/ui-components';
 
@@ -69,18 +69,15 @@ export class Chatbook extends SplitPanel {
     return this._ready;
   }
 
-  addMessage(url: string, message: Buffer, peer: dat.IHyperdrive.IPeer) {
-    if (!peer) {
-      return;
-    }
-    console.log('adding message', url);
+  addMessage(_url: string, message: Buffer, peer?: dat.IHyperdrive.IPeer) {
     const modelJSON = JSON.parse(message.toString());
     const markdownModel = new MarkdownCellModel({});
     markdownModel.value.text = modelJSON.source;
-    this._notebook.model.cells.insert(
-      this._notebook.model.cells.length - 1,
-      markdownModel
-    );
+    const idx = this._notebook.model.cells.length - 1;
+    this._notebook.model.cells.insert(idx, markdownModel);
+    const widget = this._notebook.content.widgets[idx] as MarkdownCell;
+    widget.promptNode.textContent = 'wooo';
+    console.log(peer);
   }
 
   async createWidget() {
@@ -136,7 +133,7 @@ export class Chatbook extends SplitPanel {
     SplitLayout.setStretch(this._notebook, 3);
     this.splitLayout.addWidget(this._notebook);
 
-    setupCommands(commands, this._notebook, this._datChat.model);
+    setupCommands(commands, this, this._notebook, this._datChat.model);
 
     this._ready = true;
   }

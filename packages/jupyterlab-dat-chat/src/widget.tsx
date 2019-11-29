@@ -14,6 +14,7 @@ export class DatChat extends VDomRenderer<DatChatModel> {
     this.model = new DatChatModel(options);
     this.title.iconClass = CSS.DAT.ICONS.happy;
     this.addClass(CSS.WIDGET);
+    this.addClass('jp-RenderedHTMLCommon');
   }
 
   protected render() {
