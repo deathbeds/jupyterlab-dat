@@ -6,28 +6,33 @@ import {
 import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 import { IIconRegistry } from '@jupyterlab/ui-components';
 
-import { ID } from '.';
+import { Chatbook } from './chatbook';
 
-import { DatChat } from './widget';
+import { ID } from '.';
 
 const extension: JupyterFrontEndPlugin<void> = {
   id: ID,
   autoStart: true,
   requires: [IIconRegistry, IDatManager],
-  activate: (app: JupyterFrontEnd, icons: IIconRegistry, dat: IDatManager) => {
-    const { shell } = app;
+  activate: (
+    app: JupyterFrontEnd,
+    icons: IIconRegistry,
+    datManager: IDatManager
+  ) => {
+    const { shell, serviceManager } = app;
 
-    const chat: DatChat = new DatChat({
-      manager: dat,
-      icons
+    const chat = new Chatbook({ serviceManager, datManager, icons });
+    chat.id = ID;
+    shell.add(chat, 'right');
+
+    datManager.datsChanged.connect(async () => {
+      if (!chat.ready) {
+        await chat.createWidget();
+      }
     });
 
-    chat.id = ID;
-
-    dat.datsChanged.connect(() => shell.add(chat, 'right'));
-
-    dat.registerExtension(ID, (archive, _name, message, peer) => {
-      chat.model.addMessage(archive.url, message, peer);
+    datManager.registerExtension(ID, (archive, _name, message, peer) => {
+      chat.addMessage(archive.url, message, peer);
     });
   }
 };

@@ -285,11 +285,11 @@ export class DatNotebookModel extends VDomModel {
   async getInfo() {
     let infoUpdated = false;
     if (this._publishDat) {
-      this._publishInfo = await this._publishDat.getInfo();
+      this._publishInfo = await this._manager.getInfo(this._publishDat.url);
       infoUpdated = true;
     }
     if (this._subscribeDat) {
-      this._subscribeInfo = await this._subscribeDat.getInfo();
+      this._subscribeInfo = await this._manager.getInfo(this._subscribeDat.url);
       infoUpdated = true;
     }
     if (infoUpdated) {

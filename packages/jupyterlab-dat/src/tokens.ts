@@ -24,6 +24,7 @@ export interface IDatManager {
     listener: IDatManager.IExtensionListener
   ): void;
   getArchive(url: string): dat.IDatArchive;
+  getInfo(url: string): Promise<dat.IDatArchive.IArchiveInfo>;
   datUrls: Set<string>;
   datsChanged: ISignal<IDatManager, void>;
 }

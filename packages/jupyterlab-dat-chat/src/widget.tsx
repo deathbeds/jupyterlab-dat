@@ -2,6 +2,8 @@ import React from 'react';
 
 import { VDomRenderer } from '@jupyterlab/apputils';
 
+import { renderInfoTable } from '@deathbeds/jupyterlab-dat/lib/framents/infotable';
+
 import { CSS } from '.';
 
 import { DatChatModel } from './model';
@@ -25,47 +27,21 @@ export class DatChat extends VDomRenderer<DatChatModel> {
       );
     });
 
-    const messages = this.renderMessages(m);
-
-    const textProps = {
-      defaultValue: m.nextMessage,
-      onChange: (evt: React.FormEvent<HTMLTextAreaElement>) => {
-        m.nextMessage = evt.currentTarget.value;
+    const selectProps = {
+      className: 'jp-mod-styled',
+      onChange: (evt: React.ChangeEvent<HTMLSelectElement>) => {
+        m.nextUrl = evt.currentTarget.value;
       }
-    };
-
-    const buttonProps = {
-      className: 'jp-mod-styled jp-mod-accept',
-      onClick: () => m.sendMessage()
     };
 
     return (
       <div className={`${CSS.WIDGET}-Main`}>
         <header>
           {m.icons.iconReact({ name: 'dat-happy-dat' })}
-          <select>{options}</select>
+          <select {...selectProps}>{options}</select>
         </header>
-        {messages}
-        <footer>
-          <textarea {...textProps}></textarea>
-          <button {...buttonProps}>SEND</button>
-        </footer>
+        <section>{renderInfoTable(m.archiveInfo)}</section>
       </div>
-    );
-  }
-
-  renderMessages(m: DatChatModel) {
-    return (
-      <section>
-        {m.messages.map((msg, i) => {
-          return (
-            <div key={i}>
-              <span>{`${msg.peer}`}</span>
-              <span>{`${msg.message.toString()}`}</span>
-            </div>
-          );
-        })}
-      </section>
     );
   }
 }

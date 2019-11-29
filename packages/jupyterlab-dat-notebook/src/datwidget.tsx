@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { dat } from '@deathbeds/dat-sdk-webpack';
+import { renderInfoTable } from '@deathbeds/jupyterlab-dat/lib/framents/infotable';
 
 import { VDomRenderer } from '@jupyterlab/apputils';
 
@@ -110,7 +110,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
 
   renderPublishInfo(m: DatNotebookModel) {
     if (m.isPublishing && m.publishInfo) {
-      return this.renderInfo(m.publishInfo);
+      return renderInfoTable(m.publishInfo);
     } else {
       return (
         <blockquote>
@@ -160,7 +160,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
 
   renderSubscribeInfo(m: DatNotebookModel) {
     if (m.isSubscribed && m.subscribeInfo) {
-      return this.renderInfo(m.subscribeInfo);
+      return renderInfoTable(m.subscribeInfo);
     } else {
       return (
         <blockquote>
@@ -204,41 +204,6 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           />
         </label>
       </details>
-    );
-  }
-
-  renderInfo(info: dat.IDatArchive.IArchiveInfo) {
-    let author = '';
-
-    if (info.author) {
-      if (typeof info.author === 'string') {
-        author = info.author;
-      } else if (info.author.name) {
-        author = info.author.name;
-      }
-    }
-
-    return (
-      <table>
-        <thead>
-          <tr>
-            <th>Version</th>
-            <th>Peers</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Author</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{info.version || 0}</td>
-            <td>{info.peers || 0}</td>
-            <td>{info.title || ''}</td>
-            <td>{info.description || ''}</td>
-            <td>{author}</td>
-          </tr>
-        </tbody>
-      </table>
     );
   }
 }

@@ -1,14 +1,19 @@
 .jp-DatChat {
   background-color: var(--jp-layout-color1);
   color: var(--jp-ui-font-color1);
+  min-width: 300px;
+}
+
+.jp-DatChat .p-SplitPanel-child {
   display: flex;
   flex-direction: column;
 }
 
 .jp-DatChat-Main {
-  flex: 1;
+  background-color: var(--jp-layout-color1);
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .jp-DatChat-Main > header {
@@ -16,6 +21,12 @@
   min-height: var(--jp-ui-font-size2);
   display: flex;
   flex-direction: row;
+  align-items: center;
+}
+
+.jp-DatChat-Main > header > div[data-icon] {
+  min-height: calc(2 * var(--jp-ui-font-size2));
+  min-width: calc(2 * var(--jp-ui-font-size2));
 }
 
 .jp-DatChat-Main > section {

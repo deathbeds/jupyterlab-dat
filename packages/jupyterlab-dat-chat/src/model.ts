@@ -1,5 +1,6 @@
 import { dat } from '@deathbeds/dat-sdk-webpack';
 
+import { IMarkdownCellModel } from '@jupyterlab/cells';
 import { VDomModel } from '@jupyterlab/apputils';
 import { IIconRegistry } from '@jupyterlab/ui-components';
 
@@ -10,8 +11,8 @@ export class DatChatModel extends VDomModel {
   private _icons: IIconRegistry;
   private _messages: DatChatModel.IMessage[] = [];
   private _manager: IDatManager;
-  private _nextMessage = '';
   private _nextUrl = '';
+  private _archiveInfo: dat.IDatArchive.IArchiveInfo;
 
   constructor(options: DatChatModel.IOptions) {
     super();
@@ -22,19 +23,6 @@ export class DatChatModel extends VDomModel {
     });
   }
 
-  get messages() {
-    return this._messages;
-  }
-
-  get nextMessage() {
-    return this._nextMessage;
-  }
-
-  set nextMessage(nextMessage) {
-    this._nextMessage = nextMessage;
-    this.stateChanged.emit(void 0);
-  }
-
   get icons() {
     return this._icons;
   }
@@ -43,19 +31,35 @@ export class DatChatModel extends VDomModel {
     return Array.from(this._manager.datUrls);
   }
 
+  get archiveInfo() {
+    return this._archiveInfo;
+  }
+
+  get nextUrl() {
+    return this._nextUrl || this.urls.length ? this.urls[0] : null;
+  }
+  set nextUrl(nextUrl) {
+    this._nextUrl = nextUrl;
+    this.stateChanged.emit(void 0);
+    this._manager.getInfo(this._nextUrl).then(info => {
+      this._archiveInfo = info;
+      this.stateChanged.emit(void 0);
+    });
+  }
+
   addMessage(url: string, message: Buffer, peer: dat.IHyperdrive.IPeer) {
     this._messages.push({ url, message, peer });
     this.stateChanged.emit(void 0);
   }
 
-  sendMessage() {
-    const url = this._nextUrl || this.urls[0];
+  sendMarkdown(model: IMarkdownCellModel) {
+    const url = this.nextUrl;
     const archive = this._manager.getArchive(url);
-    const buffer = Buffer.from(this._nextMessage);
-    console.log('sending extension message', archive);
-    archive._archive.extension(ID, buffer);
-    this._nextMessage = '';
-    this.addMessage(url, buffer, null);
+    const modelJson = model.toJSON();
+    archive._archive.extension(
+      ID,
+      Buffer.from(JSON.stringify(modelJson, null, 2))
+    );
   }
 }
 

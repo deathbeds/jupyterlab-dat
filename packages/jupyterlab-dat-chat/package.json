@@ -35,7 +35,8 @@
   },
   "devDependencies": {
     "@deathbeds/jupyterlab-dat": "0.2",
-    "@jupyterlab/application": "1"
+    "@jupyterlab/application": "1",
+    "@types/codemirror": "*"
   },
   "sideEffects": [
     "style/*.css"

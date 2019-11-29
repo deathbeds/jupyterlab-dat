@@ -18,6 +18,7 @@ export class DatManager implements IDatManager {
   private _datsChanged = new Signal<IDatManager, void>(this);
   private _createdArchives = new Map<string, dat.IDatArchive>();
   private _listenedArchives = new Map<string, dat.IDatArchive>();
+  private _archiveInfo = new Map<string, dat.IDatArchive.IArchiveInfo>();
 
   private _extensions = new Map<string, Set<IDatManager.IExtensionListener>>();
 
@@ -65,8 +66,6 @@ export class DatManager implements IDatManager {
 
   private addExtensionListeners(archive: dat.IDatArchive) {
     archive._archive.on('extension', (name, message, peer) => {
-      console.log('extension message received', archive, name, message, peer);
-
       const registered = this._extensions.get(name);
       if (registered) {
         registered.forEach(listener => {
@@ -100,6 +99,23 @@ export class DatManager implements IDatManager {
 
   getArchive(url: string): dat.IDatArchive {
     return this._createdArchives.get(url) || this._listenedArchives.get(url);
+  }
+
+  async getInfo(url: string): Promise<dat.IDatArchive.IArchiveInfo> {
+    if (!this._archiveInfo.has(url)) {
+      if (this._createdArchives.has(url)) {
+        this._archiveInfo.set(
+          url,
+          await this._createdArchives.get(url).getInfo()
+        );
+      } else if (this._listenedArchives.has(url)) {
+        this._archiveInfo.set(
+          url,
+          await this._listenedArchives.get(url).getInfo()
+        );
+      }
+    }
+    return this._archiveInfo.get(url);
   }
 
   async close(archive: dat.IDatArchive): Promise<void> {
