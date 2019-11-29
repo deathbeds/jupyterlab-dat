@@ -1,6 +1,6 @@
 import { dat } from '@deathbeds/dat-sdk-webpack';
 import { CommandRegistry } from '@phosphor/commands';
-import { SplitPanel, SplitLayout, Widget } from '@phosphor/widgets';
+import { BoxPanel, BoxLayout, Widget } from '@phosphor/widgets';
 
 import {
   NotebookPanel,
@@ -38,7 +38,7 @@ import {
 
 // import { ID } from '.';
 
-export class Chatbook extends SplitPanel {
+export class Chatbook extends BoxPanel {
   private _serviceManager: ServiceManager;
   private _datManager: IDatManager;
   private _ready = false;
@@ -56,13 +56,12 @@ export class Chatbook extends SplitPanel {
       manager: this._datManager,
       icons: options.icons
     });
-    SplitLayout.setStretch(this._datChat, 1);
-    this.splitLayout.orientation = 'vertical';
-    this.splitLayout.addWidget(this._datChat);
+    this.boxLayout.direction = 'top-to-bottom';
+    this.boxLayout.addWidget(this._datChat);
   }
 
-  get splitLayout() {
-    return this.layout as SplitLayout;
+  get boxLayout() {
+    return this.layout as BoxLayout;
   }
 
   get ready() {
@@ -130,8 +129,7 @@ export class Chatbook extends SplitPanel {
     (this._notebook.layout as any).widgets[0].hide();
 
     NotebookActions.insertBelow(this._notebook.content);
-    SplitLayout.setStretch(this._notebook, 3);
-    this.splitLayout.addWidget(this._notebook);
+    this.boxLayout.addWidget(this._notebook);
 
     setupCommands(commands, this, this._notebook, this._datChat.model);
 

@@ -2,8 +2,6 @@ import React from 'react';
 
 import { VDomRenderer } from '@jupyterlab/apputils';
 
-import { renderInfoTable } from '@deathbeds/jupyterlab-dat/lib/framents/infotable';
-
 import { CSS } from '.';
 
 import { DatChatModel } from './model';
@@ -13,7 +11,7 @@ export class DatChat extends VDomRenderer<DatChatModel> {
     super();
     this.model = new DatChatModel(options);
     this.title.iconClass = CSS.DAT.ICONS.happy;
-    this.addClass(CSS.WIDGET);
+    this.addClass(`${CSS.WIDGET}-Main`);
     this.addClass('jp-RenderedHTMLCommon');
   }
 
@@ -41,7 +39,6 @@ export class DatChat extends VDomRenderer<DatChatModel> {
           {m.icons.iconReact({ name: 'dat-happy-dat' })}
           <select {...selectProps}>{options}</select>
         </header>
-        <section>{renderInfoTable(m.archiveInfo)}</section>
       </div>
     );
   }

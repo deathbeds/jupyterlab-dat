@@ -1,5 +1,5 @@
 .jp-DatChat {
-  --jp-datchat-header-height: calc(2 * var(--jp-ui-font-size2));
+  --jp-datchat-header-height: calc(3 * var(--jp-ui-font-size2));
   --jp-private-toolbar-height: 0;
 }
 
@@ -20,33 +20,21 @@
   flex-direction: column;
   flex: 1;
   height: var(--jp-datchat-header-height);
-  min-height: var(--jp-datchat-header-height);
-  padding: var(--jp-notebook-padding);
+  max-height: var(--jp-datchat-header-height);
+  padding: 0 var(--jp-notebook-padding);
 }
 
 .jp-DatChat-Main > header {
-  flex: 0;
+  flex: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
-  min-height: calc(2 * var(--jp-ui-font-size2));
 }
 
 .jp-DatChat-Main > header > div[data-icon] {
-  min-height: var(--jp-datchat-header-height);
-  min-width: var(--jp-datchat-header-height);
-  margin-right: var(--jp-ui-font-size2);
-}
-
-.jp-DatChat-Main > section {
-  flex: 1;
-}
-
-.jp-DatChat-Main > footer {
-  flex: 0;
-  min-height: calc(5 * var(--jp-ui-font-size1));
-  display: flex;
-  flex-direction: row;
+  min-height: var(--jp-ui-font-size3);
+  min-width: var(--jp-ui-font-size3);
+  margin-right: var(--jp-ui-font-size1);
 }
 
 /* notebook hacks */
