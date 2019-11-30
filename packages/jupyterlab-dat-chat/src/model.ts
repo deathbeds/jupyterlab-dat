@@ -13,6 +13,7 @@ export class DatChatModel extends VDomModel {
   private _manager: IDatManager;
   private _nextUrl = '';
   private _archiveInfo: dat.IDatArchive.IArchiveInfo;
+  private _handle = 'Anon';
 
   constructor(options: DatChatModel.IOptions) {
     super();
@@ -25,6 +26,14 @@ export class DatChatModel extends VDomModel {
 
   get icons() {
     return this._icons;
+  }
+
+  get handle() {
+    return this._handle;
+  }
+  set handle(handle) {
+    this._handle = handle;
+    this.stateChanged.emit(void 0);
   }
 
   get urls() {
@@ -75,6 +84,9 @@ export namespace DatChatModel {
     url: string;
     message: Buffer;
     peer: dat.IHyperdrive.IPeer;
+  }
+  export interface IIdentity {
+    handle: string;
   }
   export interface IOptions {
     manager: IDatManager;

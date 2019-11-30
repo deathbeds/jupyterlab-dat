@@ -4,7 +4,7 @@ import { NotebookPanel, NotebookActions } from '@jupyterlab/notebook';
 import { DatChatModel } from './model';
 import { Chatbook } from './chatbook';
 
-import { CSS } from '.';
+import { CSS, ID } from '.';
 
 function makeMarkdown(nbWidget: NotebookPanel) {
   if (!isMarkdownCellModel(nbWidget.content.activeCell.model)) {
@@ -27,11 +27,18 @@ export function setupCommands(
 ) {
   function send() {
     const { content } = nbWidget;
+    const { activeCellIndex, widgets } = content;
 
     makeMarkdown(nbWidget);
 
-    if (isMarkdownCellModel(content.activeCell.model)) {
-      const buffer = chatModel.sendMarkdown(content.activeCell.model);
+    const { activeCell } = content;
+
+    if (
+      isMarkdownCellModel(activeCell.model) &&
+      activeCellIndex === widgets.length - 1
+    ) {
+      activeCell.model.metadata.set(ID, { handle: chatModel.handle });
+      const buffer = chatModel.sendMarkdown(activeCell.model);
       chatBook.addMessage(chatModel.nextUrl, buffer);
       const cell = content.widgets.slice(-1)[0] as MarkdownCell;
       const { model } = cell;

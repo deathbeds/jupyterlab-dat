@@ -38,3 +38,19 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   min-height: 4rem;
   flex: 0;
 }
+
+.jp-Dat-Peer [data-icon] {
+  max-width: var(--jp-ui-font-size3);
+}
+
+.jp-mod-dat-peer-other [data-icon] {
+  transform: scaleX(-1);
+}
+
+.jp-mod-dat-peer-self [data-icon] g {
+  fill: var(--jp-brand-color1);
+}
+
+.jp-mod-dat-peer-other [data-icon] g {
+  fill: var(--jp-accent-color1);
+}

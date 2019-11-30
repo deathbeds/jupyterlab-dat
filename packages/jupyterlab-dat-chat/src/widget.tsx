@@ -10,7 +10,7 @@ export class DatChat extends VDomRenderer<DatChatModel> {
   constructor(options: DatChatModel.IOptions) {
     super();
     this.model = new DatChatModel(options);
-    this.title.iconClass = CSS.DAT.ICONS.happy;
+    this.title.iconClass = CSS.DAT.ICONS.chat;
     this.addClass(`${CSS.WIDGET}-Main`);
     this.addClass('jp-RenderedHTMLCommon');
   }
@@ -33,11 +33,23 @@ export class DatChat extends VDomRenderer<DatChatModel> {
       }
     };
 
+    const inputProps = {
+      className: 'jp-mod-styled',
+      defaultValue: m.handle,
+      onChange: (evt: React.ChangeEvent<HTMLInputElement>) => {
+        m.handle = evt.currentTarget.value;
+      }
+    };
+
     return (
       <div className={`${CSS.WIDGET}-Main`}>
         <header>
-          {m.icons.iconReact({ name: 'dat-happy-dat' })}
+          {m.icons.iconReact({ name: 'dat-hexagon-outlines' })}
           <select {...selectProps}>{options}</select>
+        </header>
+        <header>
+          {m.icons.iconReact({ name: 'dat-hexagon-chat' })}
+          <input {...inputProps} />
         </header>
       </div>
     );

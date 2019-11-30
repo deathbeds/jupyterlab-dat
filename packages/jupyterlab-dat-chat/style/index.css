@@ -7,6 +7,7 @@
   background-color: var(--jp-layout-color1);
   color: var(--jp-ui-font-color1);
   min-width: 300px;
+  width: 12.5rem;
 }
 
 .jp-DatChat .p-SplitPanel-child {
@@ -14,14 +15,14 @@
   flex-direction: column;
 }
 
-.jp-DatChat-Main {
+.jp-DatChat-Main.jp-RenderedHTMLCommon {
   background-color: var(--jp-layout-color1);
   display: flex;
   flex-direction: column;
   flex: 1;
   height: var(--jp-datchat-header-height);
-  max-height: var(--jp-datchat-header-height);
-  padding: 0 var(--jp-notebook-padding);
+  max-height: calc(1.75 * var(--jp-datchat-header-height));
+  padding: var(--jp-notebook-padding);
 }
 
 .jp-DatChat-Main > header {
@@ -29,12 +30,20 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding-bottom: var(--jp-notebook-padding);
 }
 
 .jp-DatChat-Main > header > div[data-icon] {
   min-height: var(--jp-ui-font-size3);
   min-width: var(--jp-ui-font-size3);
   margin-right: var(--jp-ui-font-size1);
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Main > header input {
+  flex: 1;
+  width: 100%;
 }
 
 /* notebook hacks */
@@ -51,10 +60,31 @@
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25);
 }
 
+#main .jp-DatChat .jp-Notebook-cell .jp-InputArea-prompt {
+  max-width: calc(3 * var(--jp-ui-font-size2));
+}
+
+#main .jp-DatChat .jp-mod-dat-peer-self .jp-InputArea-prompt,
 #main .jp-DatChat .jp-Notebook-cell:last-of-type .jp-InputArea-prompt {
-  display: none;
+  opacity: 0;
 }
 
 .jp-DatChat .jp-Notebook.jp-mod-scrollPastEnd::after {
   display: none;
+}
+
+.jp-DatChat .jp-Cell {
+  padding-left: 0;
+}
+
+.jp-DatChat .jp-Collapser {
+  display: none;
+}
+
+.jp-DatChat .jp-Notebook-cell .jp-MarkdownOutput {
+  border-left: solid 4px transparent;
+}
+
+.jp-DatChat .jp-Notebook-cell.jp-mod-dat-peer-other .jp-MarkdownOutput {
+  border-left: solid 4px var(--jp-layout-color2);
 }

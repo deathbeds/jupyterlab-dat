@@ -9,7 +9,11 @@ import {
   NotebookWidgetFactory
 } from '@jupyterlab/notebook';
 
-import { MarkdownCellModel, MarkdownCell } from '@jupyterlab/cells';
+import {
+  MarkdownCellModel,
+  MarkdownCell,
+  isMarkdownCellModel
+} from '@jupyterlab/cells';
 
 import { IIconRegistry } from '@jupyterlab/ui-components';
 
@@ -23,20 +27,18 @@ import { DocumentRegistry } from '@jupyterlab/docregistry';
 
 import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 
+import { DatPeer } from '@deathbeds/jupyterlab-dat/lib/peer';
+
 import { DatChat } from './widget';
 import { setupCommands } from './commands';
 
-import { CSS } from '.';
+import { ID, CSS } from '.';
 
 import {
   RenderMimeRegistry,
   standardRendererFactories as initialFactories
 } from '@jupyterlab/rendermime';
-
-// import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
-// import { IIconRegistry } from '@jupyterlab/ui-components';
-
-// import { ID } from '.';
+import { nbformat } from '@jupyterlab/coreutils';
 
 export class Chatbook extends BoxPanel {
   private _serviceManager: ServiceManager;
@@ -51,7 +53,7 @@ export class Chatbook extends BoxPanel {
     this._datManager = options.datManager;
     this.addClass(CSS.WIDGET);
     this.title.caption = 'Chatbook';
-    this.title.iconClass = 'jp-DatHappyDatIcon';
+    this.title.iconClass = CSS.DAT.ICONS.chat;
     this._datChat = new DatChat({
       manager: this._datManager,
       icons: options.icons
@@ -69,14 +71,24 @@ export class Chatbook extends BoxPanel {
   }
 
   addMessage(_url: string, message: Buffer, peer?: dat.IHyperdrive.IPeer) {
-    const modelJSON = JSON.parse(message.toString());
+    const modelJSON = JSON.parse(message.toString()) as nbformat.IMarkdownCell;
     const markdownModel = new MarkdownCellModel({});
-    markdownModel.value.text = modelJSON.source;
+    markdownModel.value.text = Array.isArray(modelJSON.source)
+      ? modelJSON.source.join('')
+      : modelJSON.source;
     const idx = this._notebook.model.cells.length - 1;
     this._notebook.model.cells.insert(idx, markdownModel);
     const widget = this._notebook.content.widgets[idx] as MarkdownCell;
-    widget.promptNode.textContent = 'wooo';
-    console.log(peer);
+    const peerNode = document.createElement('div');
+    widget.promptNode.appendChild(peerNode);
+    widget.addClass(peer ? CSS.DAT.OTHER : CSS.DAT.SELF);
+    const peerIcon = new DatPeer({ node: peerNode });
+    peerIcon.model = new DatPeer.Model({
+      manager: this._datManager,
+      icons: this._datChat.model.icons
+    });
+    peerIcon.model.handle = (modelJSON.metadata[ID] as any)['handle'];
+    peerIcon.model.peer = peer;
   }
 
   async createWidget() {
@@ -130,6 +142,17 @@ export class Chatbook extends BoxPanel {
 
     NotebookActions.insertBelow(this._notebook.content);
     this.boxLayout.addWidget(this._notebook);
+
+    this._notebook.content.activeCellChanged.connect(() => {
+      const { widgets } = this._notebook.content;
+      const lastIndex = widgets.length - 1;
+      widgets.forEach((cell, i) => {
+        if (isMarkdownCellModel(cell.model) && i !== lastIndex) {
+          const markdownCell = cell as MarkdownCell;
+          markdownCell.rendered = true;
+        }
+      });
+    });
 
     setupCommands(commands, this, this._notebook, this._datChat.model);
 

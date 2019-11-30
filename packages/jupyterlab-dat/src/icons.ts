@@ -31,6 +31,7 @@ import _dat_search from '!!raw-loader!dat-icons/icons/search.svg';
 import _dat_hexagon_resume from '!!raw-loader!dat-icons/icons/hexagon-resume.svg';
 import _dat_star_dat from '!!raw-loader!dat-icons/icons/star-dat.svg';
 import _dat_hexagon_up from '!!raw-loader!dat-icons/icons/hexagon-up.svg';
+import _dat_hexagon_chat from '!!raw-loader!../style/icons/hexagon-chat.svg';
 
 export const ICONS = [
   { name: 'dat-check', svg: _dat_check },
@@ -65,7 +66,8 @@ export const ICONS = [
   { name: 'dat-search', svg: _dat_search },
   { name: 'dat-hexagon-resume', svg: _dat_hexagon_resume },
   { name: 'dat-star-dat', svg: _dat_star_dat },
-  { name: 'dat-hexagon-up', svg: _dat_hexagon_up }
+  { name: 'dat-hexagon-up', svg: _dat_hexagon_up },
+  { name: 'dat-hexagon-chat', svg: _dat_hexagon_chat }
 ].map(({ name, svg }) => {
   return {
     name,

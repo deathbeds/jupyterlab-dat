@@ -13,6 +13,10 @@
   flex-wrap: wrap;
 }
 
+.jp-Dat-Widget .jp-RenderedHTMLCommon {
+  padding: 0;
+}
+
 .jp-Dat-Widget section {
   flex: 1;
   display: flex;
