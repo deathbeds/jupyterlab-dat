@@ -13,3 +13,12 @@
 .jp-mod-dat-peer-other [data-icon] g {
   fill: var(--jp-accent-color1);
 }
+
+.jp-Dat-Me {
+  display: flex;
+  flex-direction: column;
+  min-width: 15rem;
+  width: 15rem;
+  background-color: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+}

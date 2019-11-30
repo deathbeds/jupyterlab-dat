@@ -12,7 +12,7 @@ export class DatIdentityModel extends VDomModel {
   constructor(options: DatIdentityModel.IOptions) {
     super();
     this._manager = options.manager;
-    console.log(this._manager);
+    this._peer = options.peer;
   }
 
   get icons() {
@@ -41,5 +41,6 @@ export class DatIdentityModel extends VDomModel {
 export namespace DatIdentityModel {
   export interface IOptions {
     manager: IDatIdentityManager;
+    peer?: dat.IHyperdrive.IPeer;
   }
 }

@@ -5,10 +5,10 @@ root = true
 end_of_line = lf
 insert_final_newline = true
 
-[*.{js,ts,py,js,yml,yaml,md}]
+[*.{js,ts,py,js,md}]
 charset = utf-8
 
-[*.{py,yml,yaml}]
+[*.{py}]
 indent_style = space
 indent_size = 4
 

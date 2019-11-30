@@ -4,6 +4,7 @@ export const CSS = {
     create: 'jp-DatCreateNewDatIcon',
     chat: 'jp-DatHexagonChatIcon',
     resume: 'jp-DatHexagonResumeIcon',
+    happy: 'jp-DatHappyDatIcon',
     star: 'jp-DatStarDatIcon'
   } as { [key: string]: string },
   COLOR: {

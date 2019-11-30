@@ -8,10 +8,12 @@ import { DatIdentityModel } from './model';
 
 import { CSS } from '.';
 
-export class DatPeer extends VDomRenderer<DatIdentityModel> {
+export class DatMe extends VDomRenderer<DatIdentityModel> {
   constructor(options?: Widget.IOptions) {
     super(options);
-    this.addClass(`${CSS.DAT.PEER}`);
+    this.title.caption = 'my dat';
+    this.title.iconClass = CSS.DAT.ICONS.happy;
+    this.addClass(CSS.ME);
   }
 
   protected render() {
@@ -21,13 +23,9 @@ export class DatPeer extends VDomRenderer<DatIdentityModel> {
       return <div />;
     }
 
-    const props = {
-      className: m.peer ? CSS.DAT.OTHER : CSS.DAT.SELF
-    };
-
     return (
       <label>
-        <div {...props}>{m.icons.iconReact({ name: 'dat-hexagon-chat' })}</div>
+        <div>{m.icons.iconReact({ name: 'dat-happy-dat' })}</div>
         <span title={m.handle}>{m.handle}</span>
       </label>
     );

@@ -87,8 +87,8 @@ export class Chatbook extends BoxPanel {
 
     peerIcon.model = await this._identityManager.getModel(peer);
 
+    // TODO: replace with identity
     peerIcon.model.handle = (modelJSON.metadata[ID] as any)['handle'];
-    peerIcon.model.peer = peer;
   }
 
   async createWidget() {
