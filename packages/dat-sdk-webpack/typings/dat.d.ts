@@ -27,8 +27,11 @@ declare module 'dat-sdk/promise' {
 
     export interface IPeer {
       extension(name: string, message: Buffer): void;
+      remoteID: TBitField;
     }
   }
+
+  export type TBitField = any;
 
   export interface IDatArchive extends EventTarget {
     url: string;

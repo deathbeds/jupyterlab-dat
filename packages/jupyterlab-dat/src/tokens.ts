@@ -1,6 +1,7 @@
 import { Token } from '@phosphor/coreutils';
-// import { Widget } from '@phosphor/widgets';
 import { ISignal } from '@phosphor/signaling';
+
+import { IIconRegistry } from '@jupyterlab/ui-components';
 import { dat } from '@deathbeds/dat-sdk-webpack';
 
 export const NS = '@deathbeds/jupyterlab-dat';
@@ -27,10 +28,13 @@ export interface IDatManager {
   getInfo(url: string): Promise<dat.IDatArchive.IArchiveInfo>;
   datUrls: Set<string>;
   datsChanged: ISignal<IDatManager, void>;
+  icons: IIconRegistry;
 }
 
 export namespace IDatManager {
-  export interface IOptions {}
+  export interface IOptions {
+    icons: IIconRegistry;
+  }
   export interface IExtensionListener {
     (
       archive: dat.IDatArchive,

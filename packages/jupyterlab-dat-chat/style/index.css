@@ -36,6 +36,7 @@
 .jp-DatChat-Main > header > div[data-icon] {
   min-height: var(--jp-ui-font-size3);
   min-width: var(--jp-ui-font-size3);
+  max-width: var(--jp-ui-font-size3);
   margin-right: var(--jp-ui-font-size1);
   display: flex;
   flex-direction: column;

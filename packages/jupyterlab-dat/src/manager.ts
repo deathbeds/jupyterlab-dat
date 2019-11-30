@@ -2,6 +2,7 @@ import { dat } from '@deathbeds/dat-sdk-webpack';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { ISignal, Signal } from '@phosphor/signaling';
+import { IIconRegistry } from '@jupyterlab/ui-components';
 
 import { IDatManager } from '.';
 
@@ -19,8 +20,17 @@ export class DatManager implements IDatManager {
   private _createdArchives = new Map<string, dat.IDatArchive>();
   private _listenedArchives = new Map<string, dat.IDatArchive>();
   private _archiveInfo = new Map<string, dat.IDatArchive.IArchiveInfo>();
+  private _icons: IIconRegistry;
 
   private _extensions = new Map<string, Set<IDatManager.IExtensionListener>>();
+
+  constructor(options: IDatManager.IOptions) {
+    this._icons = options.icons;
+  }
+
+  get icons() {
+    return this._icons;
+  }
 
   get datUrls() {
     return this._datUrls;

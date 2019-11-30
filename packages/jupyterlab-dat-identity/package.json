@@ -1,7 +1,7 @@
 {
-  "name": "@deathbeds/jupyterlab-dat-chat",
+  "name": "@deathbeds/jupyterlab-dat-identity",
   "version": "0.1.0",
-  "description": "a hopeful dat chat for JupyterLab Notebooks",
+  "description": "dat identity for JupyterLab",
   "keywords": [
     "jupyter",
     "jupyterlab",
@@ -35,7 +35,6 @@
   },
   "devDependencies": {
     "@deathbeds/jupyterlab-dat": "0.2",
-    "@deathbeds/jupyterlab-dat-identity": "0.1",
     "@jupyterlab/application": "1",
     "@types/codemirror": "*"
   },

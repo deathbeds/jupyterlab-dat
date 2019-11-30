@@ -15,8 +15,6 @@ import {
   isMarkdownCellModel
 } from '@jupyterlab/cells';
 
-import { IIconRegistry } from '@jupyterlab/ui-components';
-
 import { ServiceManager } from '@jupyterlab/services';
 
 import { editorServices } from '@jupyterlab/codemirror';
@@ -25,9 +23,9 @@ import { DocumentManager } from '@jupyterlab/docmanager';
 
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
-import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
+import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/lib/tokens';
 
-import { DatPeer } from '@deathbeds/jupyterlab-dat/lib/peer';
+import { DatPeer } from '@deathbeds/jupyterlab-dat-identity/lib/peer';
 
 import { DatChat } from './widget';
 import { setupCommands } from './commands';
@@ -42,7 +40,7 @@ import { nbformat } from '@jupyterlab/coreutils';
 
 export class Chatbook extends BoxPanel {
   private _serviceManager: ServiceManager;
-  private _datManager: IDatManager;
+  private _identityManager: IDatIdentityManager;
   private _ready = false;
   private _datChat: DatChat;
   private _notebook: NotebookPanel;
@@ -50,13 +48,12 @@ export class Chatbook extends BoxPanel {
   constructor(options: Chatbook.IOptions) {
     super();
     this._serviceManager = options.serviceManager;
-    this._datManager = options.datManager;
+    this._identityManager = options.identityManager;
     this.addClass(CSS.WIDGET);
     this.title.caption = 'Chatbook';
     this.title.iconClass = CSS.DAT.ICONS.chat;
     this._datChat = new DatChat({
-      manager: this._datManager,
-      icons: options.icons
+      manager: this._identityManager
     });
     this.boxLayout.direction = 'top-to-bottom';
     this.boxLayout.addWidget(this._datChat);
@@ -70,7 +67,11 @@ export class Chatbook extends BoxPanel {
     return this._ready;
   }
 
-  addMessage(_url: string, message: Buffer, peer?: dat.IHyperdrive.IPeer) {
+  async addMessage(
+    _url: string,
+    message: Buffer,
+    peer?: dat.IHyperdrive.IPeer
+  ) {
     const modelJSON = JSON.parse(message.toString()) as nbformat.IMarkdownCell;
     const markdownModel = new MarkdownCellModel({});
     markdownModel.value.text = Array.isArray(modelJSON.source)
@@ -83,10 +84,9 @@ export class Chatbook extends BoxPanel {
     widget.promptNode.appendChild(peerNode);
     widget.addClass(peer ? CSS.DAT.OTHER : CSS.DAT.SELF);
     const peerIcon = new DatPeer({ node: peerNode });
-    peerIcon.model = new DatPeer.Model({
-      manager: this._datManager,
-      icons: this._datChat.model.icons
-    });
+
+    peerIcon.model = await this._identityManager.getModel(peer);
+
     peerIcon.model.handle = (modelJSON.metadata[ID] as any)['handle'];
     peerIcon.model.peer = peer;
   }
@@ -163,7 +163,6 @@ export class Chatbook extends BoxPanel {
 export namespace Chatbook {
   export interface IOptions {
     serviceManager: ServiceManager;
-    datManager: IDatManager;
-    icons: IIconRegistry;
+    identityManager: IDatIdentityManager;
   }
 }

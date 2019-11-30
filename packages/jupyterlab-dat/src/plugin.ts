@@ -16,7 +16,7 @@ const extension: JupyterFrontEndPlugin<IDatManager> = {
   requires: [IIconRegistry],
   activate: (_app: JupyterFrontEnd, icons: IIconRegistry) => {
     icons.addIcon(...ICONS);
-    const manager = new DatManager();
+    const manager = new DatManager({ icons });
     return manager;
   }
 };

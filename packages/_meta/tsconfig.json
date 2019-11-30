@@ -17,6 +17,9 @@
       "path": "../jupyterlab-dat-notebook"
     },
     {
+      "path": "../jupyterlab-dat-identity"
+    },
+    {
       "path": "../jupyterlab-dat-chat"
     }
   ]
