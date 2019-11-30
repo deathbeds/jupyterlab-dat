@@ -52,8 +52,8 @@ export class DatChatModel extends VDomModel {
   }
 
   get nextUrl() {
-    const {urls} = this;
-    if(!this._nextUrl && urls.length) {
+    const { urls } = this;
+    if (!this._nextUrl && urls.length) {
       this._nextUrl = urls[0];
     }
     return this._nextUrl;
