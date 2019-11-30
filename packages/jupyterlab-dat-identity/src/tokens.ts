@@ -11,6 +11,7 @@ export const ID = `${NS}:IDatIdentityManager`;
  */
 export interface IDatIdentityManager {
   getModel(peer?: dat.IHyperdrive.IPeer): Promise<DatIdentityModel>;
+  me: DatIdentityModel;
   datManager: IDatManager;
 }
 

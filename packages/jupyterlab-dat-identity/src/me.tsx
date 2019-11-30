@@ -6,9 +6,12 @@ import { VDomRenderer } from '@jupyterlab/apputils';
 
 import { DatIdentityModel } from './model';
 
-import { CSS } from '.';
+import {
+  renderBigButton,
+  renderDatURL
+} from '@deathbeds/jupyterlab-dat/lib/fragments';
 
-const BTN_CLASS = `jp-mod-styled ${CSS.DAT.BTN.big}`;
+import { CSS } from '.';
 
 export class DatMe extends VDomRenderer<DatIdentityModel> {
   constructor(options?: Widget.IOptions) {
@@ -32,20 +35,12 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
       return <div />;
     }
 
-    const buttonProps = {
-      onClick: this.onPublish,
-      className: `${BTN_CLASS} jp-mod-accept`
-    };
-
     const nameProps = {
       className: 'jp-mod-styled',
       defaultValue: m.handle,
       placeholder: 'anon',
       onChange: this.onNameChange
     };
-
-    // TODO: move to fragments
-    // {this.renderShield('dat-create-new-dat')}
 
     return (
       <div className={`${CSS.ME}-Main`}>
@@ -58,10 +53,22 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
             <span>Bio</span>
             <textarea className="jp-mod-styled"></textarea>
           </label>
-
-          <button {...buttonProps}>
-            <label>PUBLISH</label>
-          </button>
+          {renderDatURL({
+            url: m.publishUrl,
+            props: {
+              readOnly: true
+            }
+          })}
+          {renderBigButton({
+            icon: 'dat-create-new-dat',
+            icons: this.model.icons,
+            label: m.isPublishing ? 'PUBLISHING' : 'PUBLISH',
+            className: m.isPublishing ? '' : CSS.DAT.JP.accept,
+            props: {
+              disabled: m.isPublishing,
+              onClick: this.onPublish
+            }
+          })}
         </section>
         <footer className="jp-RenderedMarkdownCommon">
           <blockquote>

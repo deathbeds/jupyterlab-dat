@@ -1,18 +1,16 @@
 import React from 'react';
 
-import { renderInfoTable } from '@deathbeds/jupyterlab-dat/lib/framents/infotable';
+import {
+  renderInfoTable,
+  renderBigButton,
+  renderDatURL
+} from '@deathbeds/jupyterlab-dat/lib/fragments';
 
 import { VDomRenderer } from '@jupyterlab/apputils';
 
 import { CSS } from '.';
 
 import { DatNotebookModel } from './model';
-
-const PLACEHOLDER = 'dat://';
-const BTN_CLASS = `jp-mod-styled ${CSS.BTN.big}`;
-
-const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
-  event.target.select();
 
 export class DatWidget extends VDomRenderer<DatNotebookModel> {
   constructor(options: DatNotebookModel.IOptions) {
@@ -39,7 +37,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
     this.title.label = tabTitle;
 
     const props = {
-      className: `${CSS.MAIN} jp-RenderedHTMLCommon`
+      className: `${CSS.MAIN} ${CSS.JP.md}`
     };
 
     return (
@@ -50,25 +48,29 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
     );
   }
 
+  onPublish = async () => {
+    this.model.onPublish();
+  };
+
   renderPublish(m: DatNotebookModel) {
-    const buttonProps = {
-      disabled: !!m.publishUrl,
-      onClick: async () => await m.onPublish(),
-      className: BTN_CLASS + (!m.isPublishing ? ' jp-mod-accept' : '')
-    };
     return (
       <section>
-        <input
-          readOnly={true}
-          defaultValue={m.publishUrl}
-          className="jp-mod-styled"
-          placeholder={PLACEHOLDER}
-          onFocus={handleFocus}
-        />
-        <button {...buttonProps}>
-          <label>{m.isPublishing ? 'PUBLISHING' : 'PUBLISH'}</label>
-          {this.renderShield('dat-create-new-dat')}
-        </button>
+        {renderDatURL({
+          url: m.publishUrl,
+          props: {
+            readOnly: true
+          }
+        })}
+        {renderBigButton({
+          icon: 'dat-create-new-dat',
+          label: m.isPublishing ? 'PUBLISHING' : 'PUBLISH',
+          icons: m.icons,
+          className: m.isPublishing ? '' : CSS.JP.accept,
+          props: {
+            onClick: this.onPublish,
+            disabled: !!m.publishUrl
+          }
+        })}
         {this.renderPublishInfo(m)}
         {this.renderInfoForm(m)}
       </section>
@@ -132,26 +134,33 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
     );
   }
 
+  onSubscribeUrlChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    this.model.subscribeUrl = evt.currentTarget.value;
+  };
+
+  onSubscribe = async () => {
+    await this.model.onSubscribe();
+  };
+
   renderSubscribe(m: DatNotebookModel) {
-    const buttonProps = {
-      className:
-        BTN_CLASS + (m.subscribeUrl && !m.isSubscribed ? ' jp-mod-accept' : ''),
-      disabled: !m.subscribeURLisValid || m.isSubscribed,
-      onClick: async () => await m.onSubscribe()
-    };
     return (
       <section>
-        <input
-          defaultValue={m.subscribeUrl}
-          onChange={e => (m.subscribeUrl = e.currentTarget.value)}
-          placeholder={PLACEHOLDER}
-          className="jp-mod-styled"
-          onFocus={handleFocus}
-        />
-        <button {...buttonProps}>
-          <label>{m.isSubscribed ? 'SUBSCRIBED' : 'SUBSCRIBE'}</label>
-          {this.renderShield('dat-hexagon-resume')}
-        </button>
+        {renderDatURL({
+          url: m.subscribeUrl,
+          props: {
+            onChange: this.onSubscribeUrlChange
+          }
+        })}
+        {renderBigButton({
+          label: m.isSubscribed ? 'SUBSCRIBED' : 'SUBSCRIBE',
+          icon: 'dat-hexagon-resume',
+          icons: m.icons,
+          className: m.canSubscribe ? CSS.JP.accept : '',
+          props: {
+            disabled: !m.canSubscribe,
+            onClick: this.onSubscribe
+          }
+        })}
         {this.renderSubscribeInfo(m)}
         {this.renderSubscribeForm(m)}
       </section>

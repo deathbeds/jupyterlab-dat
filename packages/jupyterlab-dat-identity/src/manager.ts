@@ -15,6 +15,10 @@ export class DatIdentityManager implements IDatIdentityManager {
     });
   }
 
+  get me() {
+    return this._me;
+  }
+
   get datManager() {
     return this._manager;
   }

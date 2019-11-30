@@ -25,7 +25,7 @@ export function setupCommands(
   nbWidget: NotebookPanel,
   chatModel: DatChatModel
 ) {
-  function send() {
+  async function send() {
     const { content } = nbWidget;
     const { activeCellIndex, widgets } = content;
 
@@ -38,7 +38,7 @@ export function setupCommands(
       activeCellIndex === widgets.length - 1
     ) {
       activeCell.model.metadata.set(ID, { handle: chatModel.handle });
-      const buffer = chatModel.sendMarkdown(activeCell.model);
+      const buffer = await chatModel.sendMarkdown(activeCell.model);
       chatBook.addMessage(chatModel.nextUrl, buffer);
       const cell = content.widgets.slice(-1)[0] as MarkdownCell;
       const { model } = cell;

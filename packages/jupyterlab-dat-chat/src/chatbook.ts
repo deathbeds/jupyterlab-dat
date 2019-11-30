@@ -110,7 +110,9 @@ export class Chatbook extends BoxPanel {
       registry: docRegistry,
       manager: this._serviceManager,
       opener: {
-        open: (_widget: Widget) => console.log('noop')
+        open: (_widget: Widget) => {
+          // nothing here yet
+        }
       }
     });
     let mFactory = new NotebookModelFactory({});

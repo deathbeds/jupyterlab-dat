@@ -120,6 +120,10 @@ export class DatNotebookModel extends VDomModel {
     return !!this._subscribeDat;
   }
 
+  get canSubscribe() {
+    return this.subscribeURLisValid && !this._subscribeDat;
+  }
+
   get subscribeUrl() {
     return this._subscribeUrl;
   }

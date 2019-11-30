@@ -11,7 +11,6 @@ export class DatChatModel extends VDomModel {
   private _manager: IDatIdentityManager;
   private _nextUrl = '';
   private _archiveInfo: dat.IDatArchive.IArchiveInfo;
-  private _handle = 'Anon';
 
   constructor(options: DatChatModel.IOptions) {
     super();
@@ -26,10 +25,10 @@ export class DatChatModel extends VDomModel {
   }
 
   get handle() {
-    return this._handle;
+    return this._manager.me.handle;
   }
   set handle(handle) {
-    this._handle = handle;
+    this._manager.me.handle = handle;
     this.stateChanged.emit(void 0);
   }
 
@@ -53,11 +52,11 @@ export class DatChatModel extends VDomModel {
   }
 
   get nextUrl() {
-    const nextUrl = this._nextUrl || this.urls.length ? this.urls[0] : null;
-    if (nextUrl && !this._archiveInfo) {
-      this.updateArchiveInfo();
+    const {urls} = this;
+    if(!this._nextUrl && urls.length) {
+      this._nextUrl = urls[0];
     }
-    return nextUrl;
+    return this._nextUrl;
   }
   set nextUrl(nextUrl) {
     this._nextUrl = nextUrl;
@@ -70,7 +69,7 @@ export class DatChatModel extends VDomModel {
     this.stateChanged.emit(void 0);
   }
 
-  sendMarkdown(model: IMarkdownCellModel) {
+  async sendMarkdown(model: IMarkdownCellModel) {
     const url = this.nextUrl;
     const archive = this._datManager.getArchive(url);
     const modelJson = model.toJSON();

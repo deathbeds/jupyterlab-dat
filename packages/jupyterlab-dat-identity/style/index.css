@@ -51,8 +51,11 @@
 .jp-DatIdentity-Me-Main > section {
   padding-top: var(--jp-notebook-padding);
   flex: 1;
-  display: flex;
-  flex-direction: column;
+}
+
+.jp-DatIdentity-Me-Main .jp-mod-dat-btn-big {
+  max-width: 100%;
+  width: 100%;
 }
 
 .jp-DatIdentity-Me-Main input,
