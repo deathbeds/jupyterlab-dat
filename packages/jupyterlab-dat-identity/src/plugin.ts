@@ -3,8 +3,6 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { MainAreaWidget } from '@jupyterlab/apputils';
-
 import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 
 import { ID } from './tokens';
@@ -22,13 +20,9 @@ const extension: JupyterFrontEndPlugin<IDatIdentityManager> = {
       datManager: dat
     });
 
-    const content = new DatMe();
-    content.id = ID;
-    content.model = await manager.getModel();
-
-    const main = new MainAreaWidget({
-      content
-    });
+    const main = new DatMe();
+    main.id = 'id-dat-identity-me';
+    main.model = await manager.getModel();
 
     app.shell.add(main, 'right');
 

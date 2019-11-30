@@ -14,11 +14,49 @@
   fill: var(--jp-accent-color1);
 }
 
-.jp-Dat-Me {
+.jp-DatIdentity-Me {
   display: flex;
   flex-direction: column;
   min-width: 15rem;
   width: 15rem;
   background-color: var(--jp-layout-color1);
   color: var(--jp-ui-font-color1);
+}
+
+.jp-DatIdentity-Me-Main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--jp-notebook-padding);
+}
+
+.jp-DatIdentity-Me-Main > header {
+  flex: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: var(--jp-ui-font-size3);
+  max-height: var(--jp-ui-font-size3);
+}
+
+.jp-DatIdentity-Me-Main > header div[data-icon] {
+  min-height: var(--jp-ui-font-size3);
+  min-width: var(--jp-ui-font-size3);
+  max-width: var(--jp-ui-font-size3);
+  margin-right: var(--jp-ui-font-size1);
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatIdentity-Me-Main > section {
+  padding-top: var(--jp-notebook-padding);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatIdentity-Me-Main input,
+.jp-DatIdentity-Me-Main textarea {
+  width: 100%;
+  flex: 1;
 }

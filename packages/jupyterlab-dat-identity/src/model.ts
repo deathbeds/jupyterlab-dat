@@ -4,15 +4,27 @@ import { IDatIdentityManager } from './tokens';
 
 import { dat } from '@deathbeds/dat-sdk-webpack';
 
+import { ID } from './tokens';
+
 export class DatIdentityModel extends VDomModel {
   private _manager: IDatIdentityManager;
+  private _handle: string = '';
+  private _archive: dat.IDatArchive;
+  private _bio: string = '';
   private _peer: dat.IHyperdrive.IPeer;
-  private _handle: string;
 
   constructor(options: DatIdentityModel.IOptions) {
     super();
     this._manager = options.manager;
     this._peer = options.peer;
+  }
+
+  async publish() {
+    this._archive = await this._manager.datManager.create({
+      title: this.handle,
+      type: [ID]
+    });
+    this.stateChanged.emit(void 0);
   }
 
   get icons() {
@@ -25,6 +37,9 @@ export class DatIdentityModel extends VDomModel {
 
   set handle(handle) {
     this._handle = handle;
+    if (!this.peer && this._archive) {
+      this._archive.configure({ title: this._handle }).catch(console.warn);
+    }
     this.stateChanged.emit(void 0);
   }
 
@@ -34,6 +49,18 @@ export class DatIdentityModel extends VDomModel {
 
   set peer(peer) {
     this._peer = peer;
+    this.stateChanged.emit(void 0);
+  }
+
+  get bio() {
+    return this._bio;
+  }
+
+  set bio(bio) {
+    this._bio = bio;
+    if (!this.peer && this._archive) {
+      this._archive.configure({ description: this._bio }).catch(console.warn);
+    }
     this.stateChanged.emit(void 0);
   }
 }

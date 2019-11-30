@@ -10,8 +10,8 @@ export class DatIdentityManager implements IDatIdentityManager {
 
   constructor(options: IDatIdentityManager.IOptions) {
     this._manager = options.datManager;
-    this._me = new DatIdentityModel({ 
-      manager: this 
+    this._me = new DatIdentityModel({
+      manager: this
     });
   }
 
@@ -20,7 +20,7 @@ export class DatIdentityManager implements IDatIdentityManager {
   }
 
   async getModel(peer?: dat.IHyperdrive.IPeer) {
-    if(!peer) {
+    if (!peer) {
       return this._me;
     }
     if (!this._peerModels.has(peer.remoteID)) {
