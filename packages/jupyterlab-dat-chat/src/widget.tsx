@@ -31,7 +31,7 @@ export class DatChat extends VDomRenderer<DatChatModel> {
 
   protected render() {
     const m = this.model;
-    const { infos, urls, handle } = m;
+    const { infos, urls } = m;
 
     const options = urls.map((url, idx) => {
       const onClick = () => (m.nextUrl = url);
@@ -48,29 +48,19 @@ export class DatChat extends VDomRenderer<DatChatModel> {
     });
 
     const selectProps = {
-      className: 'jp-mod-styled',
+      className: CSS.DAT.JP.styled,
       onChange: this.onUrlChange
-    };
-
-    const inputProps = {
-      className: 'jp-mod-styled',
-      defaultValue: handle,
-      onChange: this.onHandleChange
     };
 
     return (
       <div className={`${CSS.WIDGET}-Main`}>
         <header>
-          {m.icons.iconReact({ name: 'dat-hexagon-outlines' })}
+          {m.icons.iconReact({ name: CSS.DAT.ICON_NAMES.outlines })}
           <select {...selectProps}>{options}</select>
-        </header>
-        <header>
-          {m.icons.iconReact({ name: 'dat-hexagon-chat' })}
-          <input {...inputProps} />
         </header>
         {renderBigButton({
           label: 'CHAT',
-          icon: 'dat-hexagon-chat',
+          icon: CSS.DAT.ICON_NAMES.chat,
           icons: m.icons,
           className: urls.length ? CSS.DAT.JP.accept : '',
           props: {

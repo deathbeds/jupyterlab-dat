@@ -44,21 +44,33 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
 
     return (
       <div className={`${CSS.ME}-Main`}>
-        <header>
-          <div>{m.icons.iconReact({ name: 'dat-happy-dat' })}</div>
-          <input {...nameProps} />
-        </header>
         <section>
-          <label>
-            <span>Bio</span>
-            <textarea className="jp-mod-styled"></textarea>
-          </label>
+          <input {...nameProps} />
+          <small>
+            <i>Your name for chat and dat authoring</i>
+          </small>
+        </section>
+        <section>
+          <span>Bio</span>
+          <br />
+          <textarea className="jp-mod-styled" rows={5}></textarea>
+          <br />
+          <small>
+            <i>A short text about yourself</i>
+          </small>
+        </section>
+        <section>
           {renderDatURL({
             url: m.publishUrl,
             props: {
               readOnly: true
             }
           })}
+          <small>
+            <i>Your personal dat url</i>
+          </small>
+        </section>
+        <section>
           {renderBigButton({
             icon: 'dat-create-new-dat',
             icons: this.model.icons,
@@ -70,12 +82,6 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
             }
           })}
         </section>
-        <footer className="jp-RenderedMarkdownCommon">
-          <blockquote>
-            Your identity is how others see you. Publishing your identity makes
-            you less anonymous, but allows you to share more with your peers.
-          </blockquote>
-        </footer>
       </div>
     );
   }

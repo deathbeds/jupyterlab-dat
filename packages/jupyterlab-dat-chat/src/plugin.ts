@@ -5,30 +5,23 @@ import {
 } from '@jupyterlab/application';
 
 import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/lib/tokens';
-import { IIconRegistry } from '@jupyterlab/ui-components';
 
 import { Chatbook } from './chatbook';
 
-import { ID } from '.';
+import { ID, CSS } from '.';
 import { DatChatManager } from './manager';
-
-const CSS_ID = 'id-jp-dat-chat';
 
 const extension: JupyterFrontEndPlugin<void> = {
   id: ID,
   autoStart: true,
-  requires: [IIconRegistry, IDatIdentityManager],
-  activate: (
-    app: JupyterFrontEnd,
-    icons: IIconRegistry,
-    identityManager: IDatIdentityManager
-  ) => {
+  requires: [IDatIdentityManager],
+  activate: (app: JupyterFrontEnd, identityManager: IDatIdentityManager) => {
     const { shell, serviceManager } = app;
     const manager = new DatChatManager({ serviceManager, identityManager });
 
     const launcher = new Chatbook({ manager });
-    launcher.id = CSS_ID;
-    shell.add(launcher, 'right');
+    launcher.title.label = 'dat chat';
+    launcher.title.icon = CSS.DAT.ICON_NAMES.chat;
 
     manager.widgetRequested.connect((chatbook, panel) => {
       shell.add(panel, 'main', { mode: 'split-right' });
@@ -45,6 +38,8 @@ const extension: JupyterFrontEndPlugin<void> = {
         });
       }
     );
+
+    identityManager.datManager.addSidebarItem(launcher, { rank: 1 });
   }
 };
 

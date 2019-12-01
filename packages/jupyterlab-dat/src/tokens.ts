@@ -1,4 +1,5 @@
 import { Token } from '@phosphor/coreutils';
+import { Widget } from '@phosphor/widgets';
 import { ISignal } from '@phosphor/signaling';
 
 import { IIconRegistry } from '@jupyterlab/ui-components';
@@ -21,9 +22,20 @@ export interface IDatManager {
     name: string,
     listener: IDatManager.IExtensionListener
   ): void;
+
+  // widgets
+  addSidebarItem(
+    widget: Widget,
+    options?: Partial<IDatManager.ISidebarItemOptions>
+  ): void;
+  removeSidebarItem(widget: Widget): void;
+  sidebarItems: IDatManager.TSidebarItems;
+
   // signals
   datsChanged: ISignal<IDatManager, void>;
   infoChanged: ISignal<IDatManager, void>;
+  sidebarItemsChanged: ISignal<IDatManager, void>;
+
   // properties
   datUrls: Set<string>;
   // archive stuff
@@ -39,6 +51,7 @@ export interface IDatManager {
 }
 
 export namespace IDatManager {
+  export type TSidebarItems = [Widget, ISidebarItemOptions][];
   export interface IOptions {
     icons: IIconRegistry;
   }
@@ -49,6 +62,11 @@ export namespace IDatManager {
       message: Buffer,
       peer: dat.IHyperdrive.IPeer
     ): void;
+  }
+  export interface ISidebarItemOptions {
+    rank: number;
+    title: string;
+    icon: string;
   }
 }
 

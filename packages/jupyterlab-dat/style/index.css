@@ -1,15 +1,7 @@
+@import url('./accordion.css');
+
 :root {
-  --jp-dat-icon-light: url('./dat-light.svg');
-  --jp-dat-icon-dark: url('./dat-dark.svg');
   --jp-dat-color-brand: #2aca4b;
-}
-
-body .jp-Dat-Icon {
-  background-image: var(--jp-dat-icon-dark);
-}
-
-body[data-jp-theme-light='true'] .jp-Dat-Icon {
-  background-image: var(--jp-dat-icon-light);
 }
 
 .jp-mod-dat-brand {
@@ -23,6 +15,7 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   font-size: 150%;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .jp-mod-dat-btn-big label {
@@ -32,9 +25,76 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
 
 .jp-mod-dat-shield {
   padding: 1rem;
-  width: 4rem;
-  min-width: 4rem;
-  height: 4rem;
-  min-height: 4rem;
+  width: var(--jp-ui-font-size3);
+  min-width: var(--jp-ui-font-size3);
+  min-height: var(--jp-ui-font-size3);
   flex: 0;
+}
+
+/* sidebar */
+.jp-Dat-Sidebar {
+  min-width: 300px;
+  width: 300px;
+  background-color: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+}
+
+.jp-Dat-Sidebar .p-Collapse-header {
+  border: 0;
+  padding: 0;
+}
+
+.jp-Dat-Sidebar .p-Collapse-contents {
+  border: 0;
+}
+
+.jp-Dat-Sidebar .p-Collapse-open {
+  flex: 1;
+}
+.jp-Dat-Sidebar .p-Collapse-open .p-Collapse-contents {
+  flex: 1;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.jp-Dat-Sidebar .p-Collapse-contents {
+  padding: 0;
+}
+
+.jp-Dat-Sidebar .p-Collapse-open .p-Collapse-contents > :first-child {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 100% !important;
+}
+
+.jp-Dat-Sidebar .p-TabBar-tab.p-mod-current {
+  background-color: transparent;
+}
+
+.jp-Dat-Sidebar-Header {
+  max-height: calc(3 * var(--jp-ui-font-size2));
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-Dat-Sidebar-Header header {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  padding: var(--jp-ui-font-size1);
+}
+
+.jp-Dat-Sidebar-Header-icon {
+  flex: 0;
+  min-width: var(--jp-ui-font-size2);
+  min-height: var(--jp-ui-font-size2);
+  max-width: var(--jp-ui-font-size2);
+  max-height: var(--jp-ui-font-size2);
+  margin-right: var(--jp-ui-font-size1);
+}
+
+.jp-Dat-Sidebar-Header label {
+  flex: 1;
 }

@@ -3,18 +3,6 @@
   --jp-private-toolbar-height: 0;
 }
 
-.jp-DatChat {
-  background-color: var(--jp-layout-color1);
-  color: var(--jp-ui-font-color1);
-  min-width: 300px;
-  width: 12.5rem;
-}
-
-.jp-DatChat .p-SplitPanel-child {
-  display: flex;
-  flex-direction: column;
-}
-
 .jp-DatChat-Main.jp-RenderedHTMLCommon {
   background-color: var(--jp-layout-color1);
   display: flex;

@@ -7,6 +7,11 @@ export const CSS = {
     happy: 'jp-DatHappyDatIcon',
     star: 'jp-DatStarDatIcon'
   } as { [key: string]: string },
+  ICON_NAMES: {
+    happy: 'dat-happy-dat',
+    chat: 'dat-hexagon-chat',
+    outlines: 'dat-hexagon-outlines'
+  },
   COLOR: {
     brand: 'jp-mod-dat-brand'
   },
@@ -14,6 +19,7 @@ export const CSS = {
   SELF: 'jp-mod-dat-peer-self',
   OTHER: 'jp-mod-dat-peer-other',
   WIDGET: 'jp-Dat-Widget',
+  SIDEBAR: 'jp-Dat-Sidebar',
   MAIN: 'jp-Dat-Widget-Main',
   SHIELD: 'jp-mod-dat-shield',
   BTN: {

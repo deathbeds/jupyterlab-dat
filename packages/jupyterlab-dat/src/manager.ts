@@ -5,6 +5,7 @@ import { ISignal, Signal } from '@phosphor/signaling';
 import { IIconRegistry } from '@jupyterlab/ui-components';
 
 import { IDatManager } from '.';
+import { Widget } from '@phosphor/widgets';
 
 const NOTEBOOK_SERVER_DISCOVERY =
   URLExt.join(
@@ -12,16 +13,24 @@ const NOTEBOOK_SERVER_DISCOVERY =
     'discovery-swarm-web'
   ) + '/';
 
+const SIDEBAR_DEFAULTS = {
+  rank: 100,
+  title: 'Untitled',
+  icon: 'dat-hexagon-outlines'
+};
+
 export class DatManager implements IDatManager {
   private _SDK: dat.ISDK;
   private _RAM: any;
   private _datUrls = new Set<string>();
   private _datsChanged = new Signal<IDatManager, void>(this);
   private _infoChanged = new Signal<IDatManager, void>(this);
+  private _sidebarItemsChanged = new Signal<IDatManager, void>(this);
   private _createdArchives = new Map<string, dat.IDatArchive>();
   private _listenedArchives = new Map<string, dat.IDatArchive>();
   private _archiveInfo = new Map<string, dat.IDatArchive.IArchiveInfo>();
   private _icons: IIconRegistry;
+  private _sidebarItems = new Map<Widget, IDatManager.ISidebarItemOptions>();
 
   private _extensions = new Map<string, Set<IDatManager.IExtensionListener>>();
 
@@ -43,6 +52,10 @@ export class DatManager implements IDatManager {
 
   get infoChanged(): ISignal<IDatManager, void> {
     return this._infoChanged;
+  }
+
+  get sidebarItemsChanged(): ISignal<IDatManager, void> {
+    return this._sidebarItemsChanged;
   }
 
   private async SDK() {
@@ -171,5 +184,24 @@ export class DatManager implements IDatManager {
       listeners.delete(listener);
       this._extensions.set(name, listeners);
     }
+  }
+
+  addSidebarItem(
+    widget: Widget,
+    options: Partial<IDatManager.ISidebarItemOptions> = {}
+  ) {
+    if (!this._sidebarItems.has(widget)) {
+      this._sidebarItems.set(widget, { ...SIDEBAR_DEFAULTS, ...options });
+      this._sidebarItemsChanged.emit(void 0);
+    }
+  }
+
+  removeSidebarItem(widget: Widget) {
+    this._sidebarItems.delete(widget);
+    this._sidebarItemsChanged.emit(void 0);
+  }
+
+  get sidebarItems() {
+    return Array.from(this._sidebarItems.entries());
   }
 }
