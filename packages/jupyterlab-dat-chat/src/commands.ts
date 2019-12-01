@@ -28,6 +28,7 @@ export function setupCommands(context: IDatChatManager.ICommandsContext) {
   async function send() {
     const { activeCellIndex, widgets } = content;
     notebook.activate();
+    console.log('sending on ', notebook);
 
     makeMarkdown(notebook);
 

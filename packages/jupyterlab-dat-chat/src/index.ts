@@ -1,4 +1,4 @@
-import { CSS as DAT } from '@deathbeds/jupyterlab-dat';
+import { CSS as DAT, IDatManager } from '@deathbeds/jupyterlab-dat';
 
 export const CSS = {
   WIDGET: 'jp-DatChat',
@@ -7,3 +7,9 @@ export const CSS = {
 };
 
 export const ID = 'jupyterlab-dat-chat';
+
+export const DAT_CHAT: IDatManager.IDatType = {
+  name: ID,
+  label: 'Chat',
+  icon: 'dat-hexagon-chat'
+};

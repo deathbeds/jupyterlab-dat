@@ -17,6 +17,7 @@ import { IIconRegistry } from '@jupyterlab/ui-components';
 import { DatNotebookButton } from './datbutton';
 
 import { DatWidget } from './datwidget';
+import { DAT_NOTEBOOK } from '.';
 
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-dat-notebook',
@@ -27,10 +28,10 @@ const extension: JupyterFrontEndPlugin<void> = {
     paths: JupyterFrontEnd.IPaths,
     router: IRouter,
     icons: IIconRegistry,
-    dat: IDatManager
+    datManager: IDatManager
   ) => {
     const { shell, commands } = app;
-    const datButton = new DatNotebookButton(dat, icons);
+    const datButton = new DatNotebookButton(datManager, icons);
 
     function addMainAreaWidget(content: DatWidget) {
       const main = new MainAreaWidget({ content });
@@ -88,6 +89,8 @@ const extension: JupyterFrontEndPlugin<void> = {
       pattern: datPattern,
       rank: 29
     });
+
+    datManager.registerDatType(DAT_NOTEBOOK);
   }
 };
 

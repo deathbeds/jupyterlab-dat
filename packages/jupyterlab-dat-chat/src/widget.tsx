@@ -13,16 +13,11 @@ export class DatChat extends VDomRenderer<DatChatModel> {
     super();
     this.model = new DatChatModel(options);
     this.title.iconClass = CSS.DAT.ICONS.chat;
-    this.addClass(`${CSS.WIDGET}-Main`);
-    this.addClass('jp-RenderedHTMLCommon');
+    this.addClass(CSS.WIDGET);
   }
 
-  onUrlChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
+  onUrlChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     this.model.nextUrl = evt.currentTarget.value;
-  };
-
-  onHandleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    this.model.handle = evt.currentTarget.value;
   };
 
   onChatClicked = () => {
@@ -31,40 +26,63 @@ export class DatChat extends VDomRenderer<DatChatModel> {
 
   protected render() {
     const m = this.model;
-    const { infos, urls } = m;
+    const { infos, urls, nextUrl } = m;
 
     const options = urls.map((url, idx) => {
-      const onClick = () => (m.nextUrl = url);
       let info = infos[url];
       let label = url;
+      let peers = '?';
       if (info) {
-        label = `${info.type || 'unknown'}: ${info.title || 'Untitled'}`;
+        label = info.title || 'Untitled';
+        peers = `${info.peers == null ? '?' : info.peers}`;
       }
+      const checked = url === nextUrl;
+
+      let datTypes = m.datTypes(url).map((datType, key) => {
+        return (
+          <i key={key} title={datType.label}>
+            {m.icons.iconReact({ name: datType.icon })}
+          </i>
+        );
+      });
+
       return (
-        <option key={idx} value={url} onClick={onClick}>
-          {label}
-        </option>
+        <li key={idx} className={checked ? CSS.DAT.JP.active : ''}>
+          <label>
+            <input
+              type="radio"
+              name="next-dat-chat-url"
+              checked={checked}
+              value={url}
+              onChange={this.onUrlChange}
+            />
+            <div>
+              <section>
+                <span>{label}</span>
+                <small>
+                  {m.icons.iconReact({ name: CSS.DAT.ICON_NAMES.network })}
+                  {peers}
+                </small>
+              </section>
+              <section>{datTypes}</section>
+            </div>
+          </label>
+        </li>
       );
     });
-
-    const selectProps = {
-      className: CSS.DAT.JP.styled,
-      onChange: this.onUrlChange
-    };
 
     return (
       <div className={`${CSS.WIDGET}-Main`}>
         <header>
-          {m.icons.iconReact({ name: CSS.DAT.ICON_NAMES.outlines })}
-          <select {...selectProps}>{options}</select>
+          <ul className={`${CSS.WIDGET}-Urls`}>{options}</ul>
         </header>
         {renderBigButton({
           label: 'CHAT',
           icon: CSS.DAT.ICON_NAMES.chat,
           icons: m.icons,
-          className: urls.length ? CSS.DAT.JP.accept : '',
+          className: nextUrl ? CSS.DAT.JP.accept : '',
           props: {
-            disabled: !urls.length,
+            disabled: !nextUrl,
             onClick: this.onChatClicked
           }
         })}

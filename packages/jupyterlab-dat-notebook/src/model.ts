@@ -24,6 +24,7 @@ import { nbformat } from '@jupyterlab/coreutils';
 
 import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 import { ExplodeJSONStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/explode';
+import { DAT_NOTEBOOK } from '.';
 
 const DEFAULT_NOTEBOOK = '/Untitled.ipynb';
 const CELL_IDS_PATH = ['cells'];
@@ -237,7 +238,7 @@ export class DatNotebookModel extends VDomModel {
     const { title, description, author } = this;
 
     this._publishDat = await this._manager.create({
-      type: 'notebook',
+      type: [DAT_NOTEBOOK.name],
       title,
       description,
       author

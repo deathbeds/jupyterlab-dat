@@ -5,7 +5,7 @@ import {
 
 import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 
-import { CSS } from '.';
+import { CSS, DAT_IDENTITY } from '.';
 import { IDatIdentityManager, ID } from './tokens';
 import { DatIdentityManager } from './manager';
 import { DatMe } from './me';
@@ -15,16 +15,19 @@ const extension: JupyterFrontEndPlugin<IDatIdentityManager> = {
   autoStart: true,
   provides: IDatIdentityManager,
   requires: [IDatManager],
-  activate: async (_app: JupyterFrontEnd, dat: IDatManager) => {
+  activate: async (_app: JupyterFrontEnd, datManager: IDatManager) => {
     const manager = new DatIdentityManager({
-      datManager: dat
+      datManager
     });
 
     const me = new DatMe();
     me.title.label = 'my dat';
     me.title.icon = CSS.DAT.ICON_NAMES.happy;
 
-    dat.addSidebarItem(me, { rank: 0 });
+    datManager.addSidebarItem(me, { rank: 0 });
+
+    datManager.registerDatType(DAT_IDENTITY);
+
     me.model = await manager.getModel();
 
     return manager;

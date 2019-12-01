@@ -75,6 +75,10 @@ export class DatChatModel extends VDomModel {
     this.updateArchiveInfo();
   }
 
+  datTypes(archiveUrl: string) {
+    return this._datManager.getDatTypeInfo(archiveUrl);
+  }
+
   updateArchiveInfo() {
     this._datManager.getInfo(this._nextUrl).then(info => {
       this._archiveInfo = info;

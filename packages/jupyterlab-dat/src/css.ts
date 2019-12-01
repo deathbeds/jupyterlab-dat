@@ -10,7 +10,9 @@ export const CSS = {
   ICON_NAMES: {
     happy: 'dat-happy-dat',
     chat: 'dat-hexagon-chat',
-    outlines: 'dat-hexagon-outlines'
+    outlines: 'dat-hexagon-outlines',
+    network: 'dat-network',
+    question: 'dat-question'
   },
   COLOR: {
     brand: 'jp-mod-dat-brand'
@@ -28,6 +30,7 @@ export const CSS = {
   JP: {
     accept: 'jp-mod-accept',
     styled: 'jp-mod-styled',
-    md: 'jp-RenderedHTMLCommon'
+    md: 'jp-RenderedHTMLCommon',
+    active: 'jp-mod-active'
   }
 };

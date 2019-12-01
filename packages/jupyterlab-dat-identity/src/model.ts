@@ -4,7 +4,7 @@ import { IDatIdentityManager } from './tokens';
 
 import { dat } from '@deathbeds/dat-sdk-webpack';
 
-import { ID } from './tokens';
+import { DAT_IDENTITY } from '.';
 
 export class DatIdentityModel extends VDomModel {
   private _manager: IDatIdentityManager;
@@ -23,7 +23,7 @@ export class DatIdentityModel extends VDomModel {
     this._archive = await this._manager.datManager.create({
       title: this.handle,
       description: this.bio,
-      type: [ID]
+      type: [DAT_IDENTITY.name]
     });
     this._archive.configure({
       author: {

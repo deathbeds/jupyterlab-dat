@@ -3,7 +3,12 @@
   --jp-private-toolbar-height: 0;
 }
 
-.jp-DatChat-Main.jp-RenderedHTMLCommon {
+.jp-DatChat {
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Main {
   background-color: var(--jp-layout-color1);
   display: flex;
   flex-direction: column;
@@ -17,20 +22,84 @@
   flex-direction: row;
   align-items: center;
   padding-bottom: var(--jp-notebook-padding);
+  overflow-y: auto;
 }
 
-.jp-DatChat-Main > header > div[data-icon] {
-  min-height: var(--jp-ui-font-size3);
-  min-width: var(--jp-ui-font-size3);
-  max-width: var(--jp-ui-font-size3);
+.jp-DatChat-Main > header div[data-icon] {
+  min-height: var(--jp-ui-font-size2);
+  min-width: var(--jp-ui-font-size2);
+  max-width: var(--jp-ui-font-size2);
   margin-right: var(--jp-ui-font-size1);
   display: flex;
   flex-direction: column;
 }
 
-.jp-DatChat-Main > header input {
+.jp-DatChat-Urls {
+  list-style: none;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  width: 100%;
+}
+
+.jp-DatChat-Urls li {
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: solid 2px transparent;
+  padding: var(--jp-notebook-padding);
+  padding-left: 0;
+  background-color: var(--jp-ui-layout-color2);
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Urls li.jp-mod-active {
+  border: solid 2px var(--jp-brand-color1);
+  background-color: var(--jp-ui-layout-color3);
+}
+
+.jp-DatChat-Urls label,
+.jp-DatChat-Urls section {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-DatChat-Urls label > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Urls label section {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jp-DatChat-Urls label input {
+  opacity: 0;
+}
+
+.jp-DatChat-Urls label span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+.jp-DatChat-Urls label small {
+  flex: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-DatChat-Urls code {
+  flex: 1;
+  text-align: right;
 }
 
 /* notebook hacks */

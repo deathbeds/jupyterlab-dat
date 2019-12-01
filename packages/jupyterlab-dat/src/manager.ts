@@ -4,7 +4,7 @@ import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { ISignal, Signal } from '@phosphor/signaling';
 import { IIconRegistry } from '@jupyterlab/ui-components';
 
-import { IDatManager } from '.';
+import { IDatManager, CSS } from '.';
 import { Widget } from '@phosphor/widgets';
 
 const NOTEBOOK_SERVER_DISCOVERY =
@@ -22,6 +22,7 @@ const SIDEBAR_DEFAULTS = {
 export class DatManager implements IDatManager {
   private _SDK: dat.ISDK;
   private _RAM: any;
+  private _datTypes = new Map<string, IDatManager.IDatType>();
   private _datUrls = new Set<string>();
   private _datsChanged = new Signal<IDatManager, void>(this);
   private _infoChanged = new Signal<IDatManager, void>(this);
@@ -184,6 +185,46 @@ export class DatManager implements IDatManager {
       listeners.delete(listener);
       this._extensions.set(name, listeners);
     }
+  }
+
+  registerDatType(datType: IDatManager.IDatType) {
+    this._datTypes.set(datType.name, datType);
+  }
+
+  unregisterDatType(datType: IDatManager.IDatType) {
+    this._datTypes.delete(datType.name);
+  }
+
+  getDatTypeInfo(archiveUrl: string) {
+    let info = this.currentInfo(archiveUrl);
+    let types = [] as IDatManager.IDatType[];
+    if (info && info.type) {
+      types = (Array.isArray(info.type)
+        ? (info.type as string[])
+        : [info.type]
+      ).reduce((memo, type) => {
+        if (this._datTypes.has(type)) {
+          memo.push(this._datTypes.get(type));
+        } else {
+          memo.push({
+            name: type,
+            label: type,
+            icon: CSS.ICON_NAMES.question
+          });
+        }
+        return memo;
+      }, [] as IDatManager.IDatType[]);
+    }
+
+    if (types.length === 0) {
+      types.push({
+        name: 'unknown',
+        label: 'Unknown',
+        icon: CSS.ICON_NAMES.question
+      });
+    }
+
+    return types;
   }
 
   addSidebarItem(

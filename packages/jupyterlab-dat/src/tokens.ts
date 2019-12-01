@@ -23,6 +23,10 @@ export interface IDatManager {
     listener: IDatManager.IExtensionListener
   ): void;
 
+  registerDatType(datType: IDatManager.IDatType): void;
+  unregisterDatType(datType: IDatManager.IDatType): void;
+  getDatTypeInfo(archiveUrl: string): IDatManager.IDatType[];
+
   // widgets
   addSidebarItem(
     widget: Widget,
@@ -67,6 +71,11 @@ export namespace IDatManager {
     rank: number;
     title: string;
     icon: string;
+  }
+  export interface IDatType {
+    icon: string;
+    label: string;
+    name: string;
   }
 }
 

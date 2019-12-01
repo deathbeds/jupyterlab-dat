@@ -8,7 +8,7 @@ import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/lib/toke
 
 import { Chatbook } from './chatbook';
 
-import { ID, CSS } from '.';
+import { ID, CSS, DAT_CHAT } from '.';
 import { DatChatManager } from './manager';
 
 const extension: JupyterFrontEndPlugin<void> = {
@@ -18,6 +18,7 @@ const extension: JupyterFrontEndPlugin<void> = {
   activate: (app: JupyterFrontEnd, identityManager: IDatIdentityManager) => {
     const { shell, serviceManager } = app;
     const manager = new DatChatManager({ serviceManager, identityManager });
+    const { datManager } = identityManager;
 
     const launcher = new Chatbook({ manager });
     launcher.title.label = 'dat chat';
@@ -28,18 +29,17 @@ const extension: JupyterFrontEndPlugin<void> = {
       (app as JupyterLab).shell.collapseRight();
     });
 
-    identityManager.datManager.registerExtension(
-      ID,
-      (archive, _name, message, peer) => {
-        manager.addMessage({
-          archiveUrl: archive.url,
-          message,
-          peer
-        });
-      }
-    );
+    datManager.registerExtension(ID, (archive, _name, message, peer) => {
+      manager.addMessage({
+        archiveUrl: archive.url,
+        message,
+        peer
+      });
+    });
 
-    identityManager.datManager.addSidebarItem(launcher, { rank: 1 });
+    datManager.addSidebarItem(launcher, { rank: 1 });
+
+    datManager.registerDatType(DAT_CHAT);
   }
 };
 
