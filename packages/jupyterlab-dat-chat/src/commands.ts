@@ -90,12 +90,12 @@ export function setupCommands(
     execute: args => (content.mode = 'command')
   });
 
-  const selector = `.${CSS.WIDGET} .jp-Notebook`;
+  const selector = `.${CSS.BOOK} .jp-Notebook`;
 
   const commandMode = `${selector}.jp-mod-commandMode`;
   const editMode = `${selector}.jp-mod-editMode`;
 
-  // keys
+  // edit keys
   commands.addKeyBinding({
     command: CommandIDs.runAndSelectNext,
     keys: ['Shift Enter'],
@@ -106,6 +106,8 @@ export function setupCommands(
     keys: ['Accel Enter'],
     selector: editMode
   });
+
+  // command keys
   commands.addKeyBinding({
     command: CommandIDs.selectAbove,
     keys: ['ArrowUp'],
@@ -114,7 +116,7 @@ export function setupCommands(
   commands.addKeyBinding({
     command: CommandIDs.selectBelow,
     keys: ['ArrowDown'],
-    selector: editMode
+    selector: commandMode
   });
   commands.addKeyBinding({
     command: CommandIDs.copy,

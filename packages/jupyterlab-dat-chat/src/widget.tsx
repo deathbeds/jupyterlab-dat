@@ -6,6 +6,8 @@ import { CSS } from '.';
 
 import { DatChatModel } from './model';
 
+import { renderBigButton } from '@deathbeds/jupyterlab-dat/lib/fragments';
+
 export class DatChat extends VDomRenderer<DatChatModel> {
   constructor(options: DatChatModel.IOptions) {
     super();
@@ -21,6 +23,10 @@ export class DatChat extends VDomRenderer<DatChatModel> {
 
   onHandleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     this.model.handle = evt.currentTarget.value;
+  };
+
+  onChatClicked = () => {
+    this.model.requestChat();
   };
 
   protected render() {
@@ -62,6 +68,16 @@ export class DatChat extends VDomRenderer<DatChatModel> {
           {m.icons.iconReact({ name: 'dat-hexagon-chat' })}
           <input {...inputProps} />
         </header>
+        {renderBigButton({
+          label: 'CHAT',
+          icon: 'dat-hexagon-chat',
+          icons: m.icons,
+          className: urls.length ? CSS.DAT.JP.accept : '',
+          props: {
+            disabled: !urls.length,
+            onClick: this.onChatClicked
+          }
+        })}
       </div>
     );
   }

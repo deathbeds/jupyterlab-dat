@@ -2,6 +2,7 @@ import { dat } from '@deathbeds/dat-sdk-webpack';
 
 import { IMarkdownCellModel } from '@jupyterlab/cells';
 import { VDomModel } from '@jupyterlab/apputils';
+import { Signal } from '@phosphor/signaling';
 
 import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/lib/tokens';
 import { ID } from '.';
@@ -11,6 +12,7 @@ export class DatChatModel extends VDomModel {
   private _manager: IDatIdentityManager;
   private _nextUrl = '';
   private _archiveInfo: dat.IDatArchive.IArchiveInfo;
+  private _chatRequested = new Signal<DatChatModel, void>(this);
 
   constructor(options: DatChatModel.IOptions) {
     super();
@@ -23,6 +25,14 @@ export class DatChatModel extends VDomModel {
     });
   }
 
+  private get _datManager() {
+    return this._manager.datManager;
+  }
+
+  get chatRequested() {
+    return this._chatRequested;
+  }
+
   get icons() {
     return this._datManager.icons;
   }
@@ -33,10 +43,6 @@ export class DatChatModel extends VDomModel {
   set handle(handle) {
     this._manager.me.handle = handle;
     this.stateChanged.emit(void 0);
-  }
-
-  private get _datManager() {
-    return this._manager.datManager;
   }
 
   get urls() {
@@ -54,13 +60,6 @@ export class DatChatModel extends VDomModel {
     return this._archiveInfo;
   }
 
-  updateArchiveInfo() {
-    this._datManager.getInfo(this._nextUrl).then(info => {
-      this._archiveInfo = info;
-      this.stateChanged.emit(void 0);
-    });
-  }
-
   get nextUrl() {
     const { urls } = this;
     if (!this._nextUrl && urls.length) {
@@ -72,6 +71,17 @@ export class DatChatModel extends VDomModel {
     this._nextUrl = nextUrl;
     this.stateChanged.emit(void 0);
     this.updateArchiveInfo();
+  }
+
+  updateArchiveInfo() {
+    this._datManager.getInfo(this._nextUrl).then(info => {
+      this._archiveInfo = info;
+      this.stateChanged.emit(void 0);
+    });
+  }
+
+  requestChat() {
+    this._chatRequested.emit(void 0);
   }
 
   addMessage(url: string, message: Buffer, peer?: dat.IHyperdrive.IPeer) {

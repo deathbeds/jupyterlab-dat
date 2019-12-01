@@ -1,5 +1,6 @@
 import { dat } from '@deathbeds/dat-sdk-webpack';
 import { CommandRegistry } from '@phosphor/commands';
+import { Signal } from '@phosphor/signaling';
 import { BoxPanel, BoxLayout, Widget } from '@phosphor/widgets';
 
 import {
@@ -44,6 +45,7 @@ export class Chatbook extends BoxPanel {
   private _ready = false;
   private _datChat: DatChat;
   private _notebook: NotebookPanel;
+  private _widgetRequested = new Signal<Chatbook, NotebookPanel>(this);
 
   constructor(options: Chatbook.IOptions) {
     super();
@@ -55,8 +57,15 @@ export class Chatbook extends BoxPanel {
     this._datChat = new DatChat({
       manager: this._identityManager
     });
+    this._datChat.model.chatRequested.connect(async () => {
+      this._widgetRequested.emit(await this.createWidget());
+    });
     this.boxLayout.direction = 'top-to-bottom';
     this.boxLayout.addWidget(this._datChat);
+  }
+
+  get widgetRequested() {
+    return this._widgetRequested;
   }
 
   get boxLayout() {
@@ -139,6 +148,13 @@ export class Chatbook extends BoxPanel {
     // TODO: fix this
     const model = await docManager.newUntitled({ type: 'notebook' });
     this._notebook = docManager.open(model.path) as NotebookPanel;
+    this._notebook.addClass(CSS.BOOK);
+    this._notebook.title.icon = CSS.DAT.ICONS.chat;
+    const info = await this._identityManager.datManager.getInfo(
+      this._datChat.model.nextUrl
+    );
+    this._notebook.title.label = `${info.type || 'unknown'}: ${info.title ||
+      'Untitled'}`;
 
     (this._notebook.layout as any).widgets[0].hide();
 
@@ -158,7 +174,7 @@ export class Chatbook extends BoxPanel {
 
     setupCommands(commands, this, this._notebook, this._datChat.model);
 
-    this._ready = true;
+    return this._notebook;
   }
 }
 

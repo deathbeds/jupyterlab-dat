@@ -20,8 +20,6 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: var(--jp-datchat-header-height);
-  max-height: calc(1.75 * var(--jp-datchat-header-height));
   padding: var(--jp-notebook-padding);
 }
 
@@ -48,7 +46,7 @@
 }
 
 /* notebook hacks */
-#main .jp-DatChat .jp-Notebook-cell:last-of-type {
+#main .jp-DatChatbook .jp-Notebook-cell:last-of-type {
   position: sticky;
   background-color: var(--jp-layout-color1);
   bottom: -10px;
@@ -61,27 +59,27 @@
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25);
 }
 
-#main .jp-DatChat .jp-Notebook-cell .jp-InputArea-prompt {
+#main .jp-DatChatbook .jp-Notebook-cell .jp-InputArea-prompt {
   max-width: calc(3 * var(--jp-ui-font-size2));
 }
 
-#main .jp-DatChat .jp-mod-dat-peer-self .jp-InputArea-prompt,
-#main .jp-DatChat .jp-Notebook-cell:last-of-type .jp-InputArea-prompt {
+#main .jp-DatChatbook .jp-mod-dat-peer-self .jp-InputArea-prompt,
+#main .jp-DatChatbook .jp-Notebook-cell:last-of-type .jp-InputArea-prompt {
   opacity: 0;
 }
 
-.jp-DatChat .jp-Notebook.jp-mod-scrollPastEnd::after {
+.jp-DatChatbook .jp-Notebook.jp-mod-scrollPastEnd::after {
   display: none;
 }
 
-.jp-DatChat .jp-Cell {
+.jp-DatChatbook .jp-Cell {
   padding-left: 0;
 }
 
-.jp-DatChat .jp-Notebook-cell .jp-MarkdownOutput {
+.jp-DatChatbook .jp-Notebook-cell .jp-MarkdownOutput {
   border-left: solid 4px transparent;
 }
 
-.jp-DatChat .jp-Notebook-cell.jp-mod-dat-peer-other .jp-MarkdownOutput {
+.jp-DatChatbook .jp-Notebook-cell.jp-mod-dat-peer-other .jp-MarkdownOutput {
   border-left: solid 4px var(--jp-layout-color2);
 }
