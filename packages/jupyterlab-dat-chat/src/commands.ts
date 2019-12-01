@@ -25,7 +25,8 @@ export function setupCommands(context: IDatChatManager.ICommandsContext) {
   const { archiveUrl, commands, manager, notebook } = context;
   const { content } = notebook;
 
-  async function send() {
+  async function send(args: any) {
+    console.log(args);
     const { activeCellIndex, widgets } = content;
     notebook.activate();
     console.log('sending on ', notebook);
@@ -84,7 +85,7 @@ export function setupCommands(context: IDatChatManager.ICommandsContext) {
 
   commands.addCommand(CommandIDs.copy, {
     label: 'Copy Cells',
-    execute: args => [console.log('copy'), NotebookActions.copy(content)]
+    execute: args => NotebookActions.copy(content)
   });
 
   commands.addCommand(CommandIDs.commandMode, {

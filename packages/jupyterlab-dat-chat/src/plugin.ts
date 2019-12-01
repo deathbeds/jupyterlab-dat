@@ -20,6 +20,10 @@ const extension: JupyterFrontEndPlugin<void> = {
     const manager = new DatChatManager({ serviceManager, identityManager });
     const { datManager } = identityManager;
 
+    (app as JupyterLab).shell.activeChanged.connect((shel, change) => {
+      manager.activeWidget = change.newValue;
+    });
+
     const launcher = new Chatbook({ manager });
     launcher.title.label = 'dat chat';
     launcher.title.icon = CSS.DAT.ICON_NAMES.chat;

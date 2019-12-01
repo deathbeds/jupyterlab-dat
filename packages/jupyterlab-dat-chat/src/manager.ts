@@ -45,6 +45,8 @@ export class DatChatManager implements IDatChatManager {
   private _widgetRequested = new Signal<IDatChatManager, NotebookPanel>(this);
   private _notebookUrls = new Map<string, Set<NotebookPanel>>();
 
+  activeWidget: Widget;
+
   constructor(options: IDatChatManager.IOptions) {
     this._serviceManager = options.serviceManager;
     this._identityManager = options.identityManager;
@@ -59,10 +61,13 @@ export class DatChatManager implements IDatChatManager {
   }
 
   async addMessage(context: IDatChatManager.IMessageContext) {
+    console.log('adding', context);
     if (context.notebook) {
+      console.log('had notebook');
       await this.addMessageToNotebook(context);
     } else {
       const notebooks = this._notebookUrls.get(context.archiveUrl);
+      console.log('notebooks', notebooks);
       if (notebooks && notebooks.size) {
         const promises = [] as Promise<void>[];
         notebooks.forEach(notebook => {
@@ -101,14 +106,6 @@ export class DatChatManager implements IDatChatManager {
   async createWidget(archiveUrl: string) {
     let commands = new CommandRegistry();
     let useCapture = true;
-
-    document.addEventListener(
-      'keydown',
-      event => {
-        commands.processKeydownEvent(event);
-      },
-      useCapture
-    );
 
     let docRegistry = new DocumentRegistry();
     let docManager = new DocumentManager({
@@ -165,6 +162,17 @@ export class DatChatManager implements IDatChatManager {
         }
       });
     });
+
+    document.addEventListener(
+      'keydown',
+      event => {
+        console.log(this.activeWidget);
+        if (this.activeWidget === notebook) {
+          commands.processKeydownEvent(event);
+        }
+      },
+      useCapture
+    );
 
     setupCommands({ archiveUrl, notebook, commands, manager: this });
 
