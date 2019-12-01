@@ -10,12 +10,9 @@ export const NS = '@deathbeds/jupyterlab-dat';
  * A class that tracks dat archives.
  */
 export interface IDatManager {
-  create(opts?: dat.IDatArchive.ICreateOptions): Promise<dat.IDatArchive>;
-  listen(
-    url: string,
-    opts?: dat.IDatArchive.ILoadOptions
-  ): Promise<dat.IDatArchive>;
-  close(archive: dat.IDatArchive): Promise<void>;
+  // services
+  icons: IIconRegistry;
+  // extensions
   registerExtension(
     name: string,
     listener: IDatManager.IExtensionListener
@@ -24,11 +21,21 @@ export interface IDatManager {
     name: string,
     listener: IDatManager.IExtensionListener
   ): void;
+  // signals
+  datsChanged: ISignal<IDatManager, void>;
+  infoChanged: ISignal<IDatManager, void>;
+  // properties
+  datUrls: Set<string>;
+  // archive stuff
+  create(opts?: dat.IDatArchive.ICreateOptions): Promise<dat.IDatArchive>;
+  listen(
+    url: string,
+    opts?: dat.IDatArchive.ILoadOptions
+  ): Promise<dat.IDatArchive>;
+  close(archive: dat.IDatArchive): Promise<void>;
   getArchive(url: string): dat.IDatArchive;
   getInfo(url: string): Promise<dat.IDatArchive.IArchiveInfo>;
-  datUrls: Set<string>;
-  datsChanged: ISignal<IDatManager, void>;
-  icons: IIconRegistry;
+  currentInfo(url: string): dat.IDatArchive.IArchiveInfo;
 }
 
 export namespace IDatManager {

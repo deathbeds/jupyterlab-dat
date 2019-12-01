@@ -25,12 +25,18 @@ export class DatChat extends VDomRenderer<DatChatModel> {
 
   protected render() {
     const m = this.model;
+    const { infos, urls, handle } = m;
 
-    const options = m.urls.map((url, idx) => {
+    const options = urls.map((url, idx) => {
       const onClick = () => (m.nextUrl = url);
+      let info = infos[url];
+      let label = url;
+      if (info) {
+        label = `${info.type || 'unknown'}: ${info.title || 'Untitled'}`;
+      }
       return (
         <option key={idx} value={url} onClick={onClick}>
-          {url}
+          {label}
         </option>
       );
     });
@@ -42,7 +48,7 @@ export class DatChat extends VDomRenderer<DatChatModel> {
 
     const inputProps = {
       className: 'jp-mod-styled',
-      defaultValue: m.handle,
+      defaultValue: handle,
       onChange: this.onHandleChange
     };
 

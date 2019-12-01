@@ -10,6 +10,8 @@ import { Chatbook } from './chatbook';
 
 import { ID } from '.';
 
+const CSS_ID = 'id-jp-dat-chat';
+
 const extension: JupyterFrontEndPlugin<void> = {
   id: ID,
   autoStart: true,
@@ -22,8 +24,11 @@ const extension: JupyterFrontEndPlugin<void> = {
     const { shell, serviceManager } = app;
 
     const chat = new Chatbook({ serviceManager, identityManager });
-    chat.id = ID;
+    chat.id = CSS_ID;
     shell.add(chat, 'right');
+    chat.node.addEventListener('mouseover', () => {
+      app.shell.activateById(CSS_ID);
+    });
 
     identityManager.datManager.datsChanged.connect(async () => {
       if (!chat.ready) {

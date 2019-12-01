@@ -18,6 +18,9 @@ export class DatChatModel extends VDomModel {
     this._datManager.datsChanged.connect(() => {
       this.stateChanged.emit(void 0);
     });
+    this._datManager.infoChanged.connect(() => {
+      this.stateChanged.emit(void 0);
+    });
   }
 
   get icons() {
@@ -38,6 +41,13 @@ export class DatChatModel extends VDomModel {
 
   get urls() {
     return Array.from(this._manager.datManager.datUrls);
+  }
+
+  get infos() {
+    return this.urls.reduce((memo, url) => {
+      memo[url] = this._manager.datManager.currentInfo(url);
+      return memo;
+    }, {} as { [key: string]: dat.IDatArchive.IArchiveInfo });
   }
 
   get archiveInfo() {

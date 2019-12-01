@@ -17,6 +17,7 @@ export class DatManager implements IDatManager {
   private _RAM: any;
   private _datUrls = new Set<string>();
   private _datsChanged = new Signal<IDatManager, void>(this);
+  private _infoChanged = new Signal<IDatManager, void>(this);
   private _createdArchives = new Map<string, dat.IDatArchive>();
   private _listenedArchives = new Map<string, dat.IDatArchive>();
   private _archiveInfo = new Map<string, dat.IDatArchive.IArchiveInfo>();
@@ -38,6 +39,10 @@ export class DatManager implements IDatManager {
 
   get datsChanged(): ISignal<IDatManager, void> {
     return this._datsChanged;
+  }
+
+  get infoChanged(): ISignal<IDatManager, void> {
+    return this._infoChanged;
   }
 
   private async SDK() {
@@ -111,19 +116,27 @@ export class DatManager implements IDatManager {
     return this._createdArchives.get(url) || this._listenedArchives.get(url);
   }
 
+  currentInfo(url: string): dat.IDatArchive.IArchiveInfo {
+    return this._archiveInfo.get(url);
+  }
+
   async getInfo(url: string): Promise<dat.IDatArchive.IArchiveInfo> {
-    if (!this._archiveInfo.has(url)) {
-      if (this._createdArchives.has(url)) {
-        this._archiveInfo.set(
-          url,
-          await this._createdArchives.get(url).getInfo()
-        );
-      } else if (this._listenedArchives.has(url)) {
-        this._archiveInfo.set(
-          url,
-          await this._listenedArchives.get(url).getInfo()
-        );
-      }
+    let changed = false;
+    if (this._createdArchives.has(url)) {
+      this._archiveInfo.set(
+        url,
+        await this._createdArchives.get(url).getInfo()
+      );
+      changed = true;
+    } else if (this._listenedArchives.has(url)) {
+      this._archiveInfo.set(
+        url,
+        await this._listenedArchives.get(url).getInfo()
+      );
+      changed = true;
+    }
+    if (changed) {
+      this._infoChanged.emit(void 0);
     }
     return this._archiveInfo.get(url);
   }

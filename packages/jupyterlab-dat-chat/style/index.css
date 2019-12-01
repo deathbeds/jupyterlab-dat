@@ -78,10 +78,6 @@
   padding-left: 0;
 }
 
-.jp-DatChat .jp-Collapser {
-  display: none;
-}
-
 .jp-DatChat .jp-Notebook-cell .jp-MarkdownOutput {
   border-left: solid 4px transparent;
 }
