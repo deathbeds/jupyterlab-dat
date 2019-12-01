@@ -1,8 +1,6 @@
-import { CommandRegistry } from '@phosphor/commands';
 import { isMarkdownCellModel, MarkdownCell } from '@jupyterlab/cells';
 import { NotebookPanel, NotebookActions } from '@jupyterlab/notebook';
-import { DatChatModel } from './model';
-import { Chatbook } from './chatbook';
+import { IDatChatManager } from './tokens';
 
 import { CSS, ID } from '.';
 
@@ -23,19 +21,15 @@ export const CommandIDs = {
   selectBelow: 'notebook:move-cursor-down'
 };
 
-export function setupCommands(
-  commands: CommandRegistry,
-  chatBook: Chatbook,
-  nbWidget: NotebookPanel,
-  chatModel: DatChatModel
-) {
-  const { content } = nbWidget;
+export function setupCommands(context: IDatChatManager.ICommandsContext) {
+  const { archiveUrl, commands, manager, notebook } = context;
+  const { content } = notebook;
 
   async function send() {
     const { activeCellIndex, widgets } = content;
-    nbWidget.activate();
+    notebook.activate();
 
-    makeMarkdown(nbWidget);
+    makeMarkdown(notebook);
 
     const { activeCell } = content;
 
@@ -43,9 +37,16 @@ export function setupCommands(
       isMarkdownCellModel(activeCell.model) &&
       activeCellIndex === widgets.length - 1
     ) {
-      activeCell.model.metadata.set(ID, { handle: chatModel.handle });
-      const buffer = await chatModel.sendMarkdown(activeCell.model);
-      chatBook.addMessage(chatModel.nextUrl, buffer);
+      activeCell.model.metadata.set(ID, {
+        handle: manager.identityManager.me.handle
+      });
+      const message = await manager.sendMarkdown(archiveUrl, activeCell.model);
+      manager.addMessage({
+        archiveUrl,
+        message,
+        notebook,
+        peer: null
+      });
       const cell = content.widgets.slice(-1)[0] as MarkdownCell;
       const { model } = cell;
       cell.rendered = false;

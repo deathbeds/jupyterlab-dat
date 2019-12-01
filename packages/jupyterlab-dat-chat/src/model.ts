@@ -1,15 +1,13 @@
 import { dat } from '@deathbeds/dat-sdk-webpack';
 
-import { IMarkdownCellModel } from '@jupyterlab/cells';
 import { VDomModel } from '@jupyterlab/apputils';
 import { Signal } from '@phosphor/signaling';
 
-import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/lib/tokens';
-import { ID } from '.';
+import { IDatChatManager } from './tokens';
 
 export class DatChatModel extends VDomModel {
   private _messages: DatChatModel.IMessage[] = [];
-  private _manager: IDatIdentityManager;
+  private _manager: IDatChatManager;
   private _nextUrl = '';
   private _archiveInfo: dat.IDatArchive.IArchiveInfo;
   private _chatRequested = new Signal<DatChatModel, void>(this);
@@ -26,7 +24,11 @@ export class DatChatModel extends VDomModel {
   }
 
   private get _datManager() {
-    return this._manager.datManager;
+    return this._manager.identityManager.datManager;
+  }
+
+  get me() {
+    return this._manager.identityManager.me;
   }
 
   get chatRequested() {
@@ -38,20 +40,20 @@ export class DatChatModel extends VDomModel {
   }
 
   get handle() {
-    return this._manager.me.handle;
+    return this.me.handle;
   }
   set handle(handle) {
-    this._manager.me.handle = handle;
+    this.me.handle = handle;
     this.stateChanged.emit(void 0);
   }
 
   get urls() {
-    return Array.from(this._manager.datManager.datUrls);
+    return Array.from(this._datManager.datUrls);
   }
 
   get infos() {
     return this.urls.reduce((memo, url) => {
-      memo[url] = this._manager.datManager.currentInfo(url);
+      memo[url] = this._datManager.currentInfo(url);
       return memo;
     }, {} as { [key: string]: dat.IDatArchive.IArchiveInfo });
   }
@@ -81,21 +83,12 @@ export class DatChatModel extends VDomModel {
   }
 
   requestChat() {
-    this._chatRequested.emit(void 0);
+    this._manager.requestWidget(this.nextUrl).catch(console.warn);
   }
 
   addMessage(url: string, message: Buffer, peer?: dat.IHyperdrive.IPeer) {
     this._messages.push({ url, message, peer });
     this.stateChanged.emit(void 0);
-  }
-
-  async sendMarkdown(model: IMarkdownCellModel) {
-    const url = this.nextUrl;
-    const archive = this._datManager.getArchive(url);
-    const modelJson = model.toJSON();
-    const buffer = Buffer.from(JSON.stringify(modelJson, null, 2));
-    archive._archive.extension(ID, buffer);
-    return buffer;
   }
 }
 
@@ -109,6 +102,6 @@ export namespace DatChatModel {
     handle: string;
   }
   export interface IOptions {
-    manager: IDatIdentityManager;
+    manager: IDatChatManager;
   }
 }

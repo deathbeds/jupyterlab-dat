@@ -10,6 +10,7 @@ import { IIconRegistry } from '@jupyterlab/ui-components';
 import { Chatbook } from './chatbook';
 
 import { ID } from '.';
+import { DatChatManager } from './manager';
 
 const CSS_ID = 'id-jp-dat-chat';
 
@@ -23,15 +24,13 @@ const extension: JupyterFrontEndPlugin<void> = {
     identityManager: IDatIdentityManager
   ) => {
     const { shell, serviceManager } = app;
+    const manager = new DatChatManager({ serviceManager, identityManager });
 
-    const launcher = new Chatbook({ serviceManager, identityManager });
+    const launcher = new Chatbook({ manager });
     launcher.id = CSS_ID;
     shell.add(launcher, 'right');
-    launcher.node.addEventListener('mouseover', () => {
-      app.shell.activateById(CSS_ID);
-    });
 
-    launcher.widgetRequested.connect((chatbook, panel) => {
+    manager.widgetRequested.connect((chatbook, panel) => {
       shell.add(panel, 'main', { mode: 'split-right' });
       (app as JupyterLab).shell.collapseRight();
     });
@@ -39,7 +38,11 @@ const extension: JupyterFrontEndPlugin<void> = {
     identityManager.datManager.registerExtension(
       ID,
       (archive, _name, message, peer) => {
-        launcher.addMessage(archive.url, message, peer);
+        manager.addMessage({
+          archiveUrl: archive.url,
+          message,
+          peer
+        });
       }
     );
   }
