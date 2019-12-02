@@ -1,9 +1,11 @@
 import { IDatManager } from '@deathbeds/jupyterlab-dat';
 
-export { CSS } from '@deathbeds/jupyterlab-dat';
+import { CSS as DAT } from '@deathbeds/jupyterlab-dat';
+
+export const CSS = DAT;
 
 export const DAT_NOTEBOOK: IDatManager.IDatType = {
   name: 'jupyterlab-dat-notebook',
   label: 'Notebook',
-  icon: 'dat-star-dat'
+  icon: CSS.ICON_NAMES.notebookPublish
 };

@@ -16,7 +16,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
   constructor(options: DatNotebookModel.IOptions) {
     super();
     this.model = new DatNotebookModel(options);
-    this.title.iconClass = CSS.ICONS.star;
+    this.title.icon = CSS.ICON_NAMES.notebookPublish;
     this.addClass(CSS.WIDGET);
   }
 
@@ -62,7 +62,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           }
         })}
         {renderBigButton({
-          icon: 'dat-create-new-dat',
+          icon: CSS.ICON_NAMES.notebookPublish,
           label: m.isPublishing ? 'PUBLISHING' : 'PUBLISH',
           icons: m.icons,
           className: m.isPublishing ? '' : CSS.JP.accept,
@@ -85,7 +85,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           <i>Title</i>
           <input
             defaultValue={m.title}
-            className="jp-mod-styled"
+            className={CSS.JP.styled}
             onChange={evt => (m.title = evt.currentTarget.value)}
           />
         </label>
@@ -93,7 +93,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           <i>Author</i>
           <input
             defaultValue={m.author}
-            className="jp-mod-styled"
+            className={CSS.JP.styled}
             onChange={evt => (m.author = evt.currentTarget.value)}
           />
         </label>
@@ -101,7 +101,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           <i>Description</i>
           <textarea
             defaultValue={m.description}
-            className="jp-mod-styled"
+            className={CSS.JP.styled}
             onChange={evt => (m.description = evt.currentTarget.value)}
             rows={5}
           />
@@ -153,7 +153,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
         })}
         {renderBigButton({
           label: m.isSubscribed ? 'SUBSCRIBED' : 'SUBSCRIBE',
-          icon: 'dat-hexagon-resume',
+          icon: CSS.ICON_NAMES.notebookSubscribe,
           icons: m.icons,
           className: m.canSubscribe ? CSS.JP.accept : '',
           props: {
@@ -190,7 +190,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           <input
             type="checkbox"
             defaultChecked={m.follow}
-            className="jp-mod-styled"
+            className={CSS.JP.styled}
             onChange={() => (m.follow = !m.follow)}
           />
         </label>
@@ -199,7 +199,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           <input
             type="checkbox"
             defaultChecked={m.autoRender}
-            className="jp-mod-styled"
+            className={CSS.JP.styled}
             onChange={() => (m.autoRender = !m.autoRender)}
           />
         </label>
@@ -208,7 +208,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
           <input
             type="checkbox"
             defaultChecked={m.autoTrust}
-            className="jp-mod-styled"
+            className={CSS.JP.styled}
             onChange={() => (m.autoTrust = !m.autoTrust)}
           />
         </label>

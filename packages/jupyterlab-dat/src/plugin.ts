@@ -9,6 +9,7 @@ import { DatManager } from './manager';
 import { IDatManager } from './tokens';
 import { ICONS } from './icons';
 import { DatBar } from './widget';
+import { CSS } from '.';
 
 const extension: JupyterFrontEndPlugin<IDatManager> = {
   id: 'jupyterlab-dat',
@@ -21,7 +22,7 @@ const extension: JupyterFrontEndPlugin<IDatManager> = {
     const bar = new DatBar({ datManager: manager });
     bar.id = 'id-dat-sidebar';
     bar.title.caption = 'dat';
-    bar.title.iconClass = 'dat-hexagon-outlines';
+    bar.title.icon = CSS.ICON_NAMES.outlines;
     app.shell.add(bar, 'left');
     return manager;
   }

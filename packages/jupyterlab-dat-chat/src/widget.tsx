@@ -15,7 +15,7 @@ export class DatChat extends VDomRenderer<DatChatModel> {
   constructor(options: DatChatModel.IOptions) {
     super();
     this.model = new DatChatModel(options);
-    this.title.iconClass = CSS.DAT.ICONS.chat;
+    this.title.icon = CSS.DAT.ICON_NAMES.chat;
     this.addClass(CSS.WIDGET);
   }
 

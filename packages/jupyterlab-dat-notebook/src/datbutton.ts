@@ -47,7 +47,7 @@ export class DatNotebookButton
     _context: DocumentRegistry.IContext<INotebookModel>
   ): IDisposable {
     let button = new ToolbarButton({
-      iconClassName: `jp-Icon jp-Icon-16 ${CSS.ICONS.star}`,
+      iconClassName: `jp-Icon jp-Icon-16 ${CSS.ICONS.notebookPublish}`,
       onClick: async () => await this.requestWidget(panel),
       tooltip: 'Publish/Subscribe'
     });

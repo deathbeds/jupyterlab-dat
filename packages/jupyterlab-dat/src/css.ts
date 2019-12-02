@@ -5,14 +5,18 @@ export const CSS = {
     chat: 'jp-DatHexagonChatIcon',
     resume: 'jp-DatHexagonResumeIcon',
     happy: 'jp-DatHappyDatIcon',
-    star: 'jp-DatStarDatIcon'
+    star: 'jp-DatStarDatIcon',
+    notebookPublish: 'jp-DatHexagonNotebookPublishIcon',
+    notebookSubscribe: 'jp-DatHexagonNotebookSubscribeIcon'
   } as { [key: string]: string },
   ICON_NAMES: {
     happy: 'dat-happy-dat',
     chat: 'dat-hexagon-chat',
     outlines: 'dat-hexagon-outlines',
     network: 'dat-network',
-    question: 'dat-question'
+    question: 'dat-question',
+    notebookPublish: 'dat-hexagon-notebook-publish',
+    notebookSubscribe: 'dat-hexagon-notebook-subscribe'
   },
   COLOR: {
     brand: 'jp-mod-dat-brand'

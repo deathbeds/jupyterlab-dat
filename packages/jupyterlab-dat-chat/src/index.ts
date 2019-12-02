@@ -11,5 +11,5 @@ export const ID = 'jupyterlab-dat-chat';
 export const DAT_CHAT: IDatManager.IDatType = {
   name: ID,
   label: 'Chat',
-  icon: 'dat-hexagon-chat'
+  icon: CSS.DAT.ICON_NAMES.chat
 };

@@ -16,7 +16,7 @@ const NOTEBOOK_SERVER_DISCOVERY =
 const SIDEBAR_DEFAULTS = {
   rank: 100,
   title: 'Untitled',
-  icon: 'dat-hexagon-outlines'
+  icon: CSS.ICON_NAMES.question
 };
 
 export class DatManager implements IDatManager {

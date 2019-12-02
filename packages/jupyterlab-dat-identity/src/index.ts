@@ -8,5 +8,5 @@ export const CSS = {
 export const DAT_IDENTITY: IDatManager.IDatType = {
   name: 'jupyterlab-dat-identity',
   label: 'Identity',
-  icon: 'dat-happy-dat'
+  icon: CSS.DAT.ICON_NAMES.happy
 };

@@ -27,7 +27,9 @@ export class DatPeer extends VDomRenderer<DatIdentityModel> {
 
     return (
       <label>
-        <div {...props}>{m.icons.iconReact({ name: 'dat-hexagon-chat' })}</div>
+        <div {...props}>
+          {m.icons.iconReact({ name: CSS.DAT.ICON_NAMES.happy })}
+        </div>
         <span title={m.handle}>{m.handle}</span>
       </label>
     );

@@ -17,7 +17,7 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
   constructor(options?: Widget.IOptions) {
     super(options);
     this.title.caption = 'my dat';
-    this.title.iconClass = CSS.DAT.ICONS.happy;
+    this.title.icon = CSS.DAT.ICON_NAMES.happy;
     this.addClass(CSS.ME);
   }
 
@@ -41,7 +41,7 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
     }
 
     const nameProps = {
-      className: 'jp-mod-styled',
+      className: CSS.DAT.JP.styled,
       defaultValue: m.handle,
       placeholder: 'anon',
       onChange: this.onNameChange
@@ -58,7 +58,7 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
         <section>
           <span>Bio</span>
           <br />
-          <textarea className="jp-mod-styled" rows={5}></textarea>
+          <textarea className={CSS.DAT.JP.styled} rows={5}></textarea>
           <br />
           <small>
             <i>A short text about yourself</i>
@@ -77,7 +77,7 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
         </section>
         <section>
           {renderBigButton({
-            icon: 'dat-create-new-dat',
+            icon: CSS.DAT.ICON_NAMES.happy,
             icons: this.model.icons,
             label: m.isPublishing ? 'PUBLISHING' : 'PUBLISH',
             className: m.isPublishing ? '' : CSS.DAT.JP.accept,
