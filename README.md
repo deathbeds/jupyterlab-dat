@@ -26,6 +26,17 @@
 - Click `SUBSCRIBE`
 - Watch the notebook change
 
+### Chat
+
+- Click the `⬡` icon in the Lab sidebar
+- Click `my dat`
+- Enter a name for yourself
+  - Optionally, click publish
+- Open `dat chat`
+- If you've published or subscribed a dat, you can chat to other publishers/subscribers
+  - Or paste a `dat://` url into the text box
+- Click `CHAT`
+
 ## Features
 
 - two-or-three click publish/subscribe
