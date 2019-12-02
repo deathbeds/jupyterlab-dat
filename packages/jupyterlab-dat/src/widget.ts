@@ -3,6 +3,8 @@ import { CSS } from '.';
 import { IDatManager } from './tokens';
 import { Accordion, Collapse } from './accordion';
 
+const DEBUG = false;
+
 export class DatBar extends Accordion {
   constructor(options: DatBar.IOptions) {
     super(options);
@@ -18,7 +20,9 @@ export class DatBar extends Accordion {
       seen.push(item);
       if (!children.includes(item)) {
         this.addWidget(item);
-        console.log('added', item, _opts);
+      }
+      if (DEBUG) {
+        console.log(_opts);
       }
     }
     for (const child of children) {

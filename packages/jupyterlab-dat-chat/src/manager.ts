@@ -61,13 +61,10 @@ export class DatChatManager implements IDatChatManager {
   }
 
   async addMessage(context: IDatChatManager.IMessageContext) {
-    console.log('adding', context);
     if (context.notebook) {
-      console.log('had notebook');
       await this.addMessageToNotebook(context);
     } else {
       const notebooks = this._notebookUrls.get(context.archiveUrl);
-      console.log('notebooks', notebooks);
       if (notebooks && notebooks.size) {
         const promises = [] as Promise<void>[];
         notebooks.forEach(notebook => {
@@ -143,7 +140,21 @@ export class DatChatManager implements IDatChatManager {
     const notebook = docManager.open(model.path) as NotebookPanel;
     notebook.addClass(CSS.BOOK);
     notebook.title.icon = CSS.DAT.ICONS.chat;
-    const info = await this._identityManager.datManager.getInfo(archiveUrl);
+
+    let info = await this._identityManager.datManager.getInfo(archiveUrl);
+
+    if (info == null) {
+      let archive = await this._identityManager.datManager.listen(archiveUrl, {
+        sparse: true
+      });
+      console.warn('not sure what to do with this', archive);
+      info = await this._identityManager.datManager.getInfo(archiveUrl);
+    }
+
+    if (!info) {
+      return null;
+    }
+
     notebook.title.label = `${info.type || 'unknown'}: ${info.title ||
       'Untitled'}`;
 
@@ -166,7 +177,6 @@ export class DatChatManager implements IDatChatManager {
     document.addEventListener(
       'keydown',
       event => {
-        console.log(this.activeWidget);
         if (this.activeWidget === notebook) {
           commands.processKeydownEvent(event);
         }

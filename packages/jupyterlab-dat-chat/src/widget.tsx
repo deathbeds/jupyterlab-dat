@@ -6,7 +6,10 @@ import { CSS } from '.';
 
 import { DatChatModel } from './model';
 
-import { renderBigButton } from '@deathbeds/jupyterlab-dat/lib/fragments';
+import {
+  renderBigButton,
+  renderDatURL
+} from '@deathbeds/jupyterlab-dat/lib/fragments';
 
 export class DatChat extends VDomRenderer<DatChatModel> {
   constructor(options: DatChatModel.IOptions) {
@@ -74,7 +77,17 @@ export class DatChat extends VDomRenderer<DatChatModel> {
     return (
       <div className={`${CSS.WIDGET}-Main`}>
         <header>
-          <ul className={`${CSS.WIDGET}-Urls`}>{options}</ul>
+          <ul className={`${CSS.WIDGET}-Urls`}>
+            {options}
+            <li>
+              {renderDatURL({
+                url: m.nextUrl,
+                props: {
+                  onChange: this.onUrlChange
+                }
+              })}
+            </li>
+          </ul>
         </header>
         {renderBigButton({
           label: 'CHAT',
