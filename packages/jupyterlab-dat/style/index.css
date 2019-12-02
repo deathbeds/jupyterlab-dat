@@ -53,13 +53,22 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   flex-direction: column;
   align-items: center;
   background-color: var(--jp-layout-color2);
-  padding: var(--jp-ui-font-size0);
+  padding: var(--jp-notebook-padding);
+  border-top: solid 2px transparent;
 }
 
 .jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab.jp-mod-active,
 .jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab:hover {
   background-color: var(--jp-layout-color1);
   font-weight: bold;
+}
+
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab[data-dat-status='publishing'] {
+  border-top: solid 2px var(--jp-accent-color1);
+}
+
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab[data-dat-status='subscribed'] {
+  border-top: solid 2px var(--jp-brand-color1);
 }
 
 .jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab img {

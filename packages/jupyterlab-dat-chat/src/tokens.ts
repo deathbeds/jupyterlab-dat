@@ -13,6 +13,7 @@ export interface IDatChatManager {
   createWidget(archiveUrl: string): Promise<NotebookPanel>;
   sendMarkdown(archiveUrl: string, model: IMarkdownCellModel): Promise<Buffer>;
   requestWidget(archiveUrl: string): Promise<void>;
+  notebookUrls: string[];
 }
 
 export namespace IDatChatManager {

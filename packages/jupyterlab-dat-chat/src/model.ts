@@ -31,6 +31,10 @@ export class DatChatModel extends VDomModel {
     return this._manager.identityManager.me;
   }
 
+  get notebookUrls() {
+    return this._manager.notebookUrls;
+  }
+
   get chatRequested() {
     return this._chatRequested;
   }

@@ -31,6 +31,12 @@ export class DatChat extends VDomRenderer<DatChatModel> {
     const m = this.model;
     const { infos, urls, nextUrl } = m;
 
+    this.title.dataset = {
+      'dat-status': m.notebookUrls.length
+        ? CSS.DAT.STATUS.subscribed
+        : CSS.DAT.STATUS.offline
+    };
+
     const options = urls.map((url, idx) => {
       let info = infos[url];
       let label = url;
@@ -74,11 +80,13 @@ export class DatChat extends VDomRenderer<DatChatModel> {
       );
     });
 
+    const nullState = <blockquote>No dats to chat about... yet.</blockquote>;
+
     return (
       <div className={`${CSS.WIDGET}-Main`}>
         <header>
           <ul className={`${CSS.WIDGET}-Urls`}>
-            {options}
+            {options.length ? options : nullState}
             <li>
               {renderDatURL({
                 url: m.nextUrl,
@@ -86,6 +94,7 @@ export class DatChat extends VDomRenderer<DatChatModel> {
                   onChange: this.onUrlChange
                 }
               })}
+              <i>Paste a dat to chat</i>
             </li>
           </ul>
         </header>

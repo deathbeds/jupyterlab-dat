@@ -5,6 +5,8 @@ import { IDatManager } from './tokens';
 
 const DEBUG = false;
 
+const SVG_CACHE = new Map<string, string>();
+
 export class DatBar extends TabPanel {
   private _datManager: IDatManager;
   constructor(options: DatBar.IOptions) {
@@ -14,13 +16,24 @@ export class DatBar extends TabPanel {
       renderTab: data => {
         const { title, current } = data;
 
-        const svg = (this._datManager.icons as any).resolveSvg(title.icon);
+        if (!SVG_CACHE.has(title.icon)) {
+          SVG_CACHE.set(
+            title.icon,
+            `data:image/svg+xml;base64,${btoa(
+              (this._datManager.icons as any).resolveSvg(title.icon).outerHTML
+            )}`
+          );
+        }
+
+        const src = SVG_CACHE.get(title.icon);
+
         return h.li(
-          { className: `p-TabBar-tab ${current ? CSS.JP.active : ''}` },
-          [
-            h.img({ src: `data:image/svg+xml;base64,${btoa(svg.outerHTML)}` }),
-            h.label(title.label)
-          ]
+          {
+            className: `p-TabBar-tab ${current ? CSS.JP.active : ''}`,
+            title: title.caption,
+            dataset: title.dataset
+          },
+          [h.img({ src }), h.label(title.label)]
         );
       },
       closeIconSelector: '.not-gonna-find-it'

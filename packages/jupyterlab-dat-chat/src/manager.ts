@@ -56,6 +56,10 @@ export class DatChatManager implements IDatChatManager {
     this._identityManager = options.identityManager;
   }
 
+  get notebookUrls() {
+    return Array.from(this._notebookUrls.keys());
+  }
+
   get widgetRequested(): ISignal<IDatChatManager, NotebookPanel> {
     return this._widgetRequested;
   }

@@ -30,6 +30,11 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
 
   protected render() {
     const m = this.model;
+    this.title.dataset = {
+      'dat-status': m.isPublishing
+        ? CSS.DAT.STATUS.publishing
+        : CSS.DAT.STATUS.offline
+    };
 
     if (!m) {
       return <div />;

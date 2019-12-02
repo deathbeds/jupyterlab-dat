@@ -24,6 +24,12 @@ export const CSS = {
   SIDEBAR: 'jp-Dat-Sidebar',
   MAIN: 'jp-Dat-Widget-Main',
   SHIELD: 'jp-mod-dat-shield',
+  STATUS: {
+    offline: 'offline',
+    publishing: 'publishing',
+    unread: 'unread',
+    subscribed: 'subscribed'
+  },
   BTN: {
     big: 'jp-mod-dat-btn-big'
   },
