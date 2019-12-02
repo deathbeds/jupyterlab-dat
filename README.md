@@ -13,7 +13,7 @@
 ### Publish
 
 - Open a notebook
-- Click the `⬡⭐` icon in the notebook toolbar
+- Click the <img src="./packages/jupyterlab-dat/style/icons/hexagon-notebook-publish.svg" width="16px"/> icon in the notebook toolbar
 - Click `PUBLISH`
 - Copy the `dat://` url, send it to someone else with `jupyterlab-dat` installed
 - Change the notebook
@@ -21,7 +21,7 @@
 ### Subscribe
 
 - Open a new Untitled notebook
-- Click the `⬡⭐` icon in the notebook toolbar
+- Click the <img src="./packages/jupyterlab-dat/style/icons/hexagon-notebook-publish.svg" width="16px"/> icon in the notebook toolbar
 - Paste a `dat://` url into the text box above `SUBSCRIBE`
 - Click `SUBSCRIBE`
 - Watch the notebook change
