@@ -26,7 +26,25 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   width: var(--jp-ui-font-size3);
   min-width: var(--jp-ui-font-size3);
   min-height: var(--jp-ui-font-size3);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   flex: 0;
+}
+
+.jp-mod-dat-shield > * {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.jp-mod-dat-shield > * > * {
+  flex: 1;
+}
+
+.jp-mod-dat-btn-big [fill] {
+  fill: white;
 }
 
 /* sidebar */

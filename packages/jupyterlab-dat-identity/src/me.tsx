@@ -50,32 +50,38 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
     return (
       <div className={`${CSS.ME}-Main`}>
         <section>
-          <input {...nameProps} />
-          <small>
-            <i>Your name for chat and dat authoring</i>
-          </small>
+          <p>
+            <label>Name</label>
+            <input {...nameProps} />
+            <small>
+              <i>
+                Your name for chat and <code>dat</code> authoring
+              </i>
+            </small>
+          </p>
+          <p>
+            <label>Bio</label>
+            <textarea className={CSS.DAT.JP.styled} rows={5}></textarea>
+            <small>
+              <i>A short text about yourself</i>
+            </small>
+          </p>
+          <p>
+            <label>My Dat</label>
+            {renderDatURL({
+              url: m.publishUrl,
+              props: {
+                readOnly: true
+              }
+            })}
+            <small>
+              <i>
+                Your personal <code>dat</code> URL
+              </i>
+            </small>
+          </p>
         </section>
-        <section>
-          <span>Bio</span>
-          <br />
-          <textarea className={CSS.DAT.JP.styled} rows={5}></textarea>
-          <br />
-          <small>
-            <i>A short text about yourself</i>
-          </small>
-        </section>
-        <section>
-          {renderDatURL({
-            url: m.publishUrl,
-            props: {
-              readOnly: true
-            }
-          })}
-          <small>
-            <i>Your personal dat url</i>
-          </small>
-        </section>
-        <section>
+        <footer>
           {renderBigButton({
             icon: CSS.DAT.ICON_NAMES.happy,
             icons: this.model.icons,
@@ -86,7 +92,7 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
               onClick: this.onPublish
             }
           })}
-        </section>
+        </footer>
       </div>
     );
   }
