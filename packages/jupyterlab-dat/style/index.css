@@ -1,5 +1,3 @@
-@import url('./accordion.css');
-
 :root {
   --jp-dat-color-brand: #2aca4b;
 }
@@ -37,64 +35,33 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   width: 300px;
   background-color: var(--jp-layout-color1);
   color: var(--jp-ui-font-color1);
-}
-
-.jp-Dat-Sidebar .p-Collapse-header {
-  border: 0;
-  padding: 0;
-}
-
-.jp-Dat-Sidebar .p-Collapse-contents {
-  border: 0;
-}
-
-.jp-Dat-Sidebar .p-Collapse-open {
-  flex: 1;
-}
-.jp-Dat-Sidebar .p-Collapse-open .p-Collapse-contents {
-  flex: 1;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-.jp-Dat-Sidebar .p-Collapse-contents {
-  padding: 0;
-}
-
-.jp-Dat-Sidebar .p-Collapse-open .p-Collapse-contents > :first-child {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 100% !important;
-}
-
-.jp-Dat-Sidebar .p-TabBar-tab.p-mod-current {
-  background-color: transparent;
-}
-
-.jp-Dat-Sidebar-Header {
-  max-height: calc(3 * var(--jp-ui-font-size2));
   display: flex;
   flex-direction: column;
 }
 
-.jp-Dat-Sidebar-Header header {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  padding: var(--jp-ui-font-size1);
-}
-
-.jp-Dat-Sidebar-Header-icon {
+.jp-Dat-Sidebar > .p-TabBar {
   flex: 0;
-  min-width: var(--jp-ui-font-size2);
-  min-height: var(--jp-ui-font-size2);
-  max-width: var(--jp-ui-font-size2);
-  max-height: var(--jp-ui-font-size2);
-  margin-right: var(--jp-ui-font-size1);
+  min-height: calc(3 * var(--jp-ui-font-size3));
+  height: calc(3 * var(--jp-ui-font-size3));
+  display: flex;
+  flex-direction: row;
 }
 
-.jp-Dat-Sidebar-Header label {
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--jp-layout-color2);
+  padding: var(--jp-ui-font-size0);
+}
+
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab.jp-mod-active,
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab:hover {
+  background-color: var(--jp-layout-color1);
+  font-weight: bold;
+}
+
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab img {
+  max-height: var(--jp-ui-font-size3);
 }

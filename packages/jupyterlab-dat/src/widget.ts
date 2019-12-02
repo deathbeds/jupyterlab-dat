@@ -1,13 +1,32 @@
-import { Widget } from '@phosphor/widgets';
+import { Widget, TabPanel } from '@phosphor/widgets';
+import { h } from '@phosphor/virtualdom';
 import { CSS } from '.';
 import { IDatManager } from './tokens';
-import { Accordion, Collapse } from './accordion';
 
 const DEBUG = false;
 
-export class DatBar extends Accordion {
+export class DatBar extends TabPanel {
+  private _datManager: IDatManager;
   constructor(options: DatBar.IOptions) {
+    options.tabsMovable = false;
+    options.tabPlacement = 'top';
+    options.renderer = {
+      renderTab: data => {
+        const { title, current } = data;
+
+        const svg = (this._datManager.icons as any).resolveSvg(title.icon);
+        return h.li(
+          { className: `p-TabBar-tab ${current ? CSS.JP.active : ''}` },
+          [
+            h.img({ src: `data:image/svg+xml;base64,${btoa(svg.outerHTML)}` }),
+            h.label(title.label)
+          ]
+        );
+      },
+      closeIconSelector: '.not-gonna-find-it'
+    };
     super(options);
+    this._datManager = options.datManager;
     this.addClass(CSS.SIDEBAR);
     this._datManager.sidebarItemsChanged.connect(this.onSidebarItems, this);
     this.onSidebarItems();
@@ -15,7 +34,7 @@ export class DatBar extends Accordion {
 
   onSidebarItems() {
     let seen = [] as Widget[];
-    let children = (this.widgets as Collapse[]).map(child => child.widget);
+    let children = this.widgets;
     for (let [item, _opts] of this._datManager.sidebarItems) {
       seen.push(item);
       if (!children.includes(item)) {
@@ -25,16 +44,11 @@ export class DatBar extends Accordion {
         console.log(_opts);
       }
     }
-    for (const child of children) {
-      if (!seen.includes(child)) {
-        this.removeWidget(child);
-      }
-    }
   }
 }
 
 export namespace DatBar {
-  export interface IOptions {
+  export interface IOptions extends TabPanel.IOptions {
     datManager: IDatManager;
   }
 }

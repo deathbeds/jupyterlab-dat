@@ -31,4 +31,6 @@
 .jp-DatIdentity-Me-Main input,
 .jp-DatIdentity-Me-Main textarea {
   width: 100%;
+  max-width: 100%;
+  min-width: 100%;
 }
