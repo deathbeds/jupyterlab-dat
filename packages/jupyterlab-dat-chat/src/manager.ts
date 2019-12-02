@@ -16,6 +16,8 @@ import {
   IMarkdownCellModel
 } from '@jupyterlab/cells';
 
+import { PageConfig } from '@jupyterlab/coreutils';
+
 import { ServiceManager } from '@jupyterlab/services';
 
 import { editorServices } from '@jupyterlab/codemirror';
@@ -23,6 +25,8 @@ import { editorServices } from '@jupyterlab/codemirror';
 import { DocumentManager } from '@jupyterlab/docmanager';
 
 import { DocumentRegistry } from '@jupyterlab/docregistry';
+
+import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 
 import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/lib/tokens';
 
@@ -116,7 +120,11 @@ export class DatChatManager implements IDatChatManager {
     });
     let mFactory = new NotebookModelFactory({});
     let rendermime = new RenderMimeRegistry({
-      initialFactories: initialFactories
+      initialFactories: initialFactories,
+      latexTypesetter: new MathJaxTypesetter({
+        url: PageConfig.getOption('fullMathjaxUrl'),
+        config: PageConfig.getOption('mathjaxConfig')
+      })
     });
     let editorFactory = editorServices.factoryService.newInlineEditor;
     let contentFactory = new NotebookPanel.ContentFactory({ editorFactory });

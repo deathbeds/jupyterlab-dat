@@ -31,12 +31,14 @@
   },
   "peerDependencies": {
     "@deathbeds/jupyterlab-dat": "0.2",
-    "@jupyterlab/application": "1"
+    "@jupyterlab/application": "1",
+    "@jupyterlab/mathjax2": "1"
   },
   "devDependencies": {
     "@deathbeds/jupyterlab-dat": "0.2",
     "@deathbeds/jupyterlab-dat-identity": "0.1",
     "@jupyterlab/application": "1",
+    "@jupyterlab/mathjax2": "1",
     "@types/codemirror": "*"
   },
   "sideEffects": [
