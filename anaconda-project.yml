@@ -21,8 +21,10 @@ env_specs:
       - pillow
       - pip
       - python >=3.7,<3.8.0a0
+      - python-graphviz
       - qrcode
       - ujson
+      - vdom
       - pip:
-          - watchgod
           - jupyter_bokeh
+          - watchgod

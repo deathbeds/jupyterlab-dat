@@ -1,6 +1,6 @@
 {
-  "name": "@deatheds/jupyterlab-dat",
-  "version": "0.1.0",
+  "name": "@deathbeds/jupyterlab-dat",
+  "version": "0.2.0",
   "description": "dat for JupyterLab",
   "keywords": [
     "jupyter",

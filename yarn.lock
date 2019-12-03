@@ -341,6 +341,14 @@
     "@phosphor/widgets" "^1.9.0"
     react "~16.8.4"
 
+"@jupyterlab/mathjax2@1":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@jupyterlab/mathjax2/-/mathjax2-1.2.0.tgz#4a522c88cfa9abb8a7787da7add895e48a78caef"
+  integrity sha512-mMYbX+M3E3lSxwRPt0sroBBoEE10JEWoqaSUmrRIzU4n3jCfxO7G2nb5CIPSNurUGNvWvaUcud9Sdmt1luvOTw==
+  dependencies:
+    "@jupyterlab/rendermime-interfaces" "^1.5.0"
+    "@phosphor/coreutils" "^1.3.1"
+
 "@jupyterlab/notebook@1":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@jupyterlab/notebook/-/notebook-1.2.2.tgz#552945d3db21418ef5aa879f087f232ce4600353"
@@ -1327,10 +1335,22 @@
     buffer "5.1.0"
     random-access-storage "1.3.0"
 
+"@types/codemirror@*":
+  version "0.0.81"
+  resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-0.0.81.tgz#3cea2c1006406973d4aad212e617638cbfc2965b"
+  integrity sha512-QoeIb9tn/TZp0IzNyMKlcwHR6pHxNoIW9mKqF7asAsj+AWqpFOEUsxia756L6WKBQNk2psHpu+aFuIFqo3Ac0A==
+  dependencies:
+    "@types/tern" "*"
+
 "@types/dom4@^2.0.1":
   version "2.0.1"
   resolved "https://registry.npmjs.org/@types/dom4/-/dom4-2.0.1.tgz#506d5781b9bcab81bd9a878b198aec7dee2a6033"
   integrity sha512-kSkVAvWmMZiCYtvqjqQEwOmvKwcH+V4uiv3qPQ8pAh1Xl39xggGEo8gHUqV4waYGHezdFw0rKBR8Jt0CrQSDZA==
+
+"@types/estree@*":
+  version "0.0.40"
+  resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.40.tgz#0e6cb9b9bbd098031fa19e4b4e8131bc70e5de13"
+  integrity sha512-p3KZgMto/JyxosKGmnLDJ/dG5wf+qTRMUjHJcspC2oQKa4jP7mz+tv0ND56lLBu3ojHlhzY33Ol+khLyNmilkA==
 
 "@types/events@*":
   version "3.0.0"
@@ -1368,6 +1388,13 @@
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
+
+"@types/tern@*":
+  version "0.23.3"
+  resolved "https://registry.yarnpkg.com/@types/tern/-/tern-0.23.3.tgz#4b54538f04a88c9ff79de1f6f94f575a7f339460"
+  integrity sha512-imDtS4TAoTcXk0g7u4kkWqedB3E4qpjXzCpD2LU5M5NAXHzCDsypyvXSaG7mM8DKYkCRa7tFp4tS/lp/Wo7Q3w==
+  dependencies:
+    "@types/estree" "*"
 
 "@zkochan/cmd-shim@^3.1.0":
   version "3.1.0"

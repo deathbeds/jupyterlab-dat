@@ -4,7 +4,7 @@
   "description": "JupyterLab Dat - Meta Package.  All of the packages used by JupyterLab dat",
   "homepage": "https://github.com/deathbeds/jupyterlab-dat",
   "bugs": {
-    "url": "https://github.com/krassowski/jupyterlab-dat/issues"
+    "url": "https://github.com/deathbeds/jupyterlab-dat/issues"
   },
   "license": "BSD-3-Clause",
   "author": "dead pixels collective",
@@ -25,7 +25,10 @@
   },
   "peerDependencies": {
     "@deathbeds/dat-sdk-webpack": "*",
-    "@deathbeds/jupyterlab-dat": "*"
+    "@deathbeds/jupyterlab-dat": "*",
+    "@deathbeds/jupyterlab-dat-notebook": "*",
+    "@deathbeds/jupyterlab-dat-identity": "*",
+    "@deathbeds/jupyterlab-dat-chat": "*"
   },
   "publishConfig": {
     "access": "public"

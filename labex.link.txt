@@ -1,2 +1,5 @@
 packages/dat-sdk-webpack
 packages/jupyterlab-dat
+packages/jupyterlab-dat-chat
+packages/jupyterlab-dat-identity
+packages/jupyterlab-dat-notebook

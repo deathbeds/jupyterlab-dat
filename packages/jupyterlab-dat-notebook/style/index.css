@@ -1,0 +1,55 @@
+.jp-Dat-Widget {
+  padding: var(--jp-notebook-padding);
+  background-color: var(--jp-layout-color1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.jp-Dat-Widget .jp-Dat-Widget-Main {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.jp-Dat-Widget .jp-RenderedHTMLCommon {
+  padding: 0;
+}
+
+.jp-Dat-Widget section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--jp-notebook-padding);
+  min-width: 20rem;
+}
+
+.jp-Dat-Widget header {
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-Dat-Widget input {
+  width: 100%;
+  margin: 0 0 var(--jp-notebook-padding);
+}
+
+.jp-Dat-Widget details {
+  width: 100%;
+}
+.jp-Dat-Widget details label {
+  display: flex;
+  align-items: baseline;
+}
+.jp-Dat-Widget details label i {
+  flex: 0;
+  min-width: 7em;
+  text-align: right;
+}
+.jp-Dat-Widget details label input,
+.jp-Dat-Widget details label textarea {
+  flex: 1;
+  margin: 0 0 var(--jp-notebook-padding) var(--jp-notebook-padding);
+}

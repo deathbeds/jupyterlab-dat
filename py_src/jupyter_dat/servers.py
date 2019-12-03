@@ -13,5 +13,5 @@ def discovery_swarm_web():
     npx = shutil.which("npx")
 
     return dict(
-        command=[npx, "--port", "{port}"]
+        command=[npx, "discovery-swarm-web", "--port", "{port}"]
     )

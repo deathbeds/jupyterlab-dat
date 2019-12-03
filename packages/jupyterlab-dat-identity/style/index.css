@@ -1,0 +1,21 @@
+.jp-Dat-Peer [data-icon] {
+  max-width: var(--jp-ui-font-size3);
+}
+
+.jp-mod-dat-peer-other [data-icon] {
+  transform: scaleX(-1);
+}
+
+.jp-mod-dat-peer-self [data-icon] g {
+  fill: var(--jp-brand-color1);
+}
+
+.jp-mod-dat-peer-other [data-icon] g {
+  fill: var(--jp-accent-color1);
+}
+
+.jp-DatIdentity-Me {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

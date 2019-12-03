@@ -1,0 +1,114 @@
+.jp-DatChat {
+  --jp-datchat-header-height: calc(3 * var(--jp-ui-font-size2));
+  --jp-private-toolbar-height: 0;
+}
+
+.jp-DatChat {
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Main > header div[data-icon] {
+  min-height: var(--jp-ui-font-size2);
+  min-width: var(--jp-ui-font-size2);
+  max-width: var(--jp-ui-font-size2);
+  margin-right: var(--jp-ui-font-size1);
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Urls {
+  list-style: none;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.jp-DatChat-Urls li {
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: solid 2px transparent;
+  padding: var(--jp-notebook-padding);
+  padding-left: 0;
+  background-color: var(--jp-ui-layout-color2);
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatChat-Urls li.jp-mod-active {
+  border: solid 2px var(--jp-brand-color1);
+  background-color: var(--jp-ui-layout-color3);
+}
+
+.jp-DatChat-Urls li > label {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.jp-DatChat-Urls li > label input {
+  opacity: 0;
+  flex: 0;
+}
+
+.jp-DatChat-Urls li > label strong {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jp-DatChat-Urls li > label i {
+  flex: 0;
+  min-width: calc(2 * var(--jp-ui-font-size3));
+}
+
+.jp-DatChat-Urls li svg {
+  max-width: var(--jp-ui-font-size1);
+  padding-right: var(--jp-ui-font-size0);
+}
+
+/* notebook hacks */
+#main .jp-DatChatbook .jp-Notebook-cell:last-of-type {
+  position: sticky;
+  background-color: var(--jp-layout-color1);
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  margin-right: -8px;
+  margin-left: -8px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25);
+}
+
+#main .jp-DatChatbook .jp-Notebook-cell .jp-InputArea-prompt {
+  max-width: calc(3 * var(--jp-ui-font-size2));
+}
+
+#main .jp-DatChatbook .jp-mod-dat-peer-self .jp-InputArea-prompt,
+#main .jp-DatChatbook .jp-Notebook-cell:last-of-type .jp-InputArea-prompt {
+  opacity: 0;
+}
+
+.jp-DatChatbook .jp-Notebook.jp-mod-scrollPastEnd::after {
+  display: none;
+}
+
+.jp-DatChatbook .jp-Cell {
+  padding-left: 0;
+}
+
+.jp-DatChatbook .jp-Notebook-cell .jp-MarkdownOutput {
+  border-left: solid 4px transparent;
+}
+
+.jp-DatChatbook .jp-Notebook-cell.jp-mod-dat-peer-other .jp-MarkdownOutput {
+  border-left: solid 4px var(--jp-layout-color2);
+}

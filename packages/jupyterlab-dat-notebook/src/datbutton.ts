@@ -9,8 +9,10 @@ import { ToolbarButton } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
+import { IIconRegistry } from '@jupyterlab/ui-components';
 
-import { DatManager } from './manager';
+import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
+
 import { DatWidget } from './datwidget';
 
 import { CSS } from '.';
@@ -19,30 +21,38 @@ export class DatNotebookButton
   implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
   readonly widgetRequested: Signal<any, Widget> = new Signal<any, Widget>(this);
 
-  private _manager: DatManager;
+  private _manager: IDatManager;
+  private _icons: IIconRegistry;
 
-  constructor(manager: DatManager) {
+  constructor(manager: IDatManager, icons: IIconRegistry) {
     this._manager = manager;
+    this._icons = icons;
+  }
+
+  async requestWidget(panel: NotebookPanel, emit = true) {
+    const widget = new DatWidget({
+      panel,
+      context: panel.context,
+      manager: this._manager,
+      icons: this._icons
+    });
+    if (emit) {
+      this.widgetRequested.emit(widget);
+    }
+    return widget;
   }
 
   createNew(
     panel: NotebookPanel,
-    context: DocumentRegistry.IContext<INotebookModel>
+    _context: DocumentRegistry.IContext<INotebookModel>
   ): IDisposable {
     let button = new ToolbarButton({
-      iconClassName: `jp-Icon jp-Icon-16 ${CSS.ICON}`,
-      onClick: async () => {
-        const widget = new DatWidget({
-          panel,
-          context,
-          manager: this._manager
-        });
-        this.widgetRequested.emit(widget);
-      },
+      iconClassName: `jp-Icon jp-Icon-16 ${CSS.ICONS.notebookPublish}`,
+      onClick: async () => await this.requestWidget(panel),
       tooltip: 'Publish/Subscribe'
     });
 
-    panel.toolbar.insertItem(1, 'dat', button);
+    panel.toolbar.insertItem(2, 'dat-notebook', button);
 
     return new DisposableDelegate(() => {
       button.dispose();

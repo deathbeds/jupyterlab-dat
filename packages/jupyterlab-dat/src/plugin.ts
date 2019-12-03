@@ -3,28 +3,28 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { MainAreaWidget } from '@jupyterlab/apputils';
+import { IIconRegistry } from '@jupyterlab/ui-components';
 
 import { DatManager } from './manager';
+import { IDatManager } from './tokens';
+import { ICONS } from './icons';
+import { DatBar } from './widget';
+import { CSS } from '.';
 
-import { DatNotebookButton } from './datbutton';
-
-const extension: JupyterFrontEndPlugin<void> = {
-  id: 'jupyterlab-ws-contents',
+const extension: JupyterFrontEndPlugin<IDatManager> = {
+  id: 'jupyterlab-dat',
   autoStart: true,
-  activate: (app: JupyterFrontEnd) => {
-    const manager = new DatManager();
-    const { shell } = app;
-    const datButton = new DatNotebookButton(manager);
-
-    datButton.widgetRequested.connect((_it, content) => {
-      const main = new MainAreaWidget({ content });
-      shell.add(main, 'main', { mode: 'split-right' });
-    });
-
-    [datButton].forEach(button => {
-      app.docRegistry.addWidgetExtension('Notebook', button);
-    });
+  provides: IDatManager,
+  requires: [IIconRegistry],
+  activate: (app: JupyterFrontEnd, icons: IIconRegistry) => {
+    icons.addIcon(...ICONS);
+    const manager = new DatManager({ icons });
+    const bar = new DatBar({ datManager: manager });
+    bar.id = 'id-dat-sidebar';
+    bar.title.caption = 'dat';
+    bar.title.icon = CSS.ICON_NAMES.outlines;
+    app.shell.add(bar, 'left');
+    return manager;
   }
 };
 

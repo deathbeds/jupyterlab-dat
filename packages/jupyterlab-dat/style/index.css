@@ -1,17 +1,5 @@
 :root {
-  --jp-dat-icon-light: url('./dat-light.svg');
-  --jp-dat-icon-dark: url('./dat-dark.svg');
-  --jp-dat-icon-create: url('~dat-icons/icons/create-new-dat.svg');
-  --jp-dat-icon-resume: url('~dat-icons/icons/hexagon-resume.svg');
   --jp-dat-color-brand: #2aca4b;
-}
-
-body .jp-Dat-Icon {
-  background-image: var(--jp-dat-icon-dark);
-}
-
-body[data-jp-theme-light='true'] .jp-Dat-Icon {
-  background-image: var(--jp-dat-icon-light);
 }
 
 .jp-mod-dat-brand {
@@ -25,6 +13,7 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   font-size: 150%;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .jp-mod-dat-btn-big label {
@@ -33,56 +22,133 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
 }
 
 .jp-mod-dat-shield {
-  background-size: 61%;
-  width: 5rem;
-  min-width: 5rem;
-  height: 5rem;
-  background-position: center;
-  background-repeat: no-repeat;
+  padding: 1rem;
+  width: var(--jp-ui-font-size3);
+  min-width: var(--jp-ui-font-size3);
+  min-height: var(--jp-ui-font-size3);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   flex: 0;
 }
 
-.jp-Dat-Icon-create {
-  background-image: var(--jp-dat-icon-create);
-}
-
-.jp-Dat-Icon-resume {
-  background-image: var(--jp-dat-icon-resume);
-}
-
-.jp-Dat-Widget {
-  padding: var(--jp-notebook-padding);
-  background-color: var(--jp-layout-color1);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-.jp-Dat-Widget-Main {
+.jp-mod-dat-shield > * {
+  flex: 1;
   display: flex;
   flex-direction: row;
-  flex: 1;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
-.jp-Dat-Widget section {
+.jp-mod-dat-shield > * > * {
   flex: 1;
+}
+
+.jp-mod-dat-btn-big [fill] {
+  fill: white;
+}
+
+/* sidebar */
+.jp-Dat-Sidebar {
+  min-width: 300px;
+  width: 300px;
+  background-color: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
   display: flex;
+  flex-direction: column;
+}
+
+.jp-Dat-Sidebar > .p-TabBar {
+  flex: 0;
+  min-height: calc(3 * var(--jp-ui-font-size3));
+  height: calc(3 * var(--jp-ui-font-size3));
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab {
+  display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
+  background-color: var(--jp-layout-color2);
   padding: var(--jp-notebook-padding);
-  min-width: 20rem;
+  border-top: solid 4px transparent;
+  color: var(--jp-ui-font-color2);
 }
 
-.jp-Dat-Widget header {
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab.jp-mod-active,
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab:hover {
+  background-color: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+}
+
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab[data-dat-status='publishing'] {
+  border-top: solid 4px var(--jp-accent-color1);
+}
+
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab[data-dat-status='subscribed'] {
+  border-top: solid 4px var(--jp-brand-color1);
+}
+
+.jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab img {
+  max-height: var(--jp-ui-font-size3);
+}
+
+/* panel */
+
+.jp-DatPanel {
+  background-color: var(--jp-layout-color1);
+  padding: var(--jp-notebook-padding);
+  flex: 1;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
-.jp-Dat-Widget input {
-  font-family: var(--jp-code-font-family);
-  text-overflow: ellipsis;
+.jp-DatPanel > section {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.jp-DatPanel > footer {
+  flex: 0;
+}
+
+.jp-DatPanel p {
+  padding-bottom: var(--jp-notebook-padding);
+}
+
+.jp-DatPanel p > label {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: var(--jp-ui-font-size0);
+  display: block;
+  padding-bottom: calc(var(--jp-notebook-padding) / 2);
+}
+
+.jp-DatPanel p > small {
+  display: block;
+  padding-top: calc(var(--jp-notebook-padding) / 2);
+}
+
+.jp-DatPanel input[type='text'],
+.jp-DatPanel textarea {
   width: 100%;
-  margin: var(--jp-notebook-padding);
-  text-align: center;
+  max-width: 100%;
+  min-width: 100%;
+}
+
+.jp-DatPanel textarea {
+  background-color: var(--jp-input-background);
+  border: var(--jp-border-width) solid var(--jp-border-color1);
+  color: var(--jp-ui-font-color0);
+  font-family: var(--jp-content-font-family);
+  font-size: var(--jp-ui-font-size2);
+  padding: 7px;
+  display: block;
+}
+
+.jp-DatPanel blockquote {
+  border-left: solid 4px var(--jp-border-color1);
+  padding: var(--jp-notebook-padding);
 }
