@@ -3,6 +3,7 @@ import { CSS as DAT, IDatManager } from '@deathbeds/jupyterlab-dat';
 export const CSS = {
   WIDGET: 'jp-DatChat',
   BOOK: 'jp-DatChatbook',
+  RUN: 'jp-DatChat-Run',
   DAT
 };
 

@@ -35,7 +35,8 @@ export function setupCommands(context: IDatChatManager.ICommandsContext) {
 
     if (
       isMarkdownCellModel(activeCell.model) &&
-      activeCellIndex === widgets.length - 1
+      activeCellIndex === widgets.length - 1 &&
+      activeCell.model.value.text.trim().length
     ) {
       activeCell.model.metadata.set(ID, {
         handle: manager.identityManager.me.handle
@@ -52,6 +53,7 @@ export function setupCommands(context: IDatChatManager.ICommandsContext) {
       cell.rendered = false;
       model.value.text = '';
       cell.editor.focus();
+      manager.addRunButton(notebook, commands);
       content.activeCellIndex = content.widgets.indexOf(cell);
       content.node.scrollTo(0, content.node.clientHeight);
     }

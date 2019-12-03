@@ -22,7 +22,7 @@ import {
 import { nbformat } from '@jupyterlab/coreutils';
 
 import { ExplodeJSONStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/explode';
-import { DAT_NOTEBOOK } from '.';
+import { DAT_NOTEBOOK, CSS } from '.';
 import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/src/tokens';
 
 const DEFAULT_NOTEBOOK = '/Untitled.ipynb';
@@ -253,6 +253,7 @@ export class DatNotebookModel extends VDomModel {
   }
 
   async onPublish() {
+    this._panel.title.icon = CSS.ICON_NAMES.notebookPublish;
     this.status = 'sharing';
     const { title, description, author } = this;
 
@@ -280,6 +281,7 @@ export class DatNotebookModel extends VDomModel {
     await this.publishNotebookMetadata();
     await this.onPublishChange(true);
     await this.getInfo();
+
     this.watchInfo();
   }
 
@@ -322,6 +324,7 @@ export class DatNotebookModel extends VDomModel {
   }
 
   async onSubscribe() {
+    this._panel.title.icon = CSS.ICON_NAMES.notebookSubscribe;
     this.status = 'subscribing';
     this._subscribeDat = await this._manager.listen(this.subscribeUrl, {
       sparse: true

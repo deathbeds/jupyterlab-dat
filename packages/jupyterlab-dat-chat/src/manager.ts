@@ -32,7 +32,7 @@ import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/lib/toke
 
 import { DatPeer } from '@deathbeds/jupyterlab-dat-identity/lib/peer';
 
-import { setupCommands } from './commands';
+import { setupCommands, CommandIDs } from './commands';
 import { IDatChatManager } from './tokens';
 
 import { ID, CSS } from '.';
@@ -42,6 +42,7 @@ import {
   standardRendererFactories as initialFactories
 } from '@jupyterlab/rendermime';
 import { nbformat } from '@jupyterlab/coreutils';
+import { RunButton } from './run';
 
 export class DatChatManager implements IDatChatManager {
   private _serviceManager: ServiceManager;
@@ -202,7 +203,27 @@ export class DatChatManager implements IDatChatManager {
     }
     this._notebookUrls.get(archiveUrl).add(notebook);
 
+    this.addRunButton(notebook, commands);
     return notebook;
+  }
+
+  addRunButton(notebook: NotebookPanel, commands: CommandRegistry) {
+    const runNode = document.createElement('div');
+    let runButtonInterval = setInterval(() => {
+      const { widgets } = notebook.content;
+      if (!widgets.length) {
+        return;
+      }
+      const widget = widgets.slice(-1)[0] as MarkdownCell;
+      widget.promptNode.textContent = '';
+      widget.promptNode.appendChild(runNode);
+      new RunButton({
+        node: runNode,
+        cell: widget.model,
+        onClick: () => commands.execute(CommandIDs.run)
+      });
+      clearInterval(runButtonInterval);
+    }, 100);
   }
 
   async sendMarkdown(archiveUrl: string, model: IMarkdownCellModel) {
