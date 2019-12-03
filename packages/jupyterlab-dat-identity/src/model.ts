@@ -20,22 +20,28 @@ export class DatIdentityModel extends VDomModel {
   }
 
   async publish() {
+    let { handle } = this;
     this._archive = await this._manager.datManager.create({
-      title: this.handle,
+      title: handle,
       description: this.bio,
       type: [DAT_IDENTITY.name]
     });
-    this._archive.configure({
+    await this._archive.configure({
       author: {
-        name: this.handle,
+        name: handle,
         url: this._archive.url
       }
     });
+    await this._manager.datManager.getInfo(this._archive.url);
     this.stateChanged.emit(void 0);
   }
 
   get isPublishing() {
     return !this._peer && !!this._archive;
+  }
+
+  get canPublish() {
+    return !this.isPublishing && this.handle;
   }
 
   get publishUrl() {

@@ -44,19 +44,18 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
       className: CSS.DAT.JP.styled,
       defaultValue: m.handle,
       placeholder: 'anon',
-      onChange: this.onNameChange
+      onChange: this.onNameChange,
+      type: 'text'
     };
 
     return (
-      <div className={`${CSS.ME}-Main`}>
+      <div className={`${CSS.ME}-Main ${CSS.DAT.PANEL}`}>
         <section>
           <p>
             <label>Name</label>
             <input {...nameProps} />
             <small>
-              <i>
-                Your name for chat and <code>dat</code> authoring
-              </i>
+              <i>Your name for dat publishing and chat</i>
             </small>
           </p>
           <p>
@@ -66,6 +65,8 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
               <i>A short text about yourself</i>
             </small>
           </p>
+        </section>
+        <footer>
           <p>
             <label>My Dat</label>
             {renderDatURL({
@@ -75,20 +76,16 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
               }
             })}
             <small>
-              <i>
-                Your personal <code>dat</code> URL
-              </i>
+              <i>Your personal dat link</i>
             </small>
           </p>
-        </section>
-        <footer>
           {renderBigButton({
             icon: CSS.DAT.ICON_NAMES.happy,
             icons: this.model.icons,
             label: m.isPublishing ? 'PUBLISHING' : 'PUBLISH',
-            className: m.isPublishing ? '' : CSS.DAT.JP.accept,
+            className: m.canPublish ? CSS.DAT.JP.accept : '',
             props: {
-              disabled: m.isPublishing,
+              disabled: !m.canPublish,
               onClick: this.onPublish
             }
           })}

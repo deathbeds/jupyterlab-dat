@@ -9,6 +9,7 @@ const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
 export function renderDatURL(options: inputs.IDatURLOptions) {
   return (
     <input
+      type="text"
       defaultValue={options.url}
       className={CSS.JP.styled}
       onFocus={handleFocus}

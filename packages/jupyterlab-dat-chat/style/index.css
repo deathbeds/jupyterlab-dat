@@ -8,23 +8,6 @@
   flex-direction: column;
 }
 
-.jp-DatChat-Main {
-  background-color: var(--jp-layout-color1);
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: var(--jp-notebook-padding);
-}
-
-.jp-DatChat-Main > header {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  padding-bottom: var(--jp-notebook-padding);
-  overflow-y: auto;
-}
-
 .jp-DatChat-Main > header div[data-icon] {
   min-height: var(--jp-ui-font-size2);
   min-width: var(--jp-ui-font-size2);
@@ -63,43 +46,32 @@
   background-color: var(--jp-ui-layout-color3);
 }
 
-.jp-DatChat-Urls label,
-.jp-DatChat-Urls section {
+.jp-DatChat-Urls li > label {
   flex: 1;
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
-.jp-DatChat-Urls label > div {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.jp-DatChat-Urls label section {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.jp-DatChat-Urls label input {
+.jp-DatChat-Urls li > label input {
   opacity: 0;
+  flex: 0;
 }
 
-.jp-DatChat-Urls label span {
+.jp-DatChat-Urls li > label strong {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-weight: bold;
-}
-.jp-DatChat-Urls label small {
-  flex: 0;
-  display: flex;
-  flex-direction: row;
 }
 
-.jp-DatChat-Urls code {
-  flex: 1;
-  text-align: right;
+.jp-DatChat-Urls li > label i {
+  flex: 0;
+  min-width: calc(2 * var(--jp-ui-font-size3));
+}
+
+.jp-DatChat-Urls li svg {
+  max-width: var(--jp-ui-font-size1);
+  padding-right: var(--jp-ui-font-size0);
 }
 
 /* notebook hacks */

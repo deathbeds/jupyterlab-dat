@@ -18,6 +18,7 @@ export const CSS = {
     notebookPublish: 'dat-hexagon-notebook-publish',
     notebookSubscribe: 'dat-hexagon-notebook-subscribe'
   },
+  PANEL: 'jp-DatPanel',
   COLOR: {
     brand: 'jp-mod-dat-brand'
   },

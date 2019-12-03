@@ -41,16 +41,22 @@ export class DatChat extends VDomRenderer<DatChatModel> {
       let info = infos[url];
       let label = url;
       let peers = '?';
+      let author = 'Unknown';
       if (info) {
-        label = info.title || 'Untitled';
-        peers = `${info.peers == null ? '?' : info.peers}`;
+        label = info.title || label;
+        peers = `${info.peers == null ? peers : info.peers}`;
+        author = !info.author
+          ? author
+          : typeof info.author === 'string'
+          ? author
+          : (author as any).name;
       }
       const checked = url === nextUrl;
 
       let datTypes = m.datTypes(url).map((datType, key) => {
         return (
           <i key={key} title={datType.label}>
-            {m.icons.iconReact({ name: datType.icon })}
+            {m.icons.iconReact({ name: datType.icon, tag: 'span' })}
           </i>
         );
       });
@@ -65,16 +71,23 @@ export class DatChat extends VDomRenderer<DatChatModel> {
               value={url}
               onChange={this.onUrlChange}
             />
-            <div>
-              <section>
-                <span>{label}</span>
-                <small>
-                  {m.icons.iconReact({ name: CSS.DAT.ICON_NAMES.network })}
-                  {peers}
-                </small>
-              </section>
-              <section>{datTypes}</section>
-            </div>
+            <i>{datTypes}</i>
+            <strong>
+              {label}
+              <br />
+              {m.icons.iconReact({
+                name: CSS.DAT.ICON_NAMES.happy,
+                tag: 'span'
+              })}
+              {author}
+            </strong>
+            <i title={`${peers} peer${peers !== '1'} connected`}>
+              {m.icons.iconReact({
+                name: CSS.DAT.ICON_NAMES.network,
+                tag: 'span'
+              })}
+              {peers}
+            </i>
           </label>
         </li>
       );
@@ -83,31 +96,37 @@ export class DatChat extends VDomRenderer<DatChatModel> {
     const nullState = <blockquote>No dats to chat about... yet.</blockquote>;
 
     return (
-      <div className={`${CSS.WIDGET}-Main`}>
-        <header>
+      <div className={`${CSS.WIDGET}-Main ${CSS.DAT.PANEL}`}>
+        <section>
+          <label>dat chats</label>
           <ul className={`${CSS.WIDGET}-Urls`}>
             {options.length ? options : nullState}
-            <li>
-              {renderDatURL({
-                url: m.nextUrl,
-                props: {
-                  onChange: this.onUrlChange
-                }
-              })}
-              <i>Paste a dat to chat</i>
-            </li>
           </ul>
-        </header>
-        {renderBigButton({
-          label: 'CHAT',
-          icon: CSS.DAT.ICON_NAMES.chat,
-          icons: m.icons,
-          className: nextUrl ? CSS.DAT.JP.accept : '',
-          props: {
-            disabled: !nextUrl,
-            onClick: this.onChatClicked
-          }
-        })}
+        </section>
+        <footer>
+          <p>
+            <label>dat link</label>
+            {renderDatURL({
+              url: m.nextUrl,
+              props: {
+                onChange: this.onUrlChange
+              }
+            })}
+            <small>
+              <i>Paste a dat link to chat</i>
+            </small>
+          </p>
+          {renderBigButton({
+            label: 'CHAT',
+            icon: CSS.DAT.ICON_NAMES.chat,
+            icons: m.icons,
+            className: nextUrl ? CSS.DAT.JP.accept : '',
+            props: {
+              disabled: !nextUrl,
+              onClick: this.onChatClicked
+            }
+          })}
+        </footer>
       </div>
     );
   }

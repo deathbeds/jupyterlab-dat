@@ -167,8 +167,7 @@ export class DatChatManager implements IDatChatManager {
       return null;
     }
 
-    notebook.title.label = `${info.type || 'unknown'}: ${info.title ||
-      'Untitled'}`;
+    notebook.title.label = `Chat: ${info.title || 'Untitled'}`;
 
     (notebook.layout as any).widgets[0].hide();
 

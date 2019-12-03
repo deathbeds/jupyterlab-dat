@@ -73,12 +73,13 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   background-color: var(--jp-layout-color2);
   padding: var(--jp-notebook-padding);
   border-top: solid 4px transparent;
+  color: var(--jp-ui-font-color2);
 }
 
 .jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab.jp-mod-active,
 .jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab:hover {
   background-color: var(--jp-layout-color1);
-  font-weight: bold;
+  color: var(--jp-ui-font-color1);
 }
 
 .jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab[data-dat-status='publishing'] {
@@ -91,4 +92,58 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
 
 .jp-Dat-Sidebar > .p-TabBar .p-TabBar-tab img {
   max-height: var(--jp-ui-font-size3);
+}
+
+/* panel */
+
+.jp-DatPanel {
+  background-color: var(--jp-layout-color1);
+  padding: var(--jp-notebook-padding);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-DatPanel > section {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.jp-DatPanel > footer {
+  flex: 0;
+}
+
+.jp-DatPanel p {
+  padding-bottom: var(--jp-notebook-padding);
+}
+
+.jp-DatPanel p > label {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: var(--jp-ui-font-size0);
+  display: block;
+  padding-bottom: calc(var(--jp-notebook-padding) / 2);
+}
+
+.jp-DatPanel p > small {
+  display: block;
+  padding-top: calc(var(--jp-notebook-padding) / 2);
+}
+
+.jp-DatPanel input[type='text'],
+.jp-DatPanel textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+}
+
+.jp-DatPanel textarea {
+  background-color: var(--jp-input-background);
+  border: var(--jp-border-width) solid var(--jp-border-color1);
+  color: var(--jp-ui-font-color0);
+  font-family: var(--jp-content-font-family);
+  font-size: var(--jp-ui-font-size2);
+  padding: 7px;
+  display: block;
 }
