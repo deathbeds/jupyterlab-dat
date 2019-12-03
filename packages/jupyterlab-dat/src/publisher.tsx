@@ -1,10 +1,6 @@
 import React from 'react';
 
-import {
-  renderInfoTable,
-  renderBigButton,
-  renderDatURL
-} from '@deathbeds/jupyterlab-dat/lib/fragments';
+import { renderInfoTable, renderBigButton, renderDatURL } from './fragments';
 
 import { VDomRenderer, VDomModel } from '@jupyterlab/apputils';
 
@@ -15,12 +11,12 @@ import { IIconRegistry } from '@jupyterlab/ui-components';
 import { IDatManager } from './tokens';
 
 export class Publisher extends VDomRenderer<Publisher.Model<Widget>> {
-  constructor () {
+  constructor() {
     super();
     this.addClass(CSS.PANEL);
     this.addClass(CSS.PUBLISHER);
     this.title.icon = CSS.ICON_NAMES.create;
-    this.title.label = "publish";
+    this.title.label = 'publish';
   }
 
   protected render() {
