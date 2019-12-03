@@ -98,7 +98,9 @@ export class DatChat extends VDomRenderer<DatChatModel> {
     return (
       <div className={`${CSS.WIDGET}-Main ${CSS.DAT.PANEL}`}>
         <section>
-          <label>dat chats</label>
+          <p>
+            <label>dat chats</label>
+          </p>
           <ul className={`${CSS.WIDGET}-Urls`}>
             {options.length ? options : nullState}
           </ul>

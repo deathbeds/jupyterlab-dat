@@ -147,3 +147,8 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   padding: 7px;
   display: block;
 }
+
+.jp-DatPanel blockquote {
+  border-left: solid 4px var(--jp-border-color1);
+  padding: var(--jp-notebook-padding);
+}
