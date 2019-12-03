@@ -10,6 +10,7 @@ export const CSS = {
     notebookSubscribe: 'jp-DatHexagonNotebookSubscribeIcon'
   } as { [key: string]: string },
   ICON_NAMES: {
+    create: 'dat-create-new-dat',
     happy: 'dat-happy-dat',
     chat: 'dat-hexagon-chat',
     outlines: 'dat-hexagon-outlines',
@@ -22,6 +23,7 @@ export const CSS = {
   COLOR: {
     brand: 'jp-mod-dat-brand'
   },
+  PUBLISHER: 'jp-DatPublisher',
   PEER: 'jp-Dat-Peer',
   SELF: 'jp-mod-dat-peer-self',
   OTHER: 'jp-mod-dat-peer-other',
