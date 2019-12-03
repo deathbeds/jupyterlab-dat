@@ -9,6 +9,9 @@
   "references": [
     {
       "path": "../jupyterlab-dat"
+    },
+    {
+      "path": "../jupyterlab-dat-identity"
     }
   ]
 }

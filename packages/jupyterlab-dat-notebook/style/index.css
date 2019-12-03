@@ -45,11 +45,19 @@
 }
 .jp-Dat-Widget details label i {
   flex: 0;
-  min-width: 7em;
+  min-width: 10em;
   text-align: right;
 }
 .jp-Dat-Widget details label input,
 .jp-Dat-Widget details label textarea {
   flex: 1;
   margin: 0 0 var(--jp-notebook-padding) var(--jp-notebook-padding);
+}
+.jp-Dat-Widget details label input[type='checkbox'] {
+  flex: 0;
+  min-width: var(--jp-ui-font-size1);
+}
+
+.jp-Dat-Widget details label svg {
+  max-width: var(--jp-ui-font-size1);
 }

@@ -37,7 +37,7 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
     this.title.label = tabTitle;
 
     const props = {
-      className: `${CSS.MAIN} ${CSS.JP.md}`
+      className: `${CSS.MAIN} ${CSS.JP.md} ${CSS.PANEL}`
     };
 
     return (
@@ -78,12 +78,17 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
   }
 
   renderInfoForm(m: DatNotebookModel) {
+    const myDat = m.useMyDat
+      ? m.icons.iconReact({ name: CSS.ICON_NAMES.happy, tag: 'span' })
+      : null;
+
     return (
       <details>
         <summary>Manifest</summary>
         <label>
           <i>Title</i>
           <input
+            type="text"
             defaultValue={m.title}
             className={CSS.JP.styled}
             onChange={evt => (m.title = evt.currentTarget.value)}
@@ -92,9 +97,16 @@ export class DatWidget extends VDomRenderer<DatNotebookModel> {
         <label>
           <i>Author</i>
           <input
+            type="text"
             defaultValue={m.author}
             className={CSS.JP.styled}
             onChange={evt => (m.author = evt.currentTarget.value)}
+          />
+          <i>{myDat} link to my dat </i>
+          <input
+            defaultChecked={m.useMyDat}
+            onChange={evt => (m.useMyDat = !m.useMyDat)}
+            type="checkbox"
           />
         </label>
         <label>

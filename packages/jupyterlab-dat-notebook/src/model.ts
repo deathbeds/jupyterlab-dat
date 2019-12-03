@@ -3,7 +3,6 @@ import { each } from '@phosphor/algorithm';
 import { ElementExt } from '@phosphor/domutils';
 
 import { VDomModel } from '@jupyterlab/apputils';
-import { IIconRegistry } from '@jupyterlab/ui-components';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import {
   ICellModel,
@@ -22,9 +21,9 @@ import {
 
 import { nbformat } from '@jupyterlab/coreutils';
 
-import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
 import { ExplodeJSONStrategist } from '@deathbeds/jupyterlab-dat/lib/strategies/explode';
 import { DAT_NOTEBOOK } from '.';
+import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/src/tokens';
 
 const DEFAULT_NOTEBOOK = '/Untitled.ipynb';
 const CELL_IDS_PATH = ['cells'];
@@ -36,10 +35,9 @@ const VALID_DAT = /(dat:\/\/)?[\da-f]{64}/;
 export class DatNotebookModel extends VDomModel {
   private _panel: NotebookPanel;
   private _context: DocumentRegistry.IContext<INotebookModel>;
-  private _manager: IDatManager;
+  private _identityManager: IDatIdentityManager;
   private _strategist = new ExplodeJSONStrategist();
   private _status: string = 'zzz';
-  private _icons: IIconRegistry;
   // publisher stuff
   private _publishDat: dat.IDatArchive;
   private _publishUrl: string;
@@ -47,6 +45,7 @@ export class DatNotebookModel extends VDomModel {
   private _title: string;
   private _author: string;
   private _description: string;
+  private _useMyDat = true;
   // subscriber stuff
   private _subscribeUrl: string;
   private _subscribeDat: dat.IDatArchive;
@@ -64,8 +63,12 @@ export class DatNotebookModel extends VDomModel {
     super();
     this._panel = options.panel;
     this._context = options.context;
-    this._manager = options.manager;
-    this._icons = options.icons;
+    this._identityManager = options.identityManager;
+    this._identityManager.me.stateChanged.connect(() => {
+      if (this._useMyDat) {
+        this.stateChanged.emit(void 0);
+      }
+    });
   }
 
   dispose() {
@@ -78,8 +81,12 @@ export class DatNotebookModel extends VDomModel {
     super.dispose();
   }
 
+  private get _manager() {
+    return this._identityManager.datManager;
+  }
+
   get icons() {
-    return this._icons;
+    return this._identityManager.datManager.icons;
   }
 
   get panel() {
@@ -171,14 +178,26 @@ export class DatNotebookModel extends VDomModel {
     }
   }
 
+  get useMyDat() {
+    return this._useMyDat;
+  }
+  set useMyDat(useMyDat) {
+    this._useMyDat = useMyDat;
+    this.stateChanged.emit(void 0);
+  }
+
   get author() {
-    return this._author;
+    return this._useMyDat ? this._identityManager.me.handle : this._author;
   }
   set author(author) {
-    this._author = author;
-    this.stateChanged.emit(void 0);
+    if (this._useMyDat) {
+      this._identityManager.me.handle = author;
+    } else {
+      this._author = author;
+      this.stateChanged.emit(void 0);
+    }
     if (this._publishDat) {
-      this._publishDat.configure({ author }).catch(console.warn);
+      this._publishDat.configure({ author: this.author }).catch(console.warn);
     }
   }
 
@@ -888,7 +907,6 @@ export namespace DatNotebookModel {
   export interface IOptions {
     context: DocumentRegistry.IContext<INotebookModel>;
     panel: NotebookPanel;
-    manager: IDatManager;
-    icons: IIconRegistry;
+    identityManager: IDatIdentityManager;
   }
 }

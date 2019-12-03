@@ -31,11 +31,13 @@
   },
   "peerDependencies": {
     "@deathbeds/jupyterlab-dat": "0.2",
+    "@deathbeds/jupyterlab-dat-identity": "0.1",
     "@jupyterlab/notebook": "1",
     "@jupyterlab/application": "1"
   },
   "devDependencies": {
     "@deathbeds/jupyterlab-dat": "0.2",
+    "@deathbeds/jupyterlab-dat-identity": "0.1",
     "@jupyterlab/notebook": "1",
     "@jupyterlab/application": "1"
   },

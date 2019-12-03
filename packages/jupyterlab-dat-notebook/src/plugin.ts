@@ -11,8 +11,7 @@ import { MainAreaWidget } from '@jupyterlab/apputils';
 
 import { NotebookPanel } from '@jupyterlab/notebook';
 
-import { IDatManager } from '@deathbeds/jupyterlab-dat/lib/tokens';
-import { IIconRegistry } from '@jupyterlab/ui-components';
+import { IDatIdentityManager } from '@deathbeds/jupyterlab-dat-identity/lib/tokens';
 
 import { DatNotebookButton } from './datbutton';
 
@@ -22,16 +21,16 @@ import { DAT_NOTEBOOK } from '.';
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-dat-notebook',
   autoStart: true,
-  requires: [JupyterFrontEnd.IPaths, IRouter, IIconRegistry, IDatManager],
+  requires: [JupyterFrontEnd.IPaths, IRouter, IDatIdentityManager],
   activate: (
     app: JupyterFrontEnd,
     paths: JupyterFrontEnd.IPaths,
     router: IRouter,
-    icons: IIconRegistry,
-    datManager: IDatManager
+    identityManager: IDatIdentityManager
   ) => {
     const { shell, commands } = app;
-    const datButton = new DatNotebookButton(datManager, icons);
+    const { datManager } = identityManager;
+    const datButton = new DatNotebookButton(identityManager);
 
     function addMainAreaWidget(content: DatWidget) {
       const main = new MainAreaWidget({ content });

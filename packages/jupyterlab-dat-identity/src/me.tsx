@@ -42,7 +42,7 @@ export class DatMe extends VDomRenderer<DatIdentityModel> {
 
     const nameProps = {
       className: CSS.DAT.JP.styled,
-      defaultValue: m.handle,
+      value: m.handle,
       placeholder: 'anon',
       onChange: this.onNameChange,
       type: 'text'
