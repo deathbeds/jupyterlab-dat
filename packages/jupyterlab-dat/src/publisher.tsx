@@ -13,7 +13,6 @@ import { IDatManager } from './tokens';
 export class Publisher extends VDomRenderer<Publisher.Model<Widget>> {
   constructor() {
     super();
-    this.addClass(CSS.PANEL);
     this.addClass(CSS.PUBLISHER);
     this.title.icon = CSS.ICON_NAMES.create;
     this.title.label = 'publish';
@@ -22,8 +21,12 @@ export class Publisher extends VDomRenderer<Publisher.Model<Widget>> {
   protected render() {
     const m = this.model;
 
+    if (!m) {
+      return <div>Nothing to publish &emdash; yet.</div>;
+    }
+
     return (
-      <div className={`${CSS.PUBLISHER}-Main`}>
+      <div className={`${CSS.PUBLISHER}-Main ${CSS.PANEL}`}>
         <section>
           {this.renderPublishInfo()}
           {this.renderInfoForm()}
@@ -36,7 +39,7 @@ export class Publisher extends VDomRenderer<Publisher.Model<Widget>> {
             }
           })}
           {renderBigButton({
-            icon: CSS.ICON_NAMES.notebookPublish,
+            icon: m.icon,
             label: m.isPublishing ? 'PUBLISHING' : 'PUBLISH',
             icons: m.icons,
             className: m.isPublishing ? '' : CSS.JP.accept,
@@ -73,55 +76,70 @@ export class Publisher extends VDomRenderer<Publisher.Model<Widget>> {
   renderInfoForm() {
     const m = this.model;
 
-    return (
-      <details>
-        <summary>Manifest</summary>
-        <label>
-          <i>Title</i>
-          <input
-            defaultValue={m.title}
-            className={CSS.JP.styled}
-            onChange={evt => (m.title = evt.currentTarget.value)}
-          />
-        </label>
-        <label>
-          <i>Author</i>
-          <input
-            defaultValue={m.author}
-            className={CSS.JP.styled}
-            onChange={evt => (m.author = evt.currentTarget.value)}
-          />
-        </label>
-        <label>
-          <i>Description</i>
-          <textarea
-            defaultValue={m.description}
-            className={CSS.JP.styled}
-            onChange={evt => (m.description = evt.currentTarget.value)}
-            rows={5}
-          />
-        </label>
-      </details>
-    );
+    return [
+      <p>
+        <label>Title</label>
+        <input
+          type="text"
+          defaultValue={m.title}
+          className={CSS.JP.styled}
+          onChange={evt => (m.title = evt.currentTarget.value)}
+        />
+      </p>,
+      <p>
+        <label>Author</label>
+        <input
+          type="text"
+          defaultValue={m.author}
+          className={CSS.JP.styled}
+          onChange={evt => (m.author = evt.currentTarget.value)}
+        />
+      </p>,
+      <p>
+        <label>Description</label>
+        <textarea
+          defaultValue={m.description}
+          className={CSS.JP.styled}
+          onChange={evt => (m.description = evt.currentTarget.value)}
+          rows={5}
+        />
+      </p>
+    ];
   }
 }
 
 export namespace Publisher {
+  export interface IOptions {
+    icons: IIconRegistry;
+    datManager: IDatManager;
+    contentLabel?: string;
+    icon?: string;
+    datTypes: IDatManager.IDatType[];
+  }
+
   export class Model<T extends Widget> extends VDomModel {
     protected _icons: IIconRegistry;
     protected _datManager: IDatManager;
-    protected _datTypes: IDatManager.IDatType[];
-    protected _contentLabel: string;
-    protected _icon: string;
+    protected _datTypes: IDatManager.IDatType[] = [];
 
-    protected _status: string;
+    protected _contentLabel: string = 'Unknown';
+    protected _icon: string = 'dat-create-new-dat';
 
-    protected _title: string;
-    protected _description: string;
-    protected _author: string;
+    protected _status: string = 'zzz';
+
+    protected _title: string = '';
+    protected _description: string = '';
+    protected _author: string = '';
     protected _archive: dat.IDatArchive;
-    protected _url: string;
+    protected _url: string = '';
     protected _info: dat.IDatArchive.IArchiveInfo;
+
+    constructor(options: IOptions) {
+      super();
+      this._icons = options.icons;
+      this._datManager = options.datManager;
+      this._datTypes = options.datTypes;
+    }
 
     // readonly-ish
     get contentLabel() {

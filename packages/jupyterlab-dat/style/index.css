@@ -152,3 +152,10 @@ button.jp-mod-styled.jp-mod-dat-btn-big {
   border-left: solid 4px var(--jp-border-color1);
   padding: var(--jp-notebook-padding);
 }
+
+/* the publisher */
+.jp-DatPublisher {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
