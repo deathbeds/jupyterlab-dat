@@ -10,6 +10,7 @@ import { IDatManager } from './tokens';
 import { ICONS } from './icons';
 import { DatBar } from './widget';
 import { CSS } from '.';
+import { Publisher } from './publisher';
 
 const extension: JupyterFrontEndPlugin<IDatManager> = {
   id: 'jupyterlab-dat',
@@ -24,6 +25,13 @@ const extension: JupyterFrontEndPlugin<IDatManager> = {
     bar.title.caption = 'dat';
     bar.title.icon = CSS.ICON_NAMES.outlines;
     app.shell.add(bar, 'left');
+    const publisher = new Publisher();
+    publisher.model = new Publisher.Model({
+      datManager: manager,
+      icons,
+      datTypes: []
+    });
+    manager.addSidebarItem(publisher, { rank: 2 });
     return manager;
   }
 };
